@@ -1,16 +1,152 @@
 ---
-
+import Layout from '../layouts/Layout.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Home">
+  <!-- Hero Section -->
+  <section class="container mx-auto px-4 py-16">
+    <div class="max-w-3xl mx-auto text-center">
+      <h1 class="text-5xl font-bold mb-6">Wassim Soltani</h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400 mb-8">
+        Full-Stack Software Engineer | AI/ML Integration Specialist | Cloud & Edge Computing Expert
+      </p>
+      <div class="flex justify-center gap-4">
+        <a 
+          href="/contact" 
+          class="relative bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 animate-glow"
+        >
+          Get in Touch
+        </a>
+        <a 
+          href="https://github.com/wSoltani" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="border border-gray-300 dark:border-gray-700 px-6 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+          View GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Summary -->
+  <section class="container mx-auto px-4 py-16">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold mb-8">About Me</h2>
+      <p class="text-xl mb-6">
+        Highly motivated and results-oriented Full-Stack Software Engineer with over 5 years of comprehensive experience designing, developing, and deploying high-performance, scalable software solutions.
+      </p>
+      <p class="text-xl mb-8">
+        I possess deep expertise in modern web technologies coupled with specialized, cutting-edge skills in AI/ML integration, Cloud & Edge Computing, and building impactful Developer Tools & Automation.
+      </p>
+      <div class="flex justify-center">
+        <a href="/skills" class="text-blue-600 hover:underline text-lg">View my full skillset →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects Summary -->
+  <section class="container mx-auto px-4 py-16 bg-gray-50 dark:bg-gray-800 rounded-t-md">
+    <h2 class="text-3xl font-bold mb-8 text-center">Featured Projects</h2>
+    <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+      <div class="border border-gray-200 dark:border-gray-800 rounded-lg p-6 hover:shadow-lg transition-shadow">
+        <h3 class="text-xl font-semibold mb-2">Quickplan</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">AI-powered web application for processing meeting notes</p>
+        <a href="https://quickplan.blueblood.tech/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">View Project →</a>
+      </div>
+      <div class="border border-gray-200 dark:border-gray-800 rounded-lg p-6 hover:shadow-lg transition-shadow">
+        <h3 class="text-xl font-semibold mb-2">AI-Enhanced E-commerce Platform</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Comprehensive, customizable E-commerce platform with AI features</p>
+      </div>
+      <div class="border border-gray-200 dark:border-gray-800 rounded-lg p-6 hover:shadow-lg transition-shadow">
+        <h3 class="text-xl font-semibold mb-2">Workflow Automation Tools</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Specialized browser extensions for data extraction and processing</p>
+      </div>
+      <div class="border border-gray-200 dark:border-gray-800 rounded-lg p-6 hover:shadow-lg transition-shadow">
+        <h3 class="text-xl font-semibold mb-2">R&D Projects</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">Innovative projects exploring AI, privacy, and game development</p>
+      </div>
+    </div>
+    <div class="flex justify-center mt-8">
+      <a href="/projects" class="text-blue-600 hover:underline text-lg">View all projects →</a>
+    </div>
+  </section>
+
+  <!-- Experience Summary -->
+  <section class="container mx-auto px-4 py-16 bg-gray-50 dark:bg-gray-800">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold mb-8">Professional Experience</h2>
+      <div class="space-y-8">
+        <div class="border-l-4 border-blue-600 pl-6">
+          <h3 class="text-xl font-semibold">Founder & Software Engineer (Consultant) | Blueblood</h3>
+          <p class="text-gray-600 dark:text-gray-400">April 2022 – Present</p>
+          <p class="mt-4">Leading software consultancy providing dedicated services to international clients, specializing in AI integration and workflow automation.</p>
+        </div>
+        <div class="border-l-4 border-blue-600 pl-6">
+          <h3 class="text-xl font-semibold">Lead Full-stack Developer/Engineer | Almaviva S.p.A</h3>
+          <p class="text-gray-600 dark:text-gray-400">September 2019 – March 2022</p>
+          <p class="mt-4">Led enterprise software development initiatives, delivering high-performance applications with a focus on scalability and user experience.</p>
+        </div>
+      </div>
+      <div class="flex justify-center mt-8">
+        <a href="/experience" class="text-blue-600 hover:underline text-lg">View detailed experience →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Education -->
+  <section class="container mx-auto px-4 py-16 bg-gray-50 dark:bg-gray-800 rounded-b-md">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold mb-8">Education</h2>
+      <div class="space-y-8">
+        <div class="border-l-4 border-blue-600 pl-6">
+          <h3 class="text-xl font-semibold">Master's Degree in Computer Science</h3>
+          <p class="text-gray-600 dark:text-gray-400">Higher Institute of Computer Science and Mathematics of Monastir | 2017 - 2019</p>
+          <p class="mt-4">Specialized in Software Engineering and Information Systems. Focused on advanced software development methodologies, distributed systems, and enterprise architecture.</p>
+        </div>
+        <div class="border-l-4 border-blue-600 pl-6">
+          <h3 class="text-xl font-semibold">Bachelor's Degree in Computer Science</h3>
+          <p class="text-gray-600 dark:text-gray-400">Higher Institute of Computer Science and Mathematics of Monastir | 2014 - 2017</p>
+          <p class="mt-4">Core computer science curriculum including algorithms, data structures, software engineering principles, and practical programming skills.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact CTA -->
+  <section class="container mx-auto px-4 py-16">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl font-bold mb-4">Let's Work Together</h2>
+      <p class="text-xl text-gray-600 dark:text-gray-400 mb-8">
+        I'm always interested in hearing about new projects and opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!
+      </p>
+      <a 
+        href="/contact" 
+        class="relative bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 text-lg animate-glow"
+      >
+        Contact Me
+      </a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  @keyframes glow {
+    0% {
+      box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+    }
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+</style>

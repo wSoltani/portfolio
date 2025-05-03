@@ -1,0 +1,126 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Experience">
+  <section class="container mx-auto px-8 sm:px-16 py-16">
+    <div class="mb-16">
+      <h1 class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400 mb-4">
+        Professional Experience
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400">Building impactful solutions and leading development teams</p>
+    </div>
+
+    <!-- Blueblood -->
+    <div class="mb-16">
+      <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+        <h2 class="text-3xl font-bold">Founder & Software Engineer (Consultant) | Blueblood</h2>
+        <span class="text-gray-600 dark:text-gray-400 mt-2 md:mt-0">April 2022 – Present</span>
+      </div>
+      <div class="prose dark:prose-invert max-w-none">
+        <p class="text-xl mb-6">Established and operate Blueblood as an independent software consultancy and development studio, providing dedicated services to international clients while driving personal R&D projects.</p>
+        
+        <h3 class="text-2xl font-semibold mt-8 mb-4 relative inline-block">
+          Primary Engagement: Vantage Labs LLC
+          <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+        </h3>
+        <p class="mb-4">Function as an integral, remote member of their development team, providing full-time contract software engineering services.</p>
+        
+        <div class="space-y-6">
+          <div>
+            <h4 class="text-xl font-semibold mb-2">WriteAhead Project</h4>
+            <ul class="list-disc list-inside space-y-2">
+              <li>Architected and developed key AI-driven feedback features</li>
+              <li>Integrated AWS Bedrock for sophisticated analysis of student essays against predefined rubrics</li>
+              <li>Developed browser extension components</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-semibold mb-2">ZebraPay Extension Project</h4>
+            <ul class="list-disc list-inside space-y-2">
+              <li>Designed and built a complex workflow automation tool as a browser extension</li>
+              <li>Developed Node.js backend</li>
+              <li>Integrated OCR technology for data scraping</li>
+              <li>Utilized AI (AWS Bedrock) for enhanced processing</li>
+              <li>Significantly improved client data import efficiency</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-xl font-semibold mb-2">CorrectEnglish Project</h4>
+            <ul class="list-disc list-inside space-y-2">
+              <li>Contributed across the full stack (React/TS frontend, Spring Boot backend)</li>
+              <li>Developed and maintained core platform features</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 class="text-2xl font-semibold mt-8 mb-4 relative inline-block">
+          Impact & Process
+          <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+        </h3>
+        <ul class="list-disc list-inside space-y-2">
+          <li>Delivered 100% of assigned projects on time through effective prioritization and clear communication</li>
+          <li>Developed scalable, maintainable code that reduced technical debt by 10%</li>
+          <li>Refactored legacy codebases, improving maintainability and reducing update time by 15%</li>
+          <li>Collaborated extensively with management, stakeholders, and QA, enhancing project delivery time (~10%) and stakeholder satisfaction (15%)</li>
+          <li>Proficiently applied Agile methodologies in a fully remote setting</li>
+        </ul>
+
+        <h3 class="text-2xl font-semibold mt-8 mb-4 relative inline-block">
+          Technologies Utilized
+          <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+        </h3>
+        <div class="flex flex-wrap gap-2">
+          {['React', 'TypeScript', 'Tailwind CSS', 'Spring Boot', 'Java', 'Node.js', 'AWS Bedrock', 'Browser Extension APIs', 'OCR', 'Keycloak', 'PostgreSQL'].map(tech => (
+            <span class="px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+              {tech}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Almaviva S.p.A -->
+    <div>
+      <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+        <h2 class="text-3xl font-bold">Lead Full-stack Developer/Engineer | Almaviva S.p.A</h2>
+        <span class="text-gray-600 dark:text-gray-400 mt-2 md:mt-0">September 2019 – March 2022</span>
+      </div>
+      <div class="prose dark:prose-invert max-w-none">
+        <p class="text-xl mb-6">Led enterprise software development initiatives, translating complex user requirements into functional technical solutions.</p>
+        
+        <h3 class="text-2xl font-semibold mt-8 mb-4 relative inline-block">
+          Key Achievements
+          <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+        </h3>
+        <ul class="list-disc list-inside space-y-2">
+          <li>Accelerated overall project delivery speed by 15%</li>
+          <li>Engineered, tested, documented, and delivered 4+ major web applications</li>
+          <li>Achieved a 98% on-time project completion rate</li>
+          <li>Successfully deployed and managed applications on cloud services (AWS) and self-hosted VPS</li>
+          <li>Ensured high availability (99.7% uptime) and scalability for high traffic loads</li>
+          <li>Resolved 90% of support tickets within defined SLAs</li>
+          <li>Mentored and provided technical guidance to a team of 3 junior engineers</li>
+          <li>Improved team performance by 15%</li>
+          <li>Facilitated regular stakeholder meetings and managed client relationships effectively</li>
+          <li>Contributed to a 20% increase in customer satisfaction</li>
+          <li>Achieved 90% on-time delivery for team projects through rigorous application of Agile methodologies</li>
+        </ul>
+
+        <h3 class="text-2xl font-semibold mt-8 mb-4 relative inline-block">
+          Technologies & Tools
+          <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+        </h3>
+        <div class="flex flex-wrap gap-2">
+          {['Angular', 'Ionic', 'Spring Boot', 'Java', 'MySQL', 'MongoDB', 'AWS', 'Agile', 'Scrum'].map(tech => (
+            <span class="px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+              {tech}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout> 

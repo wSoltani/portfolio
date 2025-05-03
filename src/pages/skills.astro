@@ -1,0 +1,339 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Skills">
+  <section class="container mx-auto px-8 sm:px-16 py-16">
+    <div class="mb-16">
+      <h1 class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400 mb-4">
+        Technical Skills & Expertise
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400">Comprehensive technology stack and development methodologies</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="mb-12">
+      <div class="relative">
+        <input
+          type="text"
+          id="skillSearch"
+          placeholder="Search skills..."
+          class="w-full px-6 py-4 text-lg rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+        />
+        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skills Sections -->
+    <div id="skillsContainer">
+      <!-- AI / Machine Learning -->
+      <div class="mb-16 skill-section">
+        <h2 class="text-3xl font-bold mb-6">AI / Machine Learning</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="prose dark:prose-invert max-w-none grid-column">
+            <h3 class="text-2xl font-semibold mb-4 relative inline-block">
+              Platform Integration
+              <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['AWS Bedrock', 'Cloudflare AI', 'Cloudflare Vectorize'].map(tech => (
+                <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div class="prose dark:prose-invert max-w-none grid-column">
+            <h3 class="text-2xl font-semibold mb-4 relative inline-block">
+              Techniques & Concepts
+              <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['Prompt Engineering', 'RAG Concepts', 'Vector Databases', 'Embeddings', 'Semantic Search', 'Generative AI', 'NLP', 'OCR Integration'].map(tech => (
+                <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cloud & DevOps -->
+      <div class="mb-16 skill-section">
+        <h2 class="text-3xl font-bold mb-6">Cloud & DevOps</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="prose dark:prose-invert max-w-none grid-column">
+            <h3 class="text-2xl font-semibold mb-4 relative inline-block">
+              Platforms
+              <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['Cloudflare Workers', 'Cloudflare Pages', 'Cloudflare Vectorize', 'AWS Core Services', 'GCP', 'Azure'].map(tech => (
+                <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div class="prose dark:prose-invert max-w-none grid-column">
+            <h3 class="text-2xl font-semibold mb-4 relative inline-block">
+              Tools & Practices
+              <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['Docker', 'Kubernetes', 'CI/CD', 'Linux', 'VPS', 'Deployment Automation', 'Infrastructure as Code'].map(tech => (
+                <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Backend Development -->
+      <div class="mb-16 skill-section">
+        <h2 class="text-3xl font-bold mb-6">Backend Development</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="prose dark:prose-invert max-w-none grid-column">
+            <h3 class="text-2xl font-semibold mb-4 relative inline-block">
+              Languages & Frameworks
+              <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['Java', 'Node.js', 'TypeScript', 'Python', 'Spring Boot', 'Express.js', 'JHipster'].map(tech => (
+                <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div class="prose dark:prose-invert max-w-none grid-column">
+            <h3 class="text-2xl font-semibold mb-4 relative inline-block">
+              Concepts & Technologies
+              <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['RESTful APIs', 'GraphQL', 'Keycloak', 'OAuth2', 'JWT', 'API Design', 'Scalability', 'Performance'].map(tech => (
+                <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Frontend Development -->
+      <div class="mb-16 skill-section">
+        <h2 class="text-3xl font-bold mb-6">Frontend Development</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="prose dark:prose-invert max-w-none grid-column">
+            <h3 class="text-2xl font-semibold mb-4 relative inline-block">
+              Technologies
+              <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'React', 'React Native', 'Angular', 'Ionic'].map(tech => (
+                <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div class="prose dark:prose-invert max-w-none grid-column">
+            <h3 class="text-2xl font-semibold mb-4 relative inline-block">
+              Styling & Tooling
+              <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['Tailwind CSS', 'Bootstrap', 'PrimeNG', 'Material Design', 'Vite', 'Webpack', 'Npm/Yarn', 'Browser Extensions'].map(tech => (
+                <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Databases & Data Storage -->
+      <div class="mb-16 skill-section">
+        <h2 class="text-3xl font-bold mb-6">Databases & Data Storage</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="prose dark:prose-invert max-w-none grid-column">
+            <h3 class="text-2xl font-semibold mb-4 relative inline-block">
+              Relational & NoSQL
+              <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['PostgreSQL', 'MySQL', 'MongoDB', 'Firebase'].map(tech => (
+                <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div class="prose dark:prose-invert max-w-none grid-column">
+            <h3 class="text-2xl font-semibold mb-4 relative inline-block">
+              Search & Vector
+              <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['Elasticsearch', 'Cloudflare Vectorize'].map(tech => (
+                <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Development Tools & Methodologies -->
+      <div class="skill-section">
+        <h2 class="text-3xl font-bold mb-6">Development Tools & Methodologies</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="prose dark:prose-invert max-w-none grid-column">
+            <h3 class="text-2xl font-semibold mb-4 relative inline-block">
+              Tools & Platforms
+              <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['Git', 'GitHub', 'Bitbucket', 'Jira', 'IntelliJ IDEA', 'VS Code', 'Postman'].map(tech => (
+                <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div class="prose dark:prose-invert max-w-none grid-column">
+            <h3 class="text-2xl font-semibold mb-4 relative inline-block">
+              Methodologies & Practices
+              <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['Agile', 'Scrum', 'TDD', 'Unit Testing', 'SonarQube', 'Prettier', 'Technical Documentation'].map(tech => (
+                <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('skillSearch') as HTMLInputElement;
+      const skillSections = document.querySelectorAll('.skill-section');
+
+      if (!searchInput) return;
+
+      function filterSkills(searchTerm: string) {
+        const normalizedSearch = searchTerm.toLowerCase().trim();
+
+        skillSections.forEach(section => {
+          const sectionElement = section as HTMLElement;
+          const gridColumns = section.querySelectorAll('.grid-column');
+          let sectionHasVisibleContent = false;
+
+          gridColumns.forEach(column => {
+            const columnElement = column as HTMLElement;
+            const tags = column.querySelectorAll('.skill-tag');
+            let visibleTags = 0;
+
+            tags.forEach(tag => {
+              const tagElement = tag as HTMLElement;
+              const tagText = tagElement.textContent?.toLowerCase() || '';
+              
+              const matches = normalizedSearch === '' || tagText.includes(normalizedSearch);
+              
+              tagElement.style.display = matches ? 'inline-block' : 'none';
+              if (matches) {
+                visibleTags++;
+                tagElement.style.opacity = '1';
+                tagElement.style.transform = 'translateY(0)';
+              } else {
+                tagElement.style.opacity = '0';
+                tagElement.style.transform = 'translateY(10px)';
+              }
+            });
+
+            // Handle column visibility
+            if (visibleTags > 0 || normalizedSearch === '') {
+              columnElement.style.display = 'block';
+              sectionHasVisibleContent = true;
+            } else {
+              columnElement.style.display = 'none';
+            }
+          });
+
+          // Handle section visibility
+          if (sectionHasVisibleContent || normalizedSearch === '') {
+            sectionElement.style.display = 'block';
+            sectionElement.style.opacity = '1';
+            sectionElement.style.transform = 'translateY(0)';
+          } else {
+            sectionElement.style.display = 'none';
+            sectionElement.style.opacity = '0';
+            sectionElement.style.transform = 'translateY(10px)';
+          }
+        });
+      }
+
+      // Debounce function
+      function debounce(func: Function, wait: number) {
+        let timeout: ReturnType<typeof setTimeout>;
+        return function executedFunction(...args: any[]) {
+          const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+        };
+      }
+
+      const debouncedFilter = debounce((value: string) => filterSkills(value), 150);
+      searchInput.addEventListener('input', (e) => {
+        const target = e.target as HTMLInputElement;
+        debouncedFilter(target.value);
+      });
+
+      filterSkills('');
+    });
+  </script>
+
+  <style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .skill-tag {
+      transition: all 0.3s ease-in-out;
+    }
+
+    .skill-section {
+      transition: all 0.3s ease-in-out;
+    }
+
+    .grid-column {
+      transition: all 0.3s ease-in-out;
+    }
+  </style>
+</Layout> 
