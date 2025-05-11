@@ -1,0 +1,308 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="AI Chat">
+  <section class="container mx-auto px-4 py-16">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400 mb-6 text-center">
+        Chat with AI Assistant
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400 mb-12 text-center">
+        Ask questions about my experience, skills, or projects. This AI assistant is trained to provide accurate information about me.
+      </p>
+
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-8">
+        <div id="chat-messages" class="space-y-4 mb-6 h-[425px] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+          <div class="flex items-start">
+            <div class="flex-shrink-0 mr-3">
+              <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white mt-2">
+                AI
+              </div>
+            </div>
+            <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg max-w-[80%]">
+              <p class="text-gray-800 dark:text-gray-200">
+                Hello! I'm Wassim's agent, and I'm here to help you explore his expertise in Software Engineering, particularly in AI/ML, Cloud/Edge, and Full-Stack development. What would you like to know about his experience, skills, or projects?
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-0 border-t border-gray-200 dark:border-gray-700 pt-4">
+          <input 
+            type="text" 
+            id="user-input" 
+            placeholder="Ask a question..." 
+            class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+          <button 
+            id="send-button"
+            class="w-full sm:w-auto sm:ml-2 mt-2 sm:mt-0 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
+          >
+            <span>Send</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+        <h2 class="text-xl font-semibold mb-4">About this AI Assistant</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-4">
+          This AI assistant uses Cloudflare AutoRAG to retrieve accurate information about my background, skills, and projects. It can help answer questions about:
+        </p>
+        <ul class="list-disc pl-5 text-gray-600 dark:text-gray-400 space-y-2 mb-4">
+          <li>My professional experience and background</li>
+          <li>Technical skills and expertise</li>
+          <li>Projects I've worked on</li>
+          <li>Education and certifications</li>
+          <li>My approach to software development</li>
+        </ul>
+        <p class="text-gray-600 dark:text-gray-400 text-sm">
+          Note: This assistant uses Retrieval-Augmented Generation (RAG) to provide accurate information, but may not have data about very recent updates.
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import * as marked from 'marked';
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    const chatMessages = document.getElementById('chat-messages') as HTMLDivElement;
+    const userInput = document.getElementById('user-input') as HTMLInputElement;
+    const sendButton = document.getElementById('send-button') as HTMLButtonElement;
+    const API_ENDPOINT = 'https://portfolio-rag-proxy.bluebld.workers.dev';
+    
+    if (!chatMessages || !userInput || !sendButton) return;
+
+    const UI = {
+      typingDelay: 500,
+      initialFocusDelay: 100,
+      preFetchDelay: 100,
+      errorMessages: {
+        noResponse: "I processed your request but couldn't generate a proper response. Could you try asking something else?",
+        connectionError: "I'm sorry, there was an error connecting to the AI service. Please try again later."
+      }
+    };
+
+    function addMessage(content: string, isUser: boolean) {
+      const messageDiv = document.createElement('div');
+      
+      if (isUser) {
+        messageDiv.className = 'flex flex-row-reverse items-start mb-4';
+        
+        const avatar = document.createElement('div');
+        avatar.className = 'flex-shrink-0 ml-3';
+        
+        const avatarInner = document.createElement('div');
+        avatarInner.className = 'w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white mt-2';
+        avatarInner.textContent = 'You';
+        
+        avatar.appendChild(avatarInner);
+        messageDiv.appendChild(avatar);
+        
+        const bubble = document.createElement('div');
+        bubble.className = 'bg-gray-100 dark:bg-gray-700 p-3 rounded-lg max-w-[80%]';
+        
+        const text = document.createElement('p');
+        text.className = 'text-gray-800 dark:text-gray-200 whitespace-pre-wrap';
+        text.textContent = content;
+        
+        bubble.appendChild(text);
+        messageDiv.appendChild(bubble);
+      } else {
+        messageDiv.className = 'flex items-start mb-4';
+        
+        const avatar = document.createElement('div');
+        avatar.className = 'flex-shrink-0 mr-3';
+        
+        const avatarInner = document.createElement('div');
+        avatarInner.className = 'w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white mt-2';
+        avatarInner.textContent = 'AI';
+        
+        avatar.appendChild(avatarInner);
+        messageDiv.appendChild(avatar);
+        
+        const bubble = document.createElement('div');
+        bubble.className = 'bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg max-w-[80%]';
+        
+        const text = document.createElement('p');
+        text.className = 'text-gray-800 dark:text-gray-200';
+        text.innerHTML = marked.parse(content, {async: false});
+        
+        bubble.appendChild(text);
+        messageDiv.appendChild(bubble);
+      }
+      
+      chatMessages.appendChild(messageDiv);
+      scrollToBottom();
+    }
+
+    function createTypingIndicator() {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'flex items-start mb-4';
+
+      const avatar = document.createElement('div');
+      avatar.className = 'flex-shrink-0 mr-3';
+      
+      const avatarInner = document.createElement('div');
+      avatarInner.className = 'w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white mt-2';
+      avatarInner.textContent = 'AI';
+      
+      avatar.appendChild(avatarInner);
+      messageDiv.appendChild(avatar);
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg max-w-[80%]';
+      
+      const text = document.createElement('p');
+      text.className = 'text-gray-800 dark:text-gray-200 whitespace-pre-wrap';
+      
+      const typingIndicator = document.createElement('span');
+      typingIndicator.className = 'inline-flex items-center gap-1';
+      typingIndicator.innerHTML = `
+        <span class="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+        <span class="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style="animation-delay: 200ms"></span>
+        <span class="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style="animation-delay: 400ms"></span>
+      `;
+      text.appendChild(typingIndicator);
+      
+      bubble.appendChild(text);
+      messageDiv.appendChild(bubble);
+      
+      chatMessages.appendChild(messageDiv);
+      scrollToBottom();
+
+      return {
+        element: messageDiv,
+        textElement: text,
+        typingElement: typingIndicator,
+        remove: () => {
+          if (typingIndicator.parentNode) {
+            typingIndicator.parentNode.removeChild(typingIndicator);
+          }
+        },
+        setContent: (content: string) => {
+          text.innerHTML = marked.parse(content, {async: false});
+        }
+      };
+    }
+
+    function scrollToBottom() {
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    async function processStreamingResponse(
+      response: Response, 
+      typingIndicator: ReturnType<typeof createTypingIndicator>
+    ) {
+      if (!response.body) {
+        throw new Error('No response body found');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let responseText = '';
+      
+      setTimeout(() => {
+        typingIndicator.remove();
+        typingIndicator.setContent('');
+      }, UI.typingDelay);
+      
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          
+          if (done) break;
+          
+          const chunk = decoder.decode(value, { stream: true });
+          buffer += chunk;
+          
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+          
+          for (const line of lines) {
+            if (line.trim().startsWith('data:')) {
+              try {
+                const jsonStr = line.substring(line.indexOf('{'));
+                const data = JSON.parse(jsonStr);
+                
+                if (data && data.response) {
+                  responseText += data.response;
+                  typingIndicator.setContent(responseText);
+                  scrollToBottom();
+                }
+              } catch (e) {
+                // Ignore parsing errors
+              }
+            }
+          }
+        }
+        
+        if (!responseText) {
+          typingIndicator.setContent(UI.errorMessages.noResponse);
+        }
+        
+        return responseText;
+      } catch (error) {
+        console.error('Error processing stream:', error);
+        throw error;
+      }
+    }
+
+    async function sendMessage() {
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      addMessage(message, true);
+      
+      userInput.value = '';
+      userInput.disabled = true;
+      sendButton.disabled = true;
+      
+      const typingIndicator = createTypingIndicator();
+      
+      try {
+        await new Promise(resolve => setTimeout(resolve, UI.preFetchDelay));
+        
+        const response = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: message, stream: true })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        await processStreamingResponse(response, typingIndicator);
+        
+      } catch (error) {
+        console.error('Error:', error);
+        typingIndicator.remove();
+        typingIndicator.setContent(UI.errorMessages.connectionError);
+      } finally {
+        userInput.disabled = false;
+        sendButton.disabled = false;
+        userInput.focus();
+      }
+    }
+
+    sendButton.addEventListener('click', () => {
+      if (!userInput.disabled) sendMessage();
+    });
+    
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !userInput.disabled) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    setTimeout(() => userInput.focus(), UI.initialFocusDelay);
+  });
+</script>

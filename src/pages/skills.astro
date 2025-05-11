@@ -139,7 +139,7 @@ import Layout from '../layouts/Layout.astro';
               <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
             </h3>
             <div class="flex flex-wrap gap-2">
-              {['TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'React', 'React Native', 'Angular', 'Ionic'].map(tech => (
+              {['TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'React', 'Next.js', 'Astro', 'React Native', 'Angular', 'Ionic'].map(tech => (
                 <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
                   {tech}
                 </span>
@@ -148,11 +148,44 @@ import Layout from '../layouts/Layout.astro';
           </div>
           <div class="prose dark:prose-invert max-w-none grid-column">
             <h3 class="text-2xl font-semibold mb-4 relative inline-block">
-              Styling & Tooling
+              Styling & UI Libraries
               <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
             </h3>
             <div class="flex flex-wrap gap-2">
-              {['Tailwind CSS', 'Bootstrap', 'PrimeNG', 'Material Design', 'Vite', 'Webpack', 'Npm/Yarn', 'Browser Extensions'].map(tech => (
+              {['Tailwind CSS', 'Bootstrap', 'PrimeNG', 'Material Design', 'Styled Components', 'CSS Modules', 'Browser Extensions'].map(tech => (
+                <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Build Tools & Package Management -->
+      <div class="mb-16 skill-section">
+        <h2 class="text-3xl font-bold mb-6">Build Tools & Package Management</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="prose dark:prose-invert max-w-none grid-column">
+            <h3 class="text-2xl font-semibold mb-4 relative inline-block">
+              Package Managers
+              <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['NPM', 'Yarn', 'PNPM', 'Package.json Management', 'Dependency Resolution', 'Workspaces'].map(tech => (
+                <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div class="prose dark:prose-invert max-w-none grid-column">
+            <h3 class="text-2xl font-semibold mb-4 relative inline-block">
+              Module Bundlers & Build Tools
+              <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              {['Webpack', 'Vite', 'Babel', 'SWC', 'Code Splitting', 'Tree Shaking', 'Hot Module Replacement'].map(tech => (
                 <span class="skill-tag px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
                   {tech}
                 </span>

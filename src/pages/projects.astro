@@ -40,6 +40,49 @@ import Layout from '../layouts/Layout.astro';
       </div>
     </div>
 
+    <!-- qmims - AI-Powered README Generation & Editing -->
+    <div class="mb-16">
+      <div class="flex items-center gap-4 mb-6">
+        <h2 class="text-3xl font-bold">qmims</h2>
+        <a href="https://qmims.vercel.app" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Documentation →</a>
+        <a href="https://github.com/wSoltani/qmims" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">GitHub →</a>
+        <a href="https://www.npmjs.com/package/qmims" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">npm →</a>
+      </div>
+      <div class="prose dark:prose-invert max-w-none">
+        <p class="text-xl mb-6">An AI-powered CLI tool that leverages Amazon Q Developer to automatically generate, update, and refine README.md files for projects. It helps create clear, comprehensive, and contextually relevant documentation with minimal effort. <span class="font-semibold">This is my first open-source contribution, published on npm and available to the global developer community.</span></p>
+        
+        <h3 class="text-2xl font-semibold mt-8 mb-4 relative inline-block">
+          Key Features
+          <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+        </h3>
+        <ul class="list-disc list-inside space-y-2">
+          <li><strong>AI-Powered Content Generation</strong>: Uses Amazon Q to analyze codebases and generate relevant README content</li>
+          <li><strong>Multiple Generation Modes</strong>: Auto, Template, and Instruct modes for different documentation needs</li>
+          <li><strong>Direct File Editing</strong>: Makes targeted modifications to existing README files</li>
+          <li><strong>Custom Templates</strong>: Create and manage custom README templates</li>
+          <li><strong>Configuration Management</strong>: Customize default behaviors and settings</li>
+        </ul>
+
+        <h3 class="text-2xl font-semibold mt-8 mb-4 relative inline-block">
+          Technical Implementation
+          <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
+        </h3>
+        <ul class="list-disc list-inside space-y-2">
+          <li><strong>CLI Tool</strong>: Built with Node.js and TypeScript</li>
+          <li><strong>AI Integration</strong>: Amazon Q Developer CLI for AI-powered content generation</li>
+          <li><strong>Documentation Site</strong>: Next.js, Tailwind CSS, shadcn/ui components</li>
+          <li><strong>Deployment</strong>: CLI published to npm, documentation hosted on Vercel</li>
+        </ul>
+        <div class="flex flex-wrap gap-2 mt-6">
+          {['Node.js', 'TypeScript', 'Amazon Q', 'CLI', 'Next.js', 'Tailwind CSS', 'shadcn/ui', 'Vercel'].map(tech => (
+            <span class="px-4 py-2 bg-blue-500/5 hover:bg-blue-500/10 transition-colors rounded-full text-sm font-medium text-blue-700 dark:text-blue-300">
+              {tech}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+
     <!-- AI-Enhanced E-commerce Platform -->
     <div class="mb-16">
       <h2 class="text-3xl font-bold mb-6">AI-Enhanced E-commerce Platform (BBSB)</h2>
@@ -102,6 +145,7 @@ import Layout from '../layouts/Layout.astro';
           <span class="absolute bottom-0 left-0 w-full h-1 bg-blue-500/20 rounded-full"></span>
         </h3>
         <ul class="list-disc list-inside space-y-2">
+          <li><strong>qmims:</strong> AI-powered CLI tool for automated README generation and editing (first open-source project, published on npm)</li>
           <li><strong>ZebraPay Extension:</strong> Complex workflow automation tool for data import and processing</li>
           <li><strong>WriteAhead Project:</strong> AI-driven feedback features for student essays</li>
         </ul>
@@ -131,7 +175,11 @@ import Layout from '../layouts/Layout.astro';
           <h3 class="text-xl font-semibold mb-2">Nomad</h3>
           <p class="text-gray-600 dark:text-gray-400">Experimentation with 2D game development using a hybrid architecture (React for UI, Phaser.js for core gameplay) to build a side-scrolling roguelite prototype.</p>
         </div>
+        <div class="border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+          <h3 class="text-xl font-semibold mb-2">Travel Companion</h3>
+          <p class="text-gray-600 dark:text-gray-400">Innovative travel platform combining AI-driven recommendations with financial tracking and community insights. Features dual interfaces for individual travelers and business clients while maintaining a shared foundation.</p>
+        </div>
       </div>
     </div>
   </section>
-</Layout> 
+</Layout>
