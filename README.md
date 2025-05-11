@@ -76,7 +76,7 @@ This repository contains the source code for my personal portfolio website, show
 The site is automatically deployed to GitHub Pages using a custom deployment script:
 
 ```bash
-pnpm deploy
+pnpm run deploy
 ```
 
 This script:
