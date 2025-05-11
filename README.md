@@ -1,109 +1,78 @@
-# Personal Portfolio Website
+# Hi, I'm Wassim Soltani 👋
 
-[![Deployed on GitHub Pages](https://img.shields.io/badge/Deployed%20on-GitHub%20Pages-blue)](https://wsoltani.github.io)
-[![Tailwind CSS](https://img.shields.io/badge/Styled%20with-Tailwind%20CSS-38B2AC)](https://tailwindcss.com/)
+<a href="https://linkedin.com/in/wsoltani" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/LinkedIn-0A66C2.svg?style=for-the-badge&logo=LinkedIn&logoColor=white" alt="LinkedIn"/></a>
+<a href="mailto:wasoltani@gmail.com"><img src="https://img.shields.io/badge/Gmail-D14836.svg?style=for-the-badge&logo=Gmail&logoColor=white" alt="Gmail"/></a>
+<a href="https://wsoltani.github.io/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/Portfolio-Website-blue?style=for-the-badge&logo=FirefoxBrowser&logoColor=white" alt="Portfolio Website"/></a>
+<a href="https://wsoltani.github.io/ai-chat" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/Chat%20with%20my%20AI-Assistant-success?style=for-the-badge&logo=OpenAI&logoColor=white" alt="Chat with my AI Assistant"/></a>
 
-This repository contains the source code for my personal portfolio website, showcasing my projects, skills, and professional experience as a software engineer.
+I'm a Full-Stack Software Engineer with 5+ years of experience, passionate about building efficient, scalable, and user-centric solutions. I love tackling complex problems, automating workflows, and working with AI/ML, Cloud, and Edge technologies.
 
-## 🚀 Features
+My goal is to create tools and applications that truly enhance user experience and operational efficiency.
 
-- **Modern Design**: Clean, responsive interface built with Tailwind CSS
-- **Dark/Light Mode**: Automatic theme switching based on user preferences
-- **Project Showcase**: Detailed project descriptions with links to live demos and repositories
-- **Skills Section**: Comprehensive overview of technical skills and expertise
-- **Experience Timeline**: Professional journey and accomplishments
-- **AI Chat Interface**: Interactive AI assistant to help visitors explore my background
-- **SEO Optimized**: Built with proper metadata and structured data
+---
 
-## 🛠️ Technology Stack
+## 🚀 Explore My Work & Chat with My AI
 
-- **Framework**: [Astro](https://astro.build/) - Fast, modern static site generator
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- **Deployment**: GitHub Pages via custom deployment script
-- **SEO**: Astro SEO integration for metadata optimization
-- **Markdown**: Content management for certain sections
+Dive deeper into what I do and get your questions answered:
 
-## 📁 Project Structure
+*   **Explore my Portfolio:** [**wsoltani.github.io**](https://wsoltani.github.io/)
+*   **Chat with my AI Assistant:** Have questions about my experience or projects? [**Ask my AI!**](https://wsoltani.github.io/ai-chat)
 
-```text
-/
-├── public/            # Static assets (favicon, images, etc.)
-├── src/
-│   ├── layouts/       # Page layouts and templates
-│   ├── pages/         # Individual page components
-│   │   ├── index.astro      # Home page
-│   │   ├── projects.astro   # Projects showcase
-│   │   ├── skills.astro     # Skills overview
-│   │   ├── experience.astro # Professional experience
-│   │   ├── connect.astro    # Contact information
-│   │   └── ai-chat.astro    # AI assistant interface
-│   └── styles/        # Global styles and Tailwind configuration
-└── package.json       # Project dependencies and scripts
-```
+---
 
-## 🚀 Development
+## ✨ What I Focus On
 
-### Prerequisites
+*   **AI/ML Integration:** Building practical AI-powered features (Semantic Search, RAG, Generative AI) using platforms like Cloudflare AI & AWS Bedrock.
+*   **Serverless & Edge Computing:** Leveraging Cloudflare Workers for performant APIs and AI tasks.
+*   **Full-Stack Development:** Crafting robust applications with modern stacks (React/TypeScript, Spring Boot/Java, Node.js).
+*   **Developer Tooling & Automation:** Creating tools like browser extensions to streamline processes.
 
-- Node.js (v18 or later)
-- pnpm package manager
+---
 
-### Setup
+## 🛠️ Key Technologies
 
-1. Clone the repository
+**Languages:** Java, TypeScript/JavaScript, Python
+**Frontend:** React, Angular, TailwindCSS, Browser Extensions
+**Backend:** Spring Boot, Node.js, RESTful APIs
+**Cloud & AI:** Cloudflare (Workers, AI, Vectorize), AWS (Bedrock)
+**Databases:** PostgreSQL, MongoDB, Elasticsearch, Vector Databases
 
-   ```bash
-   git clone https://github.com/wSoltani/portfolio.git
-   cd portfolio
-   ```
+➡️ **See my full list of skills on my portfolio:** [**wsoltani.github.io/skills**](https://wsoltani.github.io/skills)
 
-2. Install dependencies
+---
 
-   ```bash
-   pnpm install
-   ```
+## 💡 Featured Projects
 
-3. Start the development server
+### ☁️ Quickplan - AI Meeting Notes Processor
+*   AI-powered tool to instantly transform raw meeting notes into structured summaries, action plans, etc.
+*   **Tech:** React, Cloudflare Workers, Cloudflare AI
+*   **Explore:** [quickplan.blueblood.tech](https://quickplan.blueblood.tech/)
 
-   ```bash
-   pnpm dev
-   ```
+### 🛒 AI-Enhanced E-commerce Platform
+*   Custom e-commerce solution with AI semantic search, recommendations, and automated content generation.
+*   **Tech:** Spring Boot, Angular, Cloudflare Workers & Vectorize, Elasticsearch
+*   **Status:** Ongoing development for my company, Blueblood.
 
-4. Open your browser and visit `http://localhost:4321`
+➡️ **Discover more projects on my portfolio:** [**wsoltani.github.io/projects**](https://wsoltani.github.io/projects)
 
-## 🚢 Deployment
+---
 
-The site is automatically deployed to GitHub Pages using a custom deployment script:
+## 🔭 Experience Snapshot
 
-```bash
-pnpm run deploy
-```
+*   **Full-Stack Software Engineer** @ Vantage Labs LLC *(Contract via Blueblood)*
+*   **Founder & Developer** @ Blueblood *(My Software Solutions Co.)*
+*   **Lead Full-stack Developer/Engineer** @ Almaviva S.p.A
 
-This script:
+➡️ **View my detailed experience on my portfolio:** [**wsoltani.github.io/experience**](https://wsoltani.github.io/experience)
 
-1. Builds the project using Astro
-2. Clones the GitHub Pages repository
-3. Copies the built files to the GitHub Pages repository
-4. Commits and pushes the changes
+---
 
-## 📝 License
+## 📫 Let's Connect!
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-Any static assets, like images, can be placed in the `public/` directory.
+I'm always open to discussing new projects, opportunities, or just chatting about tech!
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                | Action                                           |
-| :--------------------- | :----------------------------------------------- |
-| `pnpm install`         | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+*   **Via Portfolio:** [wsoltani.github.io/connect](https://wsoltani.github.io/connect)
+*   **AI Assistant:** [Chat with my AI about my background](https://wsoltani.github.io/ai-chat)
+*   **LinkedIn:** [linkedin.com/in/wsoltani](https://linkedin.com/in/wsoltani)
+*   **Email:** [wasoltani@gmail.com](mailto:wasoltani@gmail.com)
+*   **DEV Community:** [dev.to/wsoltani](https://dev.to/wsoltani)
