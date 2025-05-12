@@ -8,7 +8,6 @@ This repository contains the source code for my personal portfolio website, show
 ## 🚀 Features
 
 - **Modern Design**: Clean, responsive interface built with Tailwind CSS
-- **Dark/Light Mode**: Automatic theme switching based on user preferences
 - **Project Showcase**: Detailed project descriptions with links to live demos and repositories
 - **Skills Section**: Comprehensive overview of technical skills and expertise
 - **Experience Timeline**: Professional journey and accomplishments
@@ -79,17 +78,15 @@ The site is automatically deployed to GitHub Pages using a custom deployment scr
 pnpm run deploy
 ```
 
-This script:
+This script (PowerShell):
 
 1. Builds the project using Astro
-2. Clones the GitHub Pages repository
+2. Clones the [GitHub Pages repository](https://github.com/wSoltani/wSoltani.github.io)
 3. Copies the built files to the GitHub Pages repository
 4. Commits and pushes the changes
+5. Deletes the cloned project
 
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-Any static assets, like images, can be placed in the `public/` directory.
+_This will be replaced by a GitHub Actions workflow_
 
 ## 🧞 Commands
 
@@ -106,4 +103,4 @@ All commands are run from the root of the project, from a terminal:
 
 ## 👀 Want to learn more?
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Feel free to check out [Astro's documentation](https://docs.astro.build) or jump into [Astro's Discord server](https://astro.build/chat).
