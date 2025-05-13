@@ -1,0 +1,237 @@
+---
+// PageSearch component
+---
+
+<style is:global>
+  .page-search {
+    transition: none;
+    top: 4rem; /* Header height */
+    padding: 0;
+    background: transparent;
+  }
+  
+  .search-compact {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+  }
+  
+  .dark .search-compact {
+    background: rgba(17, 24, 39, 0.95);
+  }
+  
+  .search-compact input {
+    font-size: 0.95rem !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    transition: none !important;
+  }
+  
+  /* Mark.js highlight styles - must be global */
+  mark {
+    background-color: rgba(251, 191, 36, 0.4) !important;
+    color: inherit !important;
+    padding: 0 2px;
+    border-radius: 0.25rem;
+  }
+
+  mark.current-match {
+    background-color: #fbbf24 !important;
+    color: black !important;
+    box-shadow: 0 0 0 2px #fbbf24;
+  }
+  
+  .dark mark {
+    background-color: rgba(180, 83, 9, 0.4) !important;
+  }
+  
+  .dark mark.current-match {
+    background-color: #b45309 !important;
+    color: white !important;
+    box-shadow: 0 0 0 2px #b45309;
+  }
+</style>
+
+<div class="page-search mb-8 sticky top-0 z-50" id="stickySearch">
+  <div class="relative">
+    <input
+      type="text"
+      id="pageSearch"
+      placeholder="Search for keywords..."
+      class="w-full px-6 py-4 text-lg rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+    />
+    <div class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+    </div>
+    <div id="searchControls" class="absolute right-16 top-1/2 -translate-y-1/2 flex items-center gap-2 opacity-0 pointer-events-none transition-opacity duration-200">
+      <span id="matchCount" class="text-sm text-gray-500 dark:text-gray-400">0 matches</span>
+      <button id="prevMatch" class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 disabled:opacity-50" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
+        </svg>
+      </button>
+      <button id="nextMatch" class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 disabled:opacity-50" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import Fuse from 'fuse.js';
+  import Mark from 'mark.js';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('pageSearch') as HTMLInputElement;
+    const searchControls = document.getElementById('searchControls') as HTMLDivElement;
+    const matchCount = document.getElementById('matchCount') as HTMLSpanElement;
+    const prevMatchBtn = document.getElementById('prevMatch') as HTMLButtonElement;
+    const nextMatchBtn = document.getElementById('nextMatch') as HTMLButtonElement;
+    const stickySearch = document.getElementById('stickySearch') as HTMLDivElement;
+    const contentContainer = document.querySelector('main') as HTMLElement;
+    
+    if (!searchInput || !searchControls || !matchCount || !prevMatchBtn || !nextMatchBtn || !contentContainer) {
+      console.error('Search component: Required DOM elements not found');
+      return;
+    }
+    
+    const marker = new Mark(contentContainer);
+    let currentMatchIndex = 0;
+    let totalMatches = 0;
+    
+    function extractContent(): Array<{element: HTMLElement, text: string}> {
+      const headings = Array.from(contentContainer.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+      const textElements = Array.from(contentContainer.querySelectorAll('p, li, td, th, a, span'));
+      const elements = [...headings, ...textElements];
+      
+      return elements.map(el => ({
+        element: el as HTMLElement,
+        text: el.textContent || ''
+      }));
+    }
+    
+    const content = extractContent();
+    const fuse = new Fuse(content, {
+      keys: ['text'],
+      includeMatches: true,
+      isCaseSensitive: false,
+      threshold: 0.2,
+      distance: 150,
+      minMatchCharLength: 2,
+      ignoreLocation: true
+    });
+    
+    function performSearch(searchTerm: string): void {
+      marker.unmark();
+      currentMatchIndex = 0;
+      totalMatches = 0;
+      
+      if (!searchTerm.trim() || searchTerm.length < 2) {
+        searchControls.classList.add('opacity-0', 'pointer-events-none');
+        marker.unmark();
+        return;
+      }
+      
+      searchControls.classList.remove('opacity-0', 'pointer-events-none');
+      
+      const results = fuse.search(searchTerm);
+      totalMatches = results.length;
+      
+      matchCount.textContent = totalMatches > 0 ? `1 of ${totalMatches}` : '0 matches';
+      prevMatchBtn.disabled = totalMatches === 0 || currentMatchIndex === 0;
+      nextMatchBtn.disabled = totalMatches === 0 || currentMatchIndex === totalMatches - 1;
+      
+      if (totalMatches > 0) {
+        results.forEach(result => {
+          const element = result.item.element;
+          const elementMarker = new Mark(element);
+          elementMarker.mark(searchTerm, {
+            accuracy: 'partially',
+            separateWordSearch: false,
+            exclude: ['.page-search', 'script', 'style', 'code', 'pre']
+          });
+        });
+        
+        highlightMatch(0);
+      }
+    }
+    
+    function highlightMatch(index: number): void {
+      const marks = document.querySelectorAll('mark');
+      if (marks.length === 0) return;
+      
+      if (index < 0) index = 0;
+      if (index >= marks.length) index = marks.length - 1;
+      
+      currentMatchIndex = index;
+      
+      marks.forEach(mark => mark.classList.remove('current-match'));
+      marks[currentMatchIndex].classList.add('current-match');
+      matchCount.textContent = `${currentMatchIndex + 1} of ${marks.length}`;
+      
+      prevMatchBtn.disabled = currentMatchIndex === 0;
+      nextMatchBtn.disabled = currentMatchIndex === marks.length - 1;
+      
+      marks[currentMatchIndex].scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+    
+    function handleScroll(): void {
+      if (window.scrollY > 0) {
+        stickySearch.classList.add('search-compact');
+      } else {
+        stickySearch.classList.remove('search-compact');
+      }
+    }
+    
+    function debounce<F extends (...args: any[]) => any>(func: F, wait: number): (...args: Parameters<F>) => void {
+      let timeout: ReturnType<typeof setTimeout> | undefined;
+      return function(...args: Parameters<F>): void {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), wait);
+      };
+    }
+    
+    const debouncedSearch = debounce(performSearch, 300);
+    searchInput.addEventListener('input', (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      debouncedSearch(target.value);
+    });
+    
+    prevMatchBtn.addEventListener('click', () => {
+      if (currentMatchIndex > 0) highlightMatch(currentMatchIndex - 1);
+    });
+    
+    nextMatchBtn.addEventListener('click', () => {
+      if (currentMatchIndex < totalMatches - 1) highlightMatch(currentMatchIndex + 1);
+    });
+    
+    searchInput.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (e.shiftKey) {
+          if (currentMatchIndex > 0) highlightMatch(currentMatchIndex - 1);
+        } else {
+          if (currentMatchIndex < totalMatches - 1) {
+            highlightMatch(currentMatchIndex + 1);
+          } else if (totalMatches > 0) {
+            highlightMatch(0);
+          }
+        }
+      }
+      
+      if (e.key === 'Escape') {
+        searchInput.value = '';
+        performSearch('');
+      }
+    });
+    
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+  });
+</script>
