@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="AI Chat">
+<Layout title="AI Chat" description="Ask Wassim Soltani's AI assistant about his experience in software engineering, AI/ML, and cloud. He uses advanced AI tools to provide clear, technical answers about his background, projects, and skills.">
   <section class="container mx-auto px-4 py-16">
     <div class="max-w-3xl mx-auto">
       <h1 class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400 mb-6 text-center">
@@ -13,7 +13,7 @@ import Layout from '../layouts/Layout.astro';
       </p>
 
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-8">
-        <div id="chat-messages" class="space-y-4 mb-6 h-[425px] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+        <div id="chat-messages" class="space-y-4 mb-6 h-[425px] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent" style="background: url('/chaos.svg') center/contain no-repeat; background-blend-mode: lighten;">
           <div class="flex items-start">
             <div class="flex-shrink-0 mr-3">
               <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white mt-2">
