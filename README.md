@@ -1,7 +1,7 @@
 # Personal Portfolio Website
 
-[![Deployed on GitHub Pages](https://img.shields.io/badge/Deployed%20on-GitHub%20Pages-blue)](https://wsoltani.github.io)
-[![Tailwind CSS](https://img.shields.io/badge/Styled%20with-Tailwind%20CSS-38B2AC)](https://tailwindcss.com/)
+[![Visit wsoltani.com](https://img.shields.io/badge/Visit-wsoltani.com-38B2AC)](https://wsoltani.com)
+[![Built with Astro](https://img.shields.io/badge/Built%20with-Astro-FF5D01)](https://astro.build/)
 
 This repository contains the source code for my personal portfolio website, showcasing my projects, skills, and professional experience as a software engineer.
 
@@ -18,26 +18,49 @@ This repository contains the source code for my personal portfolio website, show
 
 - **Framework**: [Astro](https://astro.build/) - Fast, modern static site generator
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- **Deployment**: GitHub Pages via custom deployment script
+- **Search**: Fuse.js for fuzzy search with mark.js for text highlighting
+- **Markdown**: Content parsing and display for certain sections
+- **Deployment**: Cloudflare Worker on wsoltani.com
 - **SEO**: Astro SEO integration for metadata optimization
-- **Markdown**: Content management for certain sections
 
 ## 📁 Project Structure
 
 ```text
 /
-├── public/            # Static assets (favicon, images, etc.)
+├── public/              # Static assets (favicon, images, etc.)
 ├── src/
-│   ├── layouts/       # Page layouts and templates
-│   ├── pages/         # Individual page components
-│   │   ├── index.astro      # Home page
-│   │   ├── projects.astro   # Projects showcase
-│   │   ├── skills.astro     # Skills overview
-│   │   ├── experience.astro # Professional experience
-│   │   ├── connect.astro    # Contact information
-│   │   └── ai-chat.astro    # AI assistant interface
-│   └── styles/        # Global styles and Tailwind configuration
-└── package.json       # Project dependencies and scripts
+│   ├── components/      # Reusable UI components
+│   │   ├── DarkModeToggle.astro  # Dark/light mode toggle
+│   │   ├── PageSearch.astro      # Search functionality
+│   │   └── WritingCard.astro     # Card component for writings
+│   │
+│   ├── data/            # Data sources
+│   │   └── writings.ts           # Writing content and metadata
+│   │
+│   ├── layouts/         # Page layouts
+│   │   └── Layout.astro          # Main layout template
+│   │
+│   ├── pages/           # Application routes and pages
+│   │   ├── index.astro          # Home page
+│   │   ├── projects.astro       # Projects showcase
+│   │   ├── skills.astro         # Skills overview
+│   │   ├── experience.astro     # Professional experience
+│   │   ├── connect.astro        # Contact information
+│   │   ├── ai-chat.astro        # AI assistant interface
+│   │   └── writings.astro       # Blog/writings section
+│   │
+│   ├── styles/          # Global styles and Tailwind configuration
+│   │   └── global.css          # Global styles
+│   │
+│   └── types/           # TypeScript type definitions
+│       ├── fuse.js.d.ts        # Fuse.js type definitions
+│       └── mark.js.d.ts        # mark.js type definitions
+│
+├── .gitignore
+├── astro.config.mjs
+├── package.json
+├── README.md
+└── tailwind.config.js
 ```
 
 ## 🚀 Development
@@ -72,21 +95,25 @@ This repository contains the source code for my personal portfolio website, show
 
 ## 🚢 Deployment
 
-The site is automatically deployed to GitHub Pages using a custom deployment script:
+This project is deployed as a Cloudflare Worker on [wsoltani.com](https://wsoltani.com). The deployment is handled automatically through Cloudflare's build and deployment pipeline.
 
-```bash
-pnpm run deploy
-```
+### Local Development
 
-This script (PowerShell):
+To run the project locally:
 
-1. Builds the project using Astro
-2. Clones the [GitHub Pages repository](https://github.com/wSoltani/wSoltani.github.io)
-3. Copies the built files to the GitHub Pages repository
-4. Commits and pushes the changes
-5. Deletes the cloned project
+1. Install dependencies:
 
-_This will be replaced by a GitHub Actions workflow_
+   ```bash
+   pnpm install
+   ```
+
+2. Start the development server:
+
+   ```bash
+   pnpm dev
+   ```
+
+3. Open your browser to `http://localhost:4321`
 
 ## 🧞 Commands
 
