@@ -1,0 +1,233 @@
+---
+import Layout from '../layouts/Layout.astro';
+import WritingCard from '../components/WritingCard.astro';
+import PageSearch from '../components/PageSearch.astro';
+
+import { writings } from "../data/writings";
+
+// Sort all writings by date (newest first)
+const sortedWritings = [...writings].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+// Extract featured and regular writings
+const featuredWritings = sortedWritings.filter(writing => writing.featured);
+const regularWritings = sortedWritings.filter(writing => !writing.featured);
+
+// Get unique tags only from regular writings for filtering
+const allTags = [...new Set(regularWritings.flatMap(writing => writing.tags))];
+---
+
+<Layout title="Writings" description="A collection of my dev articles and LinkedIn posts. More coming soon!">
+  <section class="container mx-auto px-8 sm:px-16 py-16">
+    <div class="mb-12">
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-4">
+        <h1 class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-400" style="line-height: normal !important;">
+          Writings
+        </h1>
+        <a href="/ai-chat" class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-500 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-blue-600 transition-all text-sm mt-4 md:mt-0 w-auto self-start md:self-auto">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          </svg>
+          Ask AI
+        </a>
+      </div>
+      <p class="text-xl text-gray-600 dark:text-gray-400">Welcome to my digital notepad where I share articles, insights, and thoughts on AI, software development, cloud technologies, and the occasional tech musing. You'll find a mix of in-depth articles from platforms like Dev.to and shorter thoughts shared on LinkedIn.</p>
+    </div>
+    
+    <!-- Page Search -->
+    <PageSearch />
+    
+    {featuredWritings.length > 0 && (
+      <div class="mb-16">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-200">Featured Writings</h2>
+        <div class="grid gap-8 md:grid-cols-2">
+          {/* Non-LinkedIn featured writings */}
+          {featuredWritings.filter(w => w.source !== 'linkedin').map((writing) => (
+            <WritingCard {...writing} featured={true} />
+          ))}
+        </div>
+        {/* LinkedIn featured writings group */}
+        {featuredWritings.some(w => w.source === 'linkedin') && (
+          <div class="mt-10">
+            <h3 class="text-lg font-semibold mb-4 text-blue-700 dark:text-blue-300">From LinkedIn</h3>
+            <div class="grid gap-8 md:grid-cols-2">
+              {featuredWritings.filter(w => w.source === 'linkedin').map((writing) => (
+                <WritingCard {...writing} featured={true} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    )}
+    
+    <div class="mb-16">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 sm:gap-16">
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">All Writings</h2>
+        
+        <div class="flex flex-wrap sm:justify-end gap-2 overflow-x-auto pb-2 w-full sm:w-auto">
+          <button id="all-tags-btn" class="px-3 py-1 text-sm bg-blue-500 text-white dark:bg-blue-600 rounded-full whitespace-nowrap active-tag hover:bg-blue-600 dark:hover:bg-blue-700">
+            All Topics
+          </button>
+          {allTags.map((tag) => (
+            <button class="writing-tag-filter px-3 py-1 text-sm bg-gray-200 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-full whitespace-nowrap transition-colors" data-tag={tag}>
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      <div id="writings-container">
+        {/* Non-LinkedIn regular writings */}
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {regularWritings.filter(w => w.source !== 'linkedin').map((writing) => (
+            <div class="writing-card" data-tags={writing.tags.join(",")}>
+              <WritingCard {...writing} />
+            </div>
+          ))}
+        </div>
+        {/* LinkedIn regular writings group */}
+        {regularWritings.some(w => w.source === 'linkedin') && (
+          <div class="mt-10">
+            <h3 class="text-lg font-semibold mb-4 text-blue-700 dark:text-blue-300">From LinkedIn</h3>
+            <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {regularWritings.filter(w => w.source === 'linkedin').map((writing) => (
+                <div class="writing-card" data-tags={writing.tags.join(",")}>
+                  <WritingCard {...writing} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+    
+    <div class="mt-12 text-center">
+      <p class="text-gray-600 dark:text-gray-400 mb-4">Want to discuss any of these topics or have a suggestion for a future article?</p>
+      <a href="/connect" class="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium">
+        Let's Connect
+      </a>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const allTagsButton = document.getElementById('all-tags-btn');
+      const tagButtons = document.querySelectorAll('.writing-tag-filter');
+      const writingCards = document.querySelectorAll('.writing-card');
+      
+      // Track the currently selected tag
+      let currentTag = 'all';
+
+      // Function to filter writings by tag
+      function filterWritingsByTag(tag: string) {
+        // If clicking the already selected tag, reset to 'all'
+        if (tag !== 'all' && tag === currentTag) {
+          tag = 'all';
+        }
+        
+        // Update current tag
+        currentTag = tag;
+        
+        // Remove active class from all buttons
+        document.querySelectorAll('.active-tag').forEach(btn => {
+          if (btn instanceof HTMLElement) {
+            btn.classList.remove('active-tag', 'bg-blue-500', 'text-white', 'dark:bg-blue-600', 'hover:bg-blue-600', 'dark:hover:bg-blue-700');
+            btn.classList.add('bg-gray-200', 'dark:bg-gray-700', 'hover:bg-blue-100', 'dark:hover:bg-blue-900/30');
+          }
+        });
+
+        // Add active class to clicked button
+        const clickedButton = tag === 'all' 
+          ? allTagsButton 
+          : document.querySelector(`[data-tag="${tag}"]`);
+        
+        if (clickedButton instanceof HTMLElement) {
+          clickedButton.classList.add('active-tag', 'bg-blue-500', 'text-white', 'dark:bg-blue-600', 'hover:bg-blue-600', 'dark:hover:bg-blue-700');
+          clickedButton.classList.remove('bg-gray-200', 'dark:bg-gray-700', 'hover:bg-blue-100', 'dark:hover:bg-blue-900/30');
+        }
+
+        // Filter the writing cards
+        writingCards.forEach(card => {
+          if (card instanceof HTMLElement) {
+            if (tag === 'all') {
+              // Show all cards with a fade-in animation
+              card.style.display = 'block';
+              setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+              }, 10);
+            } else {
+              const cardTags = card.getAttribute('data-tags');
+              if (cardTags && cardTags.split(',').includes(tag)) {
+                // Show matching cards with a fade-in animation
+                card.style.display = 'block';
+                setTimeout(() => {
+                  card.style.opacity = '1';
+                  card.style.transform = 'translateY(0)';
+                }, 10);
+              } else {
+                // Hide non-matching cards with a fade-out animation
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                  card.style.display = 'none';
+                }, 300);
+              }
+            }
+          }
+        });
+      }
+
+      // Add click event to the "All Topics" button
+      if (allTagsButton) {
+        allTagsButton.addEventListener('click', () => {
+          filterWritingsByTag('all');
+        });
+      }
+
+      // Add click events to tag buttons
+      tagButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const tag = button.getAttribute('data-tag') || '';
+          filterWritingsByTag(tag);
+        });
+      });
+
+      // Initialize with all writings visible
+      filterWritingsByTag('all');
+    });
+  </script>
+
+  <style>
+    .writing-card {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .active-tag {
+      font-weight: 600;
+      position: relative;
+    }
+    
+    .active-tag::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 2px;
+      background-color: white;
+      border-radius: 2px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</Layout>

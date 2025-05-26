@@ -1,0 +1,195 @@
+---
+// Props: title, source, date, summary, url, tags, embed (optional), featured (optional)
+const { title, source, date, summary, url, tags = [], embed = null, featured = false } = Astro.props;
+---
+<article class={`bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 flex flex-col gap-4 border writing-card-content ${featured ? 'border-blue-400 dark:border-blue-500 shadow-lg' : 'border-gray-200 dark:border-gray-800'} ${featured ? 'transform transition-transform hover:-translate-y-1' : 'hover:shadow-lg transition-shadow'}`}>
+  <div class="flex items-center gap-4 mb-2">
+    <div class="flex items-center gap-2">
+      {source === 'devto' && (
+        featured
+          ? <img src="/dev.png" alt="Dev.to" class="h-6 w-auto" aria-label="Dev.to" />
+          : <img src="/dev.png" alt="Dev.to" class="h-6 w-auto" aria-label="Dev.to" loading="lazy" />
+      )}
+      {source === 'linkedin' && (
+        featured
+          ? <img src="/linkedin.svg" alt="LinkedIn" class="w-6 h-6" aria-label="LinkedIn" />
+          : <img src="/linkedin.svg" alt="LinkedIn" class="w-6 h-6" aria-label="LinkedIn" loading="lazy" />
+      )}
+      {source === 'catguide' && (
+        featured
+          ? <img src="/catguide.svg" alt="Tiny Cat Guide" class="w-6 h-6" aria-label="Tiny Cat Guide" />
+          : <img src="/catguide.svg" alt="Tiny Cat Guide" class="w-6 h-6" aria-label="Tiny Cat Guide" loading="lazy" />
+      )}
+    </div>
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      class={`text-xl ${featured ? 'text-2xl' : ''} font-semibold flex-1 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-400`}
+      aria-label={`Read full post: ${title}`}
+    >
+      {title}
+      <div class="text-gray-500 text-sm mt-1">{date}</div>
+    </a>
+  </div>
+  <div class="text-gray-700 dark:text-gray-300 mb-2 flex-grow flex items-center"><p>{summary}</p></div>
+  <div class="flex flex-wrap gap-2 mb-2">
+    {(tags as string[]).map((tag: string) => (
+      <span class="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200 rounded-full text-xs font-medium hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors" aria-label={tag}>{tag}</span>
+    ))}
+  </div>
+  {embed && (
+    <div class="my-1">
+      <button 
+        class="embed-toggle w-full px-4 py-2 text-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors flex items-center justify-between font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+        aria-expanded="false"
+        data-embed={embed}
+        data-featured={featured.toString()}
+      >
+        <span>View embedded content</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      
+      <div class="embed-container hidden">
+        <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 shadow-inner mt-2 p-0 transition-all duration-300 ease-in-out">
+          <!-- Loading spinner -->
+          <div class="embed-spinner flex justify-center items-center p-8">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div>
+          </div>
+          <div class="embed-content"></div>
+        </div>
+      </div>
+    </div>
+  )}
+  <a href={url} target="_blank" rel="noopener noreferrer" class="inline-block mt-auto px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-lg transition-colors font-medium text-center" aria-label={`Read full post: ${title}`}>
+    {source === 'devto' ? 'Read on Dev.to' : source === 'linkedin' ? 'View on LinkedIn' : 'Read More'}
+    <span class="ml-1">→</span>
+  </a>
+</article>
+
+<style>
+  /* Base styles for the card content */
+  .writing-card-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* For the embed container and animations */
+  .embed-container.visible .embed-content {
+    max-height: 800px; /* Set a reasonable max height */
+    opacity: 1;
+  }
+  
+  .embed-container .embed-content {
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out;
+  }
+  
+  .embed-toggle svg {
+    transition: transform 0.3s ease;
+  }
+  
+  .embed-toggle[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+  }
+</style>
+
+<script>
+  // One global script for all cards
+  document.addEventListener('DOMContentLoaded', () => {
+    // Function to equalize card heights
+    function equalizeCardHeights() {
+      // Group cards by their grid containers
+      document.querySelectorAll('.grid').forEach(grid => {
+        const cards = Array.from(grid.querySelectorAll('.writing-card-content'));
+        if (cards.length <= 1) return;
+        
+        // Reset heights
+        cards.forEach(card => {
+          if (card instanceof HTMLElement) card.style.minHeight = '';
+        });
+        
+        // Get the tallest card height
+        const heights = cards.map(card => card instanceof HTMLElement ? card.offsetHeight : 0);
+        const maxHeight = Math.max(...heights);
+        
+        // Apply the height to all cards
+        cards.forEach(card => {
+          if (card instanceof HTMLElement) card.style.minHeight = `${maxHeight}px`;
+        });
+      });
+    }
+    
+    // Handle embed toggles
+    document.querySelectorAll('.embed-toggle').forEach(toggle => {
+      if (!(toggle instanceof HTMLElement)) return;
+      
+      toggle.addEventListener('click', () => {
+        // Toggle expanded state
+        const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', (!isExpanded).toString());
+        
+        // Find the container
+        const container = toggle.nextElementSibling;
+        if (!(container instanceof HTMLElement) || !container.classList.contains('embed-container')) return;
+        
+        if (!isExpanded) {
+          // Expanding
+          container.classList.remove('hidden');
+          container.classList.add('visible');
+          
+          // Load the content if not already loaded
+          const contentDiv = container.querySelector('.embed-content');
+          const spinner = container.querySelector('.embed-spinner');
+          
+          if (contentDiv && contentDiv instanceof HTMLElement && contentDiv.innerHTML === '') {
+            // Get embed data from data attributes
+            const embedHTML = toggle.dataset.embed || '';
+            const isFeatured = toggle.dataset.featured === 'true';
+            
+            // Insert the embed HTML
+            const processedHTML = isFeatured ? 
+              embedHTML : 
+              embedHTML.replace(/<iframe /g, '<iframe loading="lazy" ');
+            
+            contentDiv.innerHTML = processedHTML;
+            
+            // Handle iframe load events
+            const iframes = contentDiv.querySelectorAll('iframe');
+            if (iframes.length > 0) {
+              iframes.forEach(iframe => {
+                iframe.addEventListener('load', () => {
+                  if (spinner && spinner instanceof HTMLElement) {
+                    spinner.style.display = 'none';
+                  }
+                });
+              });
+            }
+            
+            // Fallback to hide spinner
+            setTimeout(() => {
+              if (spinner && spinner instanceof HTMLElement) {
+                spinner.style.display = 'none';
+              }
+            }, 2000);
+          }
+        } else {
+          // Collapsing
+          container.classList.remove('visible');
+          setTimeout(() => container.classList.add('hidden'), 300);
+        }
+      });
+    });
+    
+    // Run equalization on load and resize
+    equalizeCardHeights();
+    let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(equalizeCardHeights, 250);
+    });
+  });
+</script>
