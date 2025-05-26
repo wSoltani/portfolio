@@ -31,9 +31,7 @@
 
   // Initialize
   let userPref = localStorage.getItem('theme');
-  let isDark = userPref
-    ? userPref === 'dark'
-    : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  let isDark = userPref === 'dark';
   setDarkMode(isDark);
 
   toggleButton.addEventListener('click', () => {
