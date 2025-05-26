@@ -6,13 +6,13 @@ import sitemap from "@astrojs/sitemap";
 // https://astro.build/config
 export default defineConfig({
   integrations: [tailwind(), sitemap()],
-  site: "https://wsoltani.github.io",
+  site: "https://wsoltani.com",
   build: {
-    assets: "assets"
+    assets: "assets",
   },
   vite: {
     build: {
-      assetsDir: "assets"
-    }
-  }
+      assetsDir: "assets",
+    },
+  },
 });
