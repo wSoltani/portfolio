@@ -16,8 +16,8 @@ const topics = ["Project", "Question", "Something else"];
     <div class="layout" data-reveal>
       <form class="form" data-contact action={SITE.contactEndpoint} method="post" novalidate>
         <div class="two">
-          <label class="field"><span>Name</span><input name="name" autocomplete="name" required maxlength="120" /></label>
-          <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required maxlength="200" /></label>
+          <label class="field"><span>Name</span><input name="name" placeholder="Your name" autocomplete="name" required maxlength="120" /></label>
+          <label class="field"><span>Email</span><input name="email" type="email" placeholder="you@example.com" autocomplete="email" required maxlength="200" /></label>
         </div>
         <fieldset class="field">
           <legend>Topic</legend>
@@ -27,7 +27,7 @@ const topics = ["Project", "Question", "Something else"];
             ))}
           </div>
         </fieldset>
-        <label class="field"><span>Message</span><textarea name="message" rows="8" required maxlength="5000"></textarea></label>
+        <label class="field"><span>Message</span><textarea name="message" rows="8" placeholder="What's on your mind?" required maxlength="5000"></textarea></label>
         <div class="send">
           <button type="submit" class="btn">Send</button>
           <p class="status" role="status" aria-live="polite"></p>
@@ -57,6 +57,7 @@ const topics = ["Project", "Question", "Something else"];
     color: var(--text); font: inherit; font-size: 16px; transition: border-color var(--fast) ease;
   }
   textarea { height: 200px; padding: 12px 14px; resize: vertical; line-height: 1.5; }
+  input::placeholder, textarea::placeholder { color: var(--subtle); opacity: 1; }
   input:hover, textarea:hover { border-color: #555; }
   input:focus-visible, textarea:focus-visible { border-color: var(--text); }
   .field [aria-invalid="true"] { border-color: var(--crimson); }
