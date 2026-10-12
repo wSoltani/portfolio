@@ -1,0 +1,12 @@
+---
+import { ICONS, MARKS } from "../data/icons";
+
+interface Props { name: string; size?: number; stroke?: number; class?: string; }
+const { name, size = 16, stroke = 1.75, class: cls } = Astro.props;
+const mark = (MARKS as Record<string, string>)[name];
+---
+{mark ? (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class={cls} style="flex-shrink:0"><path d={mark} /></svg>
+) : (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width={stroke} stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class={cls} style="flex-shrink:0" set:html={ICONS[name]} />
+)}

@@ -1,217 +1,353 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import YaporaMark from "../components/showcase/YaporaMark.astro";
+import { PROJECTS, live } from "../data/projects";
+import avatar from "../assets/brand/avatar.webp";
+import MapPreview from "../components/MapPreview.astro";
+import nsHero from "../assets/netherstone/hero.png";
+import nsLockup from "../assets/netherstone/lockup-dark.svg";
+import syDialog from "../assets/syncify/dialog.png";
+import ypAvatar from "../assets/yapora/Avatar.webp";
+import sfHero from "../assets/switchflare/hero.png";
+
+const L = Object.fromEntries(await Promise.all(PROJECTS.map(async (p) => [p.slug, await live(p)] as const)));
+const facts = (slug: string) => {
+  const p = PROJECTS.find((x) => x.slug === slug)!;
+  const l = L[slug];
+  return { parts: [p.kind, p.status ?? l.versionLabel].filter(Boolean) as string[], live: p.status ? undefined : l };
+};
+
+// What a tile shows when it opens: the project's own hero, framed by the site.
+const open: Record<string, { headline: string; sub: string; points?: [string, string][]; platforms: string[]; site?: { label: string; href: string }; img?: ImageMetadata; imgAlt?: string }> = {
+  netherstone: {
+    headline: "Your knowledge, set in stone.",
+    sub: "A desktop app for notes, documents, drawings and more. Every shard is a plain Markdown file in a folder you choose, readable by any app and fully available offline.",
+    points: [
+      ["Your files, your folder.", "A vault is an ordinary folder of Markdown files."],
+      ["A writing editor, not a code editor.", "Rich formatting as you type."],
+      ["Free sync you own.", "Back up each vault to your own private GitHub."],
+    ],
+    platforms: ["Windows", "macOS", "Linux"],
+    site: { label: "netherstone.app ↗", href: "https://netherstone.app" },
+    img: nsHero, imgAlt: "Netherstone editor with a shard open",
+  },
+  syncify: {
+    headline: "Your Spicetify setup needs a savepoint.",
+    sub: "Back up the extensions, themes and snippets you added to Spotify, and get them back in one click when an update breaks them or you move to a new computer.",
+    platforms: ["Windows", "macOS", "Linux"],
+    img: syDialog, imgAlt: "The Syncify dialog open in Spotify, with three saved backups",
+  },
+  yapora: {
+    headline: "Turn any image into an avatar that talks when you do.",
+    sub: "Pick an image, frame it, and drag a mouth onto its face. It moves with your voice, live in OBS while you stream, or in a finished video made from any audio file.",
+    platforms: ["Windows"],
+    img: ypAvatar, imgAlt: "Yapora: an avatar on the stage, with its settings beside it",
+  },
+  lyrica: {
+    headline: "Every word, right when it's sung.",
+    sub: "I give it a song and its lyrics. It pulls out the voice, times every word with machine learning, and hands me the result to check by ear.",
+    platforms: ["A private app"],
+  },
+  switchflare: {
+    headline: "Switch Cloudflare accounts in one click.",
+    sub: "A browser extension that saves your Cloudflare logins and switches between them without logging out. Everything stays encrypted on your computer.",
+    platforms: ["Browser extension"],
+    site: { label: "Website ↗", href: "https://switchflare.wsoltani.com/" },
+    img: sfHero, imgAlt: "Switchflare on the Cloudflare dashboard, asking to unlock the vault",
+  },
+};
+const themeVars = (slug: string) => {
+  const t = PROJECTS.find((x) => x.slug === slug)!.theme;
+  return `--p-bg:${t.bg};--p-line:${t.line};--p-accent:${t.accent};--p-soft:${t.soft};--p-sel:${t.sel}`;
+};
 ---
 
-<Layout title="Home">
-  <!-- Hero Section -->
-  <section class="container mx-auto px-4 py-16">
-    <div class="max-w-3xl mx-auto text-center">
-      <h1 class="text-5xl font-bold mb-6">Wassim Soltani</h1>
-      <p class="text-xl text-gray-600 dark:text-gray-400 mb-8">
-        Full-Stack Software Engineer | AI/ML Integration Specialist | Cloud & Edge Computing Expert
-      </p>
-      <div class="flex justify-center gap-4">
-        <a 
-          href="/connect" 
-          class="relative bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 animate-glow"
-        >
-          Get in Touch
-        </a>
-        <a 
-          href="https://github.com/wSoltani" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          class="border border-gray-300 dark:border-gray-700 px-6 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center gap-2"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-          </svg>
-          View GitHub
-        </a>
-      </div>
+<Base flushFooter schema={[{ "@type": "WebSite", "@id": "https://wsoltani.com/#site", url: "https://wsoltani.com", name: "Wassim Soltani", author: { "@id": "https://wsoltani.com/#me" } }]}>
+  <section class="wrap hero">
+    <Image src={avatar} alt="Wassim Soltani" width={112} height={112} densities={[1, 2]} class="hero-av" loading="eager" />
+    <div class="hero-text">
+      <h1 class="hero-title" data-title>Software engineer, mostly.</h1>
+      <p class="hero-sub">I take ideas and see them all the way through, from the first decision to the day people start using them. <span class="dim">Have something in mind? <a href="/contact" class="dim-link">Get in touch</a>.</span></p>
     </div>
   </section>
 
-  <!-- About Summary -->
-  <section class="container mx-auto px-4 py-16">
-    <div class="max-w-3xl mx-auto">
-      <div class="flex justify-between items-center mb-8">
-        <h2 class="text-3xl font-bold">About Me</h2>
-        <a href="/ai-chat" class="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-500 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-blue-600 transition-all text-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-          </svg>
-          Ask AI
-        </a>
-      </div>
-      <p class="text-xl mb-6">
-        I'm a Software Engineer who transforms complex challenges into elegant, scalable solutions. My technical expertise spans AI integration (AWS Bedrock, Cloudflare AI), full-stack development (React, TypeScript, Java, Spring Boot), and cloud/edge computing—all delivered with a focus on performance, scalability, and exceptional user experience.
-      </p>
-      <p class="text-xl mb-8">
-        As the founder of Blueblood, I've led the development of AI-powered applications that streamline workflows and enhance productivity. My work includes creating <a href="https://qmims.vercel.app" class="text-blue-600 hover:underline">qmims</a> (my first open-source contribution), developing sophisticated browser extensions for data automation, and building serverless AI solutions like <a href="https://quickplan.blueblood.tech/" class="text-blue-600 hover:underline">Quickplan</a>.
-      </p>
-      <div class="flex justify-center">
-        <a href="/skills" class="text-blue-600 hover:underline text-lg">View my full skillset →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Projects Summary -->
-  <section class="container mx-auto px-4 py-16 bg-gray-50 dark:bg-gray-800 rounded-t-md">
-    <h2 class="text-3xl font-bold mb-8 text-center">Featured Projects</h2>
-    <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-      <div class="border border-gray-200 dark:border-gray-800 rounded-lg p-6 hover:shadow-lg transition-shadow">
-        <h3 class="text-xl font-semibold mb-2">Quickplan</h3>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">AI-powered web application for processing meeting notes</p>
-        <a href="https://quickplan.blueblood.tech/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">View Project →</a>
-      </div>
-      <div class="border border-gray-200 dark:border-gray-800 rounded-lg p-6 hover:shadow-lg transition-shadow">
-        <h3 class="text-xl font-semibold mb-2">qmims <span class="text-blue-600 text-sm font-normal">(open-source)</span></h3>
-        <p class="text-gray-600 dark:text-gray-400 mb-4">AI-powered CLI tool for README generation and editing</p>
-        <a href="https://qmims.vercel.app/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">View Project →</a>
-      </div>
-    </div>
-    <div class="flex justify-center mt-8">
-      <a href="/projects" class="text-blue-600 hover:underline text-lg">View all projects →</a>
-    </div>
-  </section>
-
-  <!-- Experience Summary -->
-  <section class="container mx-auto px-4 py-16 bg-gray-50 dark:bg-gray-800">
-    <div class="max-w-4xl mx-auto">
-      <div class="flex justify-between items-center mb-8">
-        <h2 class="text-3xl font-bold">Professional Experience</h2>
-        <a href="/ai-chat" class="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-500 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-blue-600 transition-all text-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-          </svg>
-          Ask AI
-        </a>
-      </div>
-      <div class="space-y-8">
-        <div class="border-l-4 border-blue-600 pl-6">
-          <h3 class="text-xl font-semibold">Software Engineer | Vantage Labs LLC</h3>
-          <p class="text-gray-600 dark:text-gray-400">April 2022 – Present</p>
-          <p class="mt-4">Developing AI-driven educational tools, browser extensions, and full-stack applications as a full-time team member. Operating through my company, Blueblood.</p>
-        </div>
-        <div class="border-l-4 border-blue-600 pl-6">
-          <h3 class="text-xl font-semibold">Lead Full-stack Developer/Engineer | Almaviva S.p.A</h3>
-          <p class="text-gray-600 dark:text-gray-400">September 2019 – March 2022</p>
-          <p class="mt-4">Led enterprise software development initiatives, delivering high-performance applications with a focus on scalability and user experience.</p>
-        </div>
-      </div>
-      <div class="flex justify-center mt-8">
-        <a href="/experience" class="text-blue-600 hover:underline text-lg">View detailed experience →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Education -->
-  <section class="container mx-auto px-4 py-16 bg-gray-50 dark:bg-gray-800 rounded-b-md">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-3xl font-bold mb-8">Education</h2>
-      <div class="space-y-8">
-        <div class="border-l-4 border-blue-600 pl-6">
-          <h3 class="text-xl font-semibold">Master's Degree in Computer Science</h3>
-          <p class="text-gray-600 dark:text-gray-400">Tek-Up University | 2019 - 2022</p>
-          <p class="mt-4">Specialized in Software Engineering and Information Systems. Focused on advanced software development methodologies, distributed systems, and enterprise architecture.</p>
-        </div>
-        <div class="border-l-4 border-blue-600 pl-6">
-          <h3 class="text-xl font-semibold">Bachelor's Degree in Computer Science Applied to Business Management</h3>
-          <p class="text-gray-600 dark:text-gray-400">Tunisia Private School (ULT) | 2016 - 2019</p>
-          <p class="mt-4">Core computer science curriculum including algorithms, data structures, software engineering principles, and practical programming skills applied to business management.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- AI Assistant CTA -->
-  <section class="container mx-auto px-4 py-16 rounded-lg my-8 relative" style="background-image: url('/hero.webp'); background-size: cover; background-position: center;">
-    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-8">
-      <div class="md:w-1/2">
-        <h2 class="text-3xl font-bold mb-4 text-gray-900 dark:text-gray-900">Have Questions?</h2>
-        <p class="text-xl text-gray-800 dark:text-gray-800 mb-6">
-          Chat with my AI assistant to learn more about my experience, skills, and projects. It can answer questions about my work, provide details about specific technologies I've used, and help you navigate my portfolio.
-        </p>
-        <a 
-          href="/ai-chat" 
-          class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-500 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-blue-600 transition-all"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-          </svg>
-          Chat with AI Assistant
-        </a>
-      </div>
-      <div class="md:w-1/2 flex justify-center">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md w-full max-w-sm border border-gray-200 dark:border-gray-700">
-          <div class="flex mb-4">
-            <div class="flex-shrink-0 mr-3">
-              <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
-                AI
+  <section class="wrap featured" id="projects" aria-labelledby="featured">
+    <h2 id="featured" class="sec-label">Featured</h2>
+    <div class="grid" data-featured>
+      {PROJECTS.map((p, i) => {
+        const o = open[p.slug];
+        return (
+          <article class:list={["tile", { big: i === 0 }]} data-slug={p.slug} style={themeVars(p.slug)}>
+            <a href={`/projects/${p.slug}`} class="tile-link" aria-expanded="false" aria-controls={`open-${p.slug}`}>
+              {i === 0 ? (
+                <>
+                  <Image src={nsHero} alt="" widths={[600, 1200]} sizes="600px" class="big-shot" loading="eager" />
+                  <span class="big-text">
+                    <span class="tile-name big-name">{p.name}</span>
+                    <span class="tile-line">{p.line}</span>
+                    <span class="tile-facts parts">{facts(p.slug).parts.map((x) => <span>{x}</span>)}{facts(p.slug).live?.date && <span data-date={facts(p.slug).live!.date!.toISOString()}>{facts(p.slug).live!.dateLabel}</span>}</span>
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span class="tile-art" aria-hidden="true">
+                    {p.slug === "syncify" && <span class="art-mark caps"><Icon name="syncify" size={34} stroke={2.25} />SYNCIFY</span>}
+                    {p.slug === "yapora" && <span class="art-mark"><YaporaMark size={40} />Yapora</span>}
+                    {p.slug === "switchflare" && <span class="art-mark"><span style="display:flex;color:var(--p-accent)"><Icon name="switch" size={32} stroke={2} /></span>Switchflare</span>}
+                    {p.slug === "lyrica" && <span class="art-lyrica"><span>Every word, right when it's</span> <b>sung.</b></span>}
+                  </span>
+                  <span class="tile-body">
+                    <span class="tile-name">{p.name}</span>
+                    <span class="tile-line">{p.line}</span>
+                    <span class="tile-facts parts">{facts(p.slug).parts.map((x) => <span>{x}</span>)}{facts(p.slug).live?.date && <span data-date={facts(p.slug).live!.date!.toISOString()}>{facts(p.slug).live!.dateLabel}</span>}</span>
+                  </span>
+                </>
+              )}
+            </a>
+            <div class="open" id={`open-${p.slug}`} hidden>
+              <div class="open-card">
+                <div class="open-text">
+                  {p.slug === "netherstone" && <img src={nsLockup.src} alt="Netherstone" width="199" height="44" loading="lazy" class="open-logo" />}
+                  {p.slug === "syncify" && <span class="open-mark caps"><Icon name="syncify" size={36} stroke={2.25} />SYNCIFY</span>}
+                  {p.slug === "yapora" && <span class="open-mark"><YaporaMark size={40} />Yapora</span>}
+                  {p.slug === "lyrica" && <span class="open-mark" style="color: var(--p-accent); font-size: 22px">Lyrica</span>}
+                  {p.slug === "switchflare" && <span class="open-mark"><span style="display:flex;color:var(--p-accent)"><Icon name="switch" size={34} stroke={2} /></span>Switchflare</span>}
+                  <span class="open-title">{o.headline}</span>
+                  <span class="open-sub">{o.sub}</span>
+                  {o.points && (
+                    <span class="open-points">{o.points.map(([a, b]) => <span><b>{a}</b> {b}</span>)}</span>
+                  )}
+                  <span class="open-facts"><span class="parts">{o.platforms.map((x) => <span>{x}</span>)}</span>{!p.status && <span class="parts"><span>{L[p.slug].versionLabel}</span><span>{L[p.slug].dateLabel}</span></span>}{p.status && <span>{p.status}</span>}</span>
+                  <span class="open-actions">
+                    <a href={`/projects/${p.slug}`} class="btn">View project</a>
+                    {o.site && <a href={o.site.href} class="open-ext">{o.site.label}</a>}
+                  </span>
+                </div>
+                <div class="open-art">
+                  {o.img ? <Image src={o.img} alt={o.imgAlt!} widths={[640, 1280]} sizes="640px" class:list={["open-img", { tall: p.slug === "syncify" }]} /> : <span class="open-lyrica" aria-hidden="true"><span>Every word, right when it's</span> <b>sung.</b></span>}
+                </div>
               </div>
+              <button type="button" class="open-close" aria-label={`Close ${p.name}`}>×</button>
             </div>
-            <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg max-w-[80%]">
-              <p class="text-gray-800 dark:text-gray-200 text-sm">
-                Hello! I'm Wassim's assistant. How can I help you learn more about his experience and skills?
-              </p>
-            </div>
-          </div>
-          <div class="flex justify-end mb-4">
-            <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg max-w-[80%] ml-3">
-              <p class="text-gray-800 dark:text-gray-200 text-sm">
-                What projects has Wassim worked on?
-              </p>
-            </div>
-          </div>
-          <div class="flex mb-4">
-            <div class="flex-shrink-0 mr-3">
-              <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
-                AI
-              </div>
-            </div>
-            <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg max-w-[80%]">
-              <p class="text-gray-800 dark:text-gray-200 text-sm">
-                Wassim has worked on several notable projects including Quickplan, qmims, and an AI-Enhanced E-commerce Platform. Would you like to know more about any of these?
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+          </article>
+        );
+      })}
     </div>
+    <p class="older">Older projects are in the <a href="/archive" class="link">Archive</a>.</p>
   </section>
 
-  <!-- Connect CTA -->
-  <section class="container mx-auto px-4 py-16">
-    <div class="max-w-3xl mx-auto text-center">
-      <h2 class="text-3xl font-bold mb-4">Let's Connect</h2>
-      <p class="text-xl text-gray-600 dark:text-gray-400 mb-8">
-        I'm always interested in hearing about new projects and opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!
-      </p>
-      <a 
-        href="/connect" 
-        class="relative bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 text-lg animate-glow"
-      >
-        Connect With Me
-      </a>
-    </div>
+  <section class="wrap maps" data-reveal>
+    <a href="/map" class="map-teaser"><MapPreview aspect={1200 / 320} class="map-svg" /><span class="map-chip">Open the map</span></a>
   </section>
-</Layout>
+</Base>
 
 <style>
-  @keyframes glow {
-    0% {
-      box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
-    }
-    70% {
-      box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
-    }
-    100% {
-      box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
-    }
-  }
+  .hero { padding-top: 112px; padding-bottom: 96px; display: flex; gap: 40px; align-items: flex-start; }
+  .hero-av { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+  .hero-text { display: flex; flex-direction: column; gap: 12px; }
+  .hero-title { font-size: clamp(40px, 5vw, 56px); font-weight: 600; letter-spacing: -0.035em; line-height: 1.02; }
+  .hero-sub { font-size: 22px; line-height: 1.5; color: var(--body); max-width: 60ch; }
+  .dim { color: var(--subtle); }
+  .dim-link { color: var(--muted); text-decoration: underline; text-decoration-color: #4a4a4a; text-underline-offset: 4px; }
+  .dim-link:hover { color: var(--orchid); }
 
-  .animate-glow {
-    animation: glow 2s ease-in-out infinite;
+  .sec-label { font-size: 18px; font-weight: 600; color: var(--muted); margin: 0; }
+  .featured { display: flex; flex-direction: column; gap: 20px; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .tile { position: relative; }
+  .tile-link {
+    position: relative; display: flex; flex-direction: column; height: 100%; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 12px; overflow: hidden; text-decoration: none; color: var(--text);
+    transition: background var(--fast) ease, border-color var(--fast) ease, transform var(--base) var(--ease-out);
+  }
+  .tile-link:hover { background: var(--wine); border-color: var(--wine-line); color: var(--text); }
+  .tile.big { grid-column: span 2; }
+  .tile.big .tile-link { min-height: 300px; }
+  .big-shot { position: absolute; left: 340px; top: 36px; width: 600px; max-width: none; border-radius: 10px 0 0 0; border-top: 1px solid var(--p-line); border-left: 1px solid var(--p-line); box-shadow: 0 24px 48px -20px #000; transition: transform var(--base) var(--ease-out); }
+  .tile-link:hover .big-shot { transform: translateY(-6px); }
+  .big-text { position: relative; width: 300px; height: 100%; padding: 28px; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+  .big-name { font-size: 30px !important; letter-spacing: -0.02em !important; }
+  .tile-art { height: 140px; overflow: hidden; position: relative; background: var(--p-bg); border-bottom: 1px solid var(--line); }
+  /* Each project's own mark on its own color, the way its showcase opens. */
+  .art-mark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); transition: transform var(--base) var(--ease-out); }
+  .art-mark.caps { font-size: 22px; font-weight: 700; letter-spacing: 0.04em; }
+  .tile-link:hover .art-mark { transform: translateY(-4px); }
+  .art-lyrica { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 24px; font-size: 26px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; color: rgba(242, 238, 244, 0.85); flex-wrap: wrap; align-content: center; gap: 0 0.25em; }
+  .art-lyrica b { font-weight: 600; color: var(--p-accent); text-shadow: 0 0 24px #8e2b8b; }
+  .tile-body { padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+  .tile-name { font-size: 24px; font-weight: 600; letter-spacing: -0.015em; }
+  .tile-line { font-size: 15px; line-height: 1.5; color: var(--muted); }
+  .tile-facts { font-size: 13px; color: var(--subtle); border-top: 1px solid var(--line); padding-top: 12px; margin-top: auto; }
+  .tile-link:hover .tile-facts { border-color: var(--wine-line); }
+
+  /* Depth 2: a tile opens across the row, in the project's own colors. */
+  .tile.is-open { grid-column: 1 / -1; }
+  .tile.is-open > .tile-link { display: none; }
+  .open { position: relative; }
+  .open-card {
+    display: grid; grid-template-columns: 420px 1fr; gap: 48px; padding: 44px; min-height: 560px;
+    background: var(--p-bg); border: 1px solid var(--p-line); border-radius: 12px; box-shadow: 0 70px 110px -40px #000;
+  }
+  .open-text { display: flex; flex-direction: column; gap: 22px; }
+  .open-logo { height: 44px; width: auto; align-self: flex-start; }
+  .open-mark { display: flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+  .open-mark.caps { font-size: 24px; font-weight: 700; letter-spacing: 0.04em; }
+  .open-title { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
+  .open-sub { font-size: 16px; line-height: 1.6; color: var(--p-soft); }
+  .open-points { display: flex; flex-direction: column; gap: 10px; font-size: 14px; line-height: 1.5; color: var(--body); }
+  .open-points b { font-weight: 600; color: var(--p-accent); }
+  .open-facts { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+  .open-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: auto; }
+  .open-ext { height: 44px; display: inline-flex; align-items: center; padding: 0 18px; border-radius: 6px; border: 1px solid var(--p-line); font-size: 15px; text-decoration: none; }
+  .open-ext:hover { color: var(--text); background: var(--p-sel); }
+  .open-art { display: flex; align-items: center; justify-content: center; min-width: 0; }
+  .open-img { width: 100%; border-radius: 8px; border: 1px solid var(--p-line); box-shadow: 0 30px 60px -20px #000; }
+  .open-img.tall { width: auto; max-height: 470px; }
+  .open-lyrica { font-size: 56px; font-weight: 600; letter-spacing: -0.035em; line-height: 1.05; color: rgba(242, 238, 244, 0.9); }
+  .open-lyrica b { font-weight: 600; color: var(--p-accent); text-shadow: 0 0 32px #8e2b8b; }
+  .open-close { position: absolute; right: 20px; top: 20px; width: 36px; height: 36px; border-radius: 6px; border: 1px solid var(--p-line); background: var(--p-bg); color: var(--text); font-size: 18px; cursor: pointer; }
+  .open-close:hover { background: var(--p-sel); }
+  .grid.flipping .tile { overflow: hidden; border-radius: 12px; }
+  .tile.leaving > .open { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+  .tile.leaving > .open .open-card { height: 100%; min-height: 0; overflow: hidden; }
+  .grid.has-open .tile:not(.is-open) { opacity: 0.4; }
+  .grid.has-open .tile:not(.is-open):hover { opacity: 1; }
+
+  .older { font-size: 16px; color: var(--muted); padding-top: 12px; }
+  .older .link { color: var(--muted); text-decoration-color: var(--subtle); text-underline-offset: 3px; }
+
+  .maps { padding-top: 96px; display: flex; flex-direction: column; gap: 20px; }
+  .maps-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .small-link { font-size: 14px; color: var(--muted); text-decoration: underline; text-decoration-color: var(--subtle); text-underline-offset: 3px; }
+  /* The map sits half tucked behind the footer, and rises a little when you point at it. */
+  /* The map runs on under the footer, which covers its lower part; pointing at it
+     lifts it a little and shows where it leads. */
+  .maps { position: relative; z-index: 0; margin-bottom: -170px; }
+  .map-teaser { position: relative; display: block; height: 320px; border: 1px solid var(--line); border-bottom: 0; border-radius: 12px 12px 0 0; overflow: hidden; text-decoration: none; transition: transform var(--slow) var(--ease-out), border-color var(--fast) ease; }
+  .map-teaser:hover, .map-teaser:focus-visible { transform: translateY(-40px); border-color: var(--wine-line); }
+  .map-chip { position: absolute; left: 20px; top: 18px; font-size: 14px; color: var(--text); background: var(--wine); border: 1px solid var(--wine-line); border-radius: 6px; padding: 6px 10px; opacity: 0; transform: translateY(4px); transition: opacity var(--base) ease, transform var(--base) var(--ease-out); }
+  .map-teaser:hover .map-chip, .map-teaser:focus-visible .map-chip { opacity: 1; transform: none; }
+  .map-teaser :global(.map-svg) { display: block; width: 100%; height: 100%; }
+
+  @media (max-width: 1279px) {
+    .big-shot { left: 46%; width: 70%; }
+    .big-text { width: 44%; }
+    .open-card { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); padding: 36px; min-height: 0; }
+  }
+  @media (max-width: 1023px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .open-card { grid-template-columns: 1fr; }
+    .open-img.tall { max-height: 360px; }
+  }
+  @media (max-width: 767px) {
+    .hero { padding-top: 56px; padding-bottom: 64px; flex-direction: column; gap: 24px; }
+    .hero-av { width: 88px; height: 88px; }
+    .hero-sub { font-size: 18px; }
+    .grid { grid-template-columns: 1fr; gap: 16px; }
+    .tile.big { grid-column: auto; }
+    .tile.big .tile-link { min-height: 0; }
+    .big-shot { position: static; width: calc(100% - 28px); margin: 28px 0 0 28px; order: 2; }
+    .big-text { width: auto; order: 1; }
+    .open-card { padding: 24px 20px; gap: 28px; }
+    .open-title { font-size: 26px; }
+    .open-lyrica { font-size: 40px; }
+    .maps { padding-top: 72px; }
+    .maps { margin-bottom: -120px; }
+    .map-teaser { height: 220px; }
   }
 </style>
+
+<script>
+  import { gsap, T, EASE, reduced } from "../scripts/motion";
+  import { Flip } from "gsap/Flip";
+  gsap.registerPlugin(Flip);
+
+  // Relative dates on the tiles ("4 days ago"), worked out in the browser so they stay true after the build.
+  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+  for (const el of document.querySelectorAll<HTMLElement>(".tile-facts [data-date]")) {
+    const days = Math.round((Date.now() - new Date(el.dataset.date!).getTime()) / 86400000);
+    if (days >= 0 && days < 30) el.textContent = rtf.format(-days, "day");
+  }
+
+  // Depth 2: open a tile across the row instead of leaving the page. Ctrl/⌘-click still opens the showcase.
+  // The page's signature: the tile grows into the row with Flip and the rest of the grid
+  // makes room; closing runs it back to exactly where it came from.
+  const grid = document.querySelector<HTMLElement>("[data-featured]")!;
+  // Everything that moves when a tile opens or closes: the tiles, and what sits below them,
+  // so the sections underneath travel with the grid instead of jumping ahead of it.
+  const moving = () => [...grid.querySelectorAll<HTMLElement>(".tile"), ...document.querySelectorAll<HTMLElement>(".older, .maps, footer")];
+  const flip = (change: () => void, opened?: HTMLElement, closing?: HTMLElement) => {
+    if (reduced()) return change();
+    const state = Flip.getState(moving(), { props: "opacity" });
+    change();
+    if (opened) center(opened);
+    grid.classList.add("flipping");
+    // While a tile shrinks back, its open panel stays on top and fades, so the small
+    // tile's content never shows stretched inside the big box.
+    const ghost = closing?.querySelector<HTMLElement>(".open");
+    if (ghost) {
+      closing!.classList.add("leaving");
+      ghost.hidden = false;
+      gsap.fromTo(ghost, { autoAlpha: 1 }, { autoAlpha: 0, duration: T.base, ease: "power1.out" });
+      gsap.from(closing!.querySelector(".tile-link"), { autoAlpha: 0, duration: T.base, delay: T.base, ease: "power1.out" });
+    }
+    Flip.from(state, {
+      duration: T.slow, ease: EASE.move, scale: false, nested: true,
+      onComplete: () => {
+        grid.classList.remove("flipping");
+        if (ghost) { closing!.classList.remove("leaving"); ghost.hidden = true; gsap.set(ghost, { clearProps: "all" }); }
+      },
+    });
+    if (opened) {
+      const card = opened.querySelector<HTMLElement>(".open-card")!;
+      gsap.from(card.querySelectorAll(".open-text > *"), { autoAlpha: 0, y: 12, duration: T.slow, ease: EASE.enter, stagger: T.stagger, delay: T.base });
+      gsap.from(card.querySelector(".open-art"), { autoAlpha: 0, y: 24, scale: 0.98, duration: T.signature, ease: EASE.enter, delay: T.base, clearProps: "transform" });
+    }
+  };
+  // Bring the opened project to the middle of the screen. Measured on the final layout,
+  // before the animation starts, so the scroll and the opening run together.
+  const center = (tile: HTMLElement) => {
+    const r = tile.getBoundingClientRect();
+    const top = scrollY + r.top + r.height / 2 - innerHeight / 2;
+    const header = 72;
+    scrollTo({ top: Math.max(0, Math.min(top, scrollY + r.top - header - 16)), behavior: reduced() ? "auto" : "smooth" });
+  };
+  const openTile = () => grid.querySelector<HTMLElement>(".tile.is-open") ?? undefined;
+  const shut = () => {
+    grid.querySelectorAll<HTMLElement>(".tile.is-open").forEach((t) => {
+      t.classList.remove("is-open");
+      t.querySelector<HTMLElement>(".open")!.hidden = true;
+      t.querySelector(".tile-link")!.setAttribute("aria-expanded", "false");
+    });
+    grid.classList.remove("has-open");
+  };
+  grid.addEventListener("click", (e) => {
+    const me = e as MouseEvent;
+    const link = (e.target as HTMLElement).closest<HTMLAnchorElement>(".tile-link");
+    if (link) {
+      if (me.ctrlKey || me.metaKey || me.shiftKey || me.button !== 0) return;
+      e.preventDefault();
+      const tile = link.closest<HTMLElement>(".tile")!;
+      const was = openTile();
+      flip(() => {
+        shut();
+        tile.classList.add("is-open");
+        tile.querySelector<HTMLElement>(".open")!.hidden = false;
+        link.setAttribute("aria-expanded", "true");
+        grid.classList.add("has-open");
+      }, tile, was !== tile ? was : undefined);
+      if (reduced()) center(tile);
+      tile.querySelector<HTMLElement>(".open-close")!.focus({ preventScroll: true });
+      return;
+    }
+    if ((e.target as HTMLElement).closest(".open-close")) {
+      const tile = (e.target as HTMLElement).closest<HTMLElement>(".tile")!;
+      flip(shut, undefined, tile);
+      tile.querySelector<HTMLElement>(".tile-link")!.focus({ preventScroll: true });
+    }
+  });
+  addEventListener("keydown", (e) => { if (e.key === "Escape" && grid.classList.contains("has-open")) flip(shut, undefined, openTile()); });
+</script>

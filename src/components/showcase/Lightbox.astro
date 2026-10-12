@@ -1,0 +1,32 @@
+---
+import { Image, getImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props { images: ImageMetadata[]; alt: string; caption: string; }
+const { images, alt, caption } = Astro.props;
+const large = await Promise.all(images.map((img) => getImage({ src: img, width: Math.min(img.width, 1600), format: "webp" })));
+---
+
+<div class="lb" data-lightbox style="display: flex; flex-direction: column; gap: 10px">
+  <div class="thumbs">
+    {images.map((img, i) => (
+      <button type="button" class="thumb" data-src={large[i].src} aria-label={`${alt}, larger`}>
+        <Image src={img} alt={alt} width={360} densities={[1, 2]} loading="lazy" />
+      </button>
+    ))}
+  </div>
+  <span class="label" style="color: var(--subtle)">{caption}</span>
+  <dialog class="lightbox" aria-label={alt}>
+    <img alt={alt} />
+  </dialog>
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-lightbox]")) {
+    const dlg = root.querySelector("dialog")!;
+    const img = dlg.querySelector("img")!;
+    root.querySelectorAll<HTMLElement>(".thumb").forEach((b) =>
+      b.addEventListener("click", () => { img.src = b.dataset.src!; dlg.showModal(); }));
+    dlg.addEventListener("click", () => dlg.close());
+  }
+</script>

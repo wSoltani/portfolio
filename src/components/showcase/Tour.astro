@@ -1,0 +1,150 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+export interface TourSpot { x: number; y: number; side: "l" | "r" | "b" | "t"; text: string; }
+export interface TourStep { name: string; line: string; img: ImageMetadata; hl?: [number, number, number, number]; spots: TourSpot[]; }
+interface Props { project: string; steps: TourStep[]; }
+
+const { project, steps } = Astro.props;
+// Coordinates are written in the 860×484 design frame and placed as percentages.
+const FW = 860, FH = 484;
+const px = (v: number) => `${((v / FW) * 100).toFixed(3)}%`;
+const py = (v: number) => `${((v / FH) * 100).toFixed(3)}%`;
+function popStyle({ x, y, side }: TourSpot) {
+  const low = y > FH * 0.72;
+  if (side === "l") return `right:${px(FW - x + 22)};` + (low ? `bottom:${py(FH - y - 16)}` : `top:${py(y - 16)}`);
+  if (side === "r") return `left:${px(x + 22)};` + (low ? `bottom:${py(FH - y - 16)}` : `top:${py(y - 16)}`);
+  if (side === "b") return `left:${px(Math.max(8, Math.min(x - 140, FW - 290)))};top:${py(y + 22)}`;
+  return `left:${px(Math.max(8, x - 20))};bottom:${py(FH - y + 22)}`;
+}
+// The highlight: four dimming panels around a ring. One set, moved from step to step.
+const box = (hl?: [number, number, number, number]) => {
+  if (!hl) return { on: false, x0: 0, y0: 0, x1: 100, y1: 100 };
+  return { on: true, x0: (hl[0] / FW) * 100, y0: (hl[1] / FH) * 100, x1: (hl[2] / FW) * 100, y1: (hl[3] / FH) * 100 };
+};
+const first = box(steps[0].hl);
+const dims = (b: ReturnType<typeof box>) => [
+  `left:0;top:0;width:100%;height:${b.y0}%`,
+  `left:0;top:${b.y1}%;width:100%;height:${100 - b.y1}%`,
+  `left:0;top:${b.y0}%;width:${b.x0}%;height:${b.y1 - b.y0}%`,
+  `left:${b.x1}%;top:${b.y0}%;width:${100 - b.x1}%;height:${b.y1 - b.y0}%`,
+];
+---
+
+<div class="tour" data-tour>
+  <div>
+    <div class="tour-frame">
+      {steps.map((s, i) => (
+        <Image src={s.img} alt={`${project}, ${s.name}`} widths={[860, 1720]} sizes="(min-width: 1280px) 860px, 100vw" class:list={["tour-shot", { on: i === 0 }]} data-shot={i} loading="lazy" />
+      ))}
+      <div class:list={["tour-hl", { on: first.on }]} data-hl>
+        {dims(first).map((d) => <i style={d} />)}
+        <b style={`left:${first.x0}%;top:${first.y0}%;width:${first.x1 - first.x0}%;height:${first.y1 - first.y0}%`} />
+      </div>
+      {steps.map((s, i) => (
+        <div class:list={["tour-spots", { on: i === 0 }]} data-spots={i}>
+          {s.spots.map((p, j) => (
+            <button type="button" class:list={["spot", { on: j === 0 }]} style={`left:${px(p.x)};top:${py(p.y)}`} aria-label={p.text} data-j={j} data-pop={popStyle(p)} />
+          ))}
+        </div>
+      ))}
+      <span class="pop" aria-hidden="true" style={popStyle(steps[0].spots[0])}>{steps[0].spots[0]?.text}</span>
+    </div>
+    <p class="tour-caption" aria-live="polite">{steps[0].spots[0]?.text}</p>
+  </div>
+  <div class="tour-steps" role="tablist" aria-label={`${project} tour`}>
+    {steps.map((s, i) => {
+      const b = box(s.hl);
+      return (
+        <button type="button" role="tab" class:list={["step", { on: i === 0 }]} aria-selected={i === 0 ? "true" : "false"} data-step={i} data-box={b.on ? [b.x0, b.y0, b.x1, b.y1].join(",") : ""}>
+          <span class="step-name"><span class="step-n">{i + 1}</span>{s.name}</span>
+          <span class="step-line">{s.line}</span>
+        </button>
+      );
+    })}
+  </div>
+</div>
+
+<script>
+  import { gsap, T, EASE, reduced } from "../../scripts/motion";
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-tour]")) {
+    const pop = root.querySelector<HTMLElement>(".pop")!;
+    const cap = root.querySelector<HTMLElement>(".tour-caption")!;
+    const hl = root.querySelector<HTMLElement>("[data-hl]")!;
+    const [top, bottom, left, right] = hl.querySelectorAll<HTMLElement>("i");
+    const ring = hl.querySelector<HTMLElement>("b")!;
+    let current = "0";
+
+    const showSpot = (btn: HTMLElement | null) => {
+      if (!btn) { pop.hidden = true; cap.textContent = ""; return; }
+      btn.parentElement!.querySelectorAll(".spot").forEach((s) => s.classList.toggle("on", s === btn));
+      pop.hidden = false;
+      pop.setAttribute("style", btn.dataset.pop!);
+      pop.textContent = cap.textContent = btn.getAttribute("aria-label");
+      if (!reduced()) gsap.fromTo(pop, { autoAlpha: 0, y: 4 }, { autoAlpha: 1, y: 0, duration: T.fast, ease: EASE.enter });
+    };
+
+    // The highlight glides to the next area instead of jumping; steps without one fade it out.
+    const moveHighlight = (spec: string) => {
+      const d = reduced() ? 0 : T.slow;
+      if (!spec) { gsap.to(hl, { autoAlpha: 0, duration: d / 2 }); return; }
+      const [x0, y0, x1, y1] = spec.split(",").map(Number);
+      const p = (v: number) => `${v}%`;
+      gsap.to(hl, { autoAlpha: 1, duration: d / 2 });
+      const o = { duration: d, ease: EASE.move, overwrite: true };
+      gsap.to(ring, { ...o, left: p(x0), top: p(y0), width: p(x1 - x0), height: p(y1 - y0) });
+      gsap.to(top, { ...o, height: p(y0) });
+      gsap.to(bottom, { ...o, top: p(y1), height: p(100 - y1) });
+      gsap.to(left, { ...o, top: p(y0), width: p(x0), height: p(y1 - y0) });
+      gsap.to(right, { ...o, left: p(x1), top: p(y0), width: p(100 - x1), height: p(y1 - y0) });
+    };
+
+    const showStep = (btn: HTMLElement) => {
+      const i = btn.dataset.step!;
+      if (i === current) return;
+      const prev = root.querySelector<HTMLElement>(`[data-shot="${current}"]`)!;
+      const next = root.querySelector<HTMLElement>(`[data-shot="${i}"]`)!;
+      current = i;
+      root.querySelectorAll<HTMLElement>(".step").forEach((s) => {
+        const on = s === btn;
+        s.classList.toggle("on", on);
+        s.setAttribute("aria-selected", String(on));
+      });
+      root.querySelectorAll<HTMLElement>("[data-spots]").forEach((s) => s.classList.toggle("on", s.dataset.spots === i));
+      const spots = root.querySelectorAll<HTMLElement>(`[data-spots="${i}"] .spot`);
+      if (reduced()) {
+        prev.classList.remove("on");
+        next.classList.add("on");
+      } else if (prev !== next) {
+        // A plain crossfade: the new screenshot fades in over the old one, which stays solid
+        // underneath until it's covered, so the frame never dims in between. Two steps can
+        // share a screenshot; then only the highlight and the spots move.
+        gsap.set(prev, { zIndex: 1 });
+        gsap.set(next, { zIndex: 2 });
+        next.classList.add("on");
+        gsap.fromTo(next, { autoAlpha: 0 }, {
+          autoAlpha: 1, duration: T.base, ease: "power1.out", overwrite: true,
+          onComplete: () => { prev.classList.remove("on"); gsap.set(prev, { autoAlpha: 0, zIndex: 0 }); gsap.set(next, { zIndex: 1 }); },
+        });
+      }
+      moveHighlight(btn.dataset.box!);
+      if (!reduced()) gsap.from(spots, { autoAlpha: 0, y: 6, duration: T.base, ease: EASE.enter, stagger: T.stagger, delay: T.base / 2 });
+      showSpot(spots[0] ?? null);
+    };
+
+    root.addEventListener("click", (e) => {
+      const t = (e.target as HTMLElement).closest<HTMLElement>(".step, .spot");
+      if (!t) return;
+      if (t.matches(".step")) showStep(t);
+      else showSpot(t);
+    });
+    for (const type of ["mouseover", "focusin"]) {
+      root.addEventListener(type, (e) => {
+        const t = (e.target as HTMLElement).closest<HTMLElement>(".spot");
+        if (t && !t.classList.contains("on")) showSpot(t);
+      });
+    }
+  }
+</script>

@@ -1,18 +1,12 @@
 // @ts-check
 import { defineConfig } from "astro/config";
-import tailwind from "@astrojs/tailwind";
 import sitemap from "@astrojs/sitemap";
 
-// https://astro.build/config
 export default defineConfig({
-  integrations: [tailwind(), sitemap()],
   site: "https://wsoltani.com",
-  build: {
-    assets: "assets",
-  },
-  vite: {
-    build: {
-      assetsDir: "assets",
-    },
-  },
+  trailingSlash: "never",
+  build: { format: "file", inlineStylesheets: "always" },
+  // Pages load in the background when a link is pointed at, so moving between them is instant.
+  prefetch: { prefetchAll: true, defaultStrategy: "hover" },
+  integrations: [sitemap({ filter: (page) => !page.includes("/resume-print") })],
 });

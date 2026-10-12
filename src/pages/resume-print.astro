@@ -1,0 +1,132 @@
+---
+// The résumé as a printed document, A4. scripts/resume-pdf.mjs prints this page to
+// public/wassim-soltani-resume.pdf. Not linked or indexed; the PDF is what people get.
+import "@fontsource-variable/instrument-sans/wdth.css";
+import Flow from "../components/Flow.astro";
+import { JOBS, EDU, SKILLS, LANG } from "../data/resume";
+import { PROJECTS } from "../data/projects";
+import { SITE } from "../data/site";
+
+// When each project shipped, plus one fact worth a reader's time.
+const status: Record<string, string> = {
+  netherstone: "Public beta since Oct 2026", syncify: "Released May 2026", yapora: "Public beta since Sep 2026",
+  lyrica: "In use since Oct 2026", switchflare: "Not released yet",
+};
+const fact: Record<string, string> = {
+  netherstone: "Free and open source (GPL-3.0), on Windows, macOS and Linux.",
+  syncify: "4.9k accounts backed up. Free and open source (MIT).",
+  yapora: "Exports render frame by frame, so they never drop a frame or drift out of sync.",
+  lyrica: "A 3:17 song takes about 53 seconds on an RTX 3060 Ti; the app itself runs on Cloudflare.",
+  switchflare: "Logins stay encrypted on your computer.",
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>Wassim Soltani – Résumé</title>
+  </head>
+  <body>
+    <Flow width={1200} height={40} seed="Wassim Soltani" class="band" />
+    <header>
+      <div>
+        <h1>Wassim Soltani</h1>
+        <p class="role"><span>Software engineer</span> <span>Tunisia, working remotely</span></p>
+      </div>
+      <ul class="contact">
+        <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+        <li><a href={SITE.url}>wsoltani.com</a></li>
+        <li><a href={SITE.linkedin}>linkedin.com/in/wsoltani</a></li>
+        <li><a href={SITE.github}>github.com/wSoltani</a></li>
+      </ul>
+    </header>
+
+    <p class="summary">{SITE.description}</p>
+
+    <section>
+      <h2>Experience</h2>
+      {JOBS.map((j) => (
+        <article class="item">
+          <div class="head"><h3>{j.role}<span>{" "}{j.org}</span></h3><span class="when">{j.when}</span></div>
+          <ul>{j.lines.map((l) => <li>{l}</li>)}</ul>
+        </article>
+      ))}
+    </section>
+
+    <section>
+      <h2>Projects</h2>
+      <p class="note">My own products, which I build and run myself.</p>
+      {PROJECTS.map((p) => (
+        <article class="item project">
+          <div class="head"><h3>{p.name}<span>{" "}{p.kind}</span></h3><span class="when">{status[p.slug]}</span></div>
+          <p>{p.line} {fact[p.slug]}</p>
+          {p.tech.length > 0 && <p class="tech">{p.tech.join(", ")}</p>}
+          <p class="url"><a href={`${SITE.url}/projects/${p.slug}`}>wsoltani.com/projects/{p.slug}</a></p>
+        </article>
+      ))}
+      <p class="note">Older projects: <a href={`${SITE.url}/archive`}>wsoltani.com/archive</a></p>
+    </section>
+
+    <section>
+      <h2>Education</h2>
+      {EDU.map((e) => (
+        <article class="item">
+          <div class="head"><h3>{e.t}<span>{" "}{e.o}</span></h3><span class="when">{e.w}</span></div>
+          {e.d && <p>{e.d}</p>}
+        </article>
+      ))}
+    </section>
+
+    <section class="two">
+      <div>
+        <h2>Skills</h2>
+        <dl>{SKILLS.map(([a, b]) => <><dt>{a}</dt><dd>{b}</dd></>)}</dl>
+      </div>
+      <div>
+        <h2>Languages</h2>
+        <dl>{LANG.map(([a, b]) => <><dt>{a}</dt><dd>{b}</dd></>)}</dl>
+      </div>
+    </section>
+  </body>
+</html>
+
+<style is:global>
+  @page { size: A4; margin: 14mm 15mm 14mm; }
+  :root { --magenta: #94288c; --ink: #0d0d0d; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; font-family: "Instrument Sans Variable", "Instrument Sans", sans-serif; font-size: 9.6pt; line-height: 1.45; color: #1a1a1a; background: #fff; }
+  a { color: inherit; text-decoration: none; }
+  .band { display: block; width: 100%; height: 7mm; border-radius: 1.5mm; background: #94288c; color: #0d0d0d; }
+  header { display: flex; justify-content: space-between; align-items: flex-end; gap: 8mm; margin-top: 6mm; }
+  h1 { margin: 0; font-size: 24pt; font-weight: 600; letter-spacing: -0.02em; word-spacing: 0.05em; line-height: 1; color: #0d0d0d; }
+  .role { margin: 2mm 0 0; font-size: 11pt; color: #444; }
+  .contact { list-style: none; margin: 0; padding: 0; text-align: right; font-size: 9pt; color: #333; line-height: 1.55; }
+  .summary { margin: 5mm 0 0; font-size: 10.5pt; line-height: 1.5; color: #222; max-width: 150mm; }
+  section { margin-top: 6mm; }
+  h2 { margin: 0 0 2.5mm; padding-bottom: 1.5mm; border-bottom: 0.3mm solid #d8d8d8; font-size: 11pt; font-weight: 600; letter-spacing: -0.01em; color: #0d0d0d; }
+  .item { margin-top: 3.2mm; break-inside: avoid; }
+  .head { display: flex; justify-content: space-between; align-items: baseline; gap: 6mm; }
+  h3 { margin: 0; font-size: 10.5pt; font-weight: 600; color: #0d0d0d; }
+  h3 span { font-weight: 400; color: #555; white-space: pre-wrap; }
+  /* The same drawn dot as the site; the real space before it keeps the text readable for parsers. */
+  h3 span::before, .role span + span::before { content: ""; display: inline-block; width: 0.8mm; height: 0.8mm; border-radius: 50%; background: currentColor; opacity: 0.5; vertical-align: 0.6mm; }
+  /* In headings the space comes after the dot, so the dot carries the space in front. */
+  h3 span::before { margin: 0 0.8mm 0 2mm; }
+  .role span + span::before { margin: 0 1.8mm 0 0.6mm; }
+  .when { flex-shrink: 0; font-size: 9pt; color: #666; }
+  ul { margin: 1.5mm 0 0; padding-left: 4.5mm; }
+  li { margin: 0 0 1mm; }
+  .item p { margin: 1.2mm 0 0; }
+  .tech { color: #555; font-size: 9pt; }
+  .url { font-size: 8.8pt; color: #7a2a74; }
+  .note { margin: 0; color: #555; font-size: 9pt; }
+  section .note:last-child { margin-top: 3.2mm; }
+  .two { display: grid; grid-template-columns: 1fr 62mm; gap: 8mm; break-inside: avoid; }
+  dl { margin: 0; display: grid; grid-template-columns: 20mm 1fr; gap: 1.2mm 4mm; }
+  dt { color: #666; }
+  dd { margin: 0; }
+  @media screen { body { max-width: 210mm; margin: 0 auto; padding: 14mm 15mm; } }
+</style>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://wsoltani.com/sitemap-index.xml

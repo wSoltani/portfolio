@@ -1,0 +1,34 @@
+---
+import MapPreview from "../MapPreview.astro";
+import Flow from "../Flow.astro";
+
+interface Props { project: string; slug: string; next: { name: string; slug: string }; }
+const { project, slug, next } = Astro.props;
+---
+
+<div class="wrap end" data-reveal>
+  <a href={`/map?p=${slug}`} class="card map">
+    <MapPreview focus={slug} aspect={588 / 240} class="map-svg" label={`${project} on the map`} />
+    <span class="chip">Check the map</span>
+  </a>
+  <a href={`/projects/${next.slug}`} class="card next">
+    <Flow width={600} height={150} seed={next.slug} drift class="cover" />
+    <span class="row"><span class="small">Next project</span><span class="name">{next.name} →</span></span>
+  </a>
+</div>
+
+<style>
+  .end { padding-top: 96px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .card { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; text-decoration: none; transition: border-color var(--fast) ease, background var(--fast) ease; }
+  .map { position: relative; height: 240px; }
+  .map :global(.map-svg) { display: block; width: 100%; height: 100%; }
+  .chip { position: absolute; left: 20px; bottom: 18px; font-size: 14px; background: var(--wine); border: 1px solid var(--wine-line); border-radius: 6px; padding: 6px 10px; color: var(--text); }
+  .next { display: flex; flex-direction: column; background: var(--surface); }
+  .cover { width: 100%; height: 150px; transition: transform var(--base) var(--ease-out); }
+  .row { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; }
+  .name { font-size: 20px; font-weight: 600; color: var(--text); }
+  .card:hover { border-color: var(--wine-line); }
+  .next:hover { background: var(--wine); }
+  .next { overflow: hidden; }
+  @media (max-width: 767px) { .end { grid-template-columns: 1fr; } .map { height: 180px; } }
+</style>

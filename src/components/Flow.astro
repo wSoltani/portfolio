@@ -1,0 +1,19 @@
+---
+// A Flowlines area. `seed` gives each project its own pattern.
+// `settle` swirls the stripes into place when it scrolls into view; `drift` loosens them on hover.
+import { flowPath, type FlowOptions } from "../lib/flowlines";
+
+interface Props extends Partial<FlowOptions> {
+  width: number; height: number; seed: number | string;
+  inverse?: boolean; settle?: boolean; drift?: boolean; class?: string; style?: string;
+}
+const { width, height, seed, period, swirl, inverse = false, settle = false, drift = false, class: cls, style } = Astro.props;
+const d = flowPath({ width, height, seed, period, swirl });
+---
+<svg
+  viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid slice" aria-hidden="true" class={cls}
+  data-seed={String(seed)} data-w={width} data-h={height} data-period={period} data-settle={settle || undefined} data-drift={drift || undefined}
+  style={`background:${inverse ? "var(--ink)" : "var(--magenta)"};color:${inverse ? "var(--magenta)" : "var(--ink)"};${style ?? ""}`}
+>
+  <path fill="currentColor" fill-rule="evenodd" d={d} />
+</svg>

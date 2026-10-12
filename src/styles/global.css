@@ -1,28 +1,132 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "@fontsource-variable/instrument-sans/wdth.css";
 
-@layer base {
-  body {
-    @apply antialiased;
-  }
+:root {
+  /* Graphite */
+  --ink: #0d0d0d;
+  --surface: #171717;
+  --raised: #212121;
+  --line: #303030;
+  --line-strong: #404040;
+  --subtle: #878787;
+  --muted: #adadad;
+  --body: #d4d4d4;
+  --text: #f0f0f0;
+  /* Wine */
+  --wine: #1f0f13;
+  --wine-raised: #2c171c;
+  --wine-line: #3d242a;
+  /* Brand */
+  --magenta: #94288c;
+  --orchid: #d65bc8;
+  --crimson: #e0456f;
+  --indigo: #8b85ff;
+  --split-red: #ff2a4f;
+  --split-blue: #3b5bff;
+
+  --font: "Instrument Sans Variable", "Instrument Sans", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", Consolas, monospace;
+
+  --gutter: 16px;
+  --max: 1200px;
+
+  --fast: 150ms;
+  --base: 300ms;
+  --slow: 600ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+
+  color-scheme: dark;
+}
+@media (min-width: 640px) { :root { --gutter: 32px; } }
+@media (min-width: 1280px) { :root { --gutter: 80px; } }
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+/* "Projects" in the header scrolls to them smoothly; the header stays clear of the heading. */
+html.motion { scroll-behavior: smooth; }
+#projects { scroll-margin-top: 32px; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+main { flex: 1 0 auto; }
+img, svg, video { display: block; max-width: 100%; }
+img { height: auto; }
+h1, h2, h3, p { margin: 0; }
+button { font: inherit; color: inherit; }
+code, pre { font-family: var(--mono); }
+
+a { color: var(--text); transition: color var(--fast) ease; }
+a:hover { color: var(--orchid); }
+
+:focus { outline: none; }
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ink), -1px 0 0 4px var(--split-red), 1px 0 0 4px var(--split-blue), 0 0 0 4px var(--text);
+  border-radius: 6px;
 }
 
-@layer components {
-  .container {
-    @apply max-w-7xl mx-auto;
-  }
+::selection { background: var(--wine-raised); color: var(--text); }
 
-  /* Embed container for LinkedIn and other embeds */
-  .embed-container {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-  }
+.wrap { width: 100%; max-width: calc(var(--max) + var(--gutter) * 2); margin-inline: auto; padding-inline: var(--gutter); }
 
-  .embed-container iframe {
-    width: 100%;
-    border: 0;
-    min-height: 300px;
-  }
+/* Type scale (desktop; Display and H1 step down on mobile) */
+.display { font-size: clamp(44px, 6vw, 72px); font-weight: 600; letter-spacing: -0.035em; line-height: 1; }
+.h1 { font-size: clamp(36px, 4.5vw, 48px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; }
+.h2 { font-size: clamp(26px, 3vw, 32px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
+.h3 { font-size: 22px; font-weight: 600; line-height: 1.3; }
+.lead { font-size: 18px; line-height: 1.6; color: var(--body); }
+.small { font-size: 14px; line-height: 1.5; color: var(--muted); }
+.label { font-size: 13px; line-height: 1.4; color: var(--muted); }
+
+/* Pieces of one line (facts, platforms), with a small drawn dot between them.
+   The dot is a shape, not a text character, so it sits centered at any size.
+   Every piece carries a dot in front; the row is shifted left by one dot and that strip
+   is clipped off, so whichever piece starts a line, wrapped or not, never shows a dot. */
+.parts {
+  --dot: 3px; --space: 0.6em;
+  display: inline-flex; flex-wrap: wrap; align-items: center; row-gap: 2px;
+  margin-left: calc(-1 * (var(--dot) + 2 * var(--space)));
+  clip-path: inset(-4px -4px -4px calc(var(--dot) + 2 * var(--space)));
+}
+.parts > * { display: inline-flex; align-items: center; }
+.parts > *::before {
+  content: ""; flex: none; width: var(--dot); height: var(--dot); margin: 0 var(--space);
+  border-radius: 50%; background: currentColor; opacity: 0.45;
+}
+
+.link { color: var(--text); text-decoration: underline; text-decoration-color: var(--subtle); text-underline-offset: 4px; }
+.link:hover { color: var(--orchid); text-decoration-color: currentColor; }
+
+.btn {
+  height: 44px; display: inline-flex; align-items: center; gap: 8px; padding: 0 20px;
+  border-radius: 6px; font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer;
+  background: var(--text); color: var(--ink); border: 0;
+  transition: background var(--fast) ease, border-color var(--fast) ease, color var(--fast) ease;
+}
+.btn:hover { color: var(--ink); background: #ffffff; }
+.btn-outline { background: none; color: var(--text); border: 1px solid var(--line-strong); font-weight: 500; }
+.btn-outline:hover { background: var(--surface); color: var(--text); }
+
+.pill { display: inline-flex; align-items: center; border: 1px solid var(--line-strong); border-radius: 999px; padding: 6px 14px; font-size: 14px; text-decoration: none; color: var(--text); }
+a.pill:hover { background: var(--wine); border-color: var(--wine-line); color: var(--text); }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Title reveal masks: room above and below the line, so accents and descenders (É, g, y) aren't clipped. */
+.title-line-mask { padding: 0.12em 0 0.18em; margin: -0.12em 0 -0.18em; }
+
+/* Hidden until the motion script takes over, so nothing flashes before it animates in. */
+.motion:not(.motion-ready) [data-reveal], .motion:not(.motion-ready) [data-title] { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; scroll-behavior: auto !important; }
 }
