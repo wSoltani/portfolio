@@ -23,7 +23,8 @@ const { title, description = SITE.description, image = "/og/default.png", nav, n
 const person = { "@type": "Person", "@id": `${SITE.url}/#me`, name: SITE.name, url: SITE.url, jobTitle: "Software engineer", image: `${SITE.url}/web-app-manifest-512x512.png`, sameAs: [SITE.github, SITE.linkedin] };
 const graph = { "@context": "https://schema.org", "@graph": [person, ...schema] };
 const fullTitle = title ? `${title} – ${SITE.name}` : SITE.name;
-const canonical = new URL(Astro.url.pathname.replace(/\/$/, "") || "/", SITE.url).href;
+// Pages are built as .html files, but they're served (and shared) without the extension.
+const canonical = new URL(Astro.url.pathname.replace(/(\/index)?\.html$/, "").replace(/\/$/, "") || "/", SITE.url).href;
 const ogImage = new URL(image, SITE.url).href;
 ---
 
