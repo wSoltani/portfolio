@@ -1,133 +1,38 @@
-# Personal Portfolio Website
+# wsoltani.com
 
-[![Visit wsoltani.com](https://img.shields.io/badge/Visit-wsoltani.com-38B2AC)](https://wsoltani.com)
-[![Built with Astro](https://img.shields.io/badge/Built%20with-Astro-FF5D01)](https://astro.build/)
+My personal site, where I keep the things I've made and a map of how they connect. My résumé is there too.
 
-This repository contains the source code for my personal portfolio website, showcasing my projects, skills, and professional experience as a software engineer.
+It's a static site built with Astro. The animations use GSAP, and Cloudflare serves it.
 
-## 🚀 Features
+## Running it locally
 
-- **Modern Design**: Clean, responsive interface built with Tailwind CSS
-- **Project Showcase**: Detailed project descriptions with links to live demos and repositories
-- **Skills Section**: Comprehensive overview of technical skills and expertise
-- **Experience Timeline**: Professional journey and accomplishments
-- **AI Chat Interface**: Interactive AI assistant to help visitors explore my background
-- **SEO Optimized**: Built with proper metadata and structured data
+You'll need Node 22.12 or newer and pnpm.
 
-## 🛠️ Technology Stack
-
-- **Framework**: [Astro](https://astro.build/) - Fast, modern static site generator
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- **Search**: Fuse.js for fuzzy search with mark.js for text highlighting
-- **Markdown**: Content parsing and display for certain sections
-- **Deployment**: Cloudflare Worker on wsoltani.com
-- **SEO**: Astro SEO integration for metadata optimization
-
-## 📁 Project Structure
-
-```text
-/
-├── public/              # Static assets (favicon, images, etc.)
-├── src/
-│   ├── components/      # Reusable UI components
-│   │   ├── DarkModeToggle.astro  # Dark/light mode toggle
-│   │   ├── PageSearch.astro      # Search functionality
-│   │   └── WritingCard.astro     # Card component for writings
-│   │
-│   ├── data/            # Data sources
-│   │   └── writings.ts           # Writing content and metadata
-│   │
-│   ├── layouts/         # Page layouts
-│   │   └── Layout.astro          # Main layout template
-│   │
-│   ├── pages/           # Application routes and pages
-│   │   ├── index.astro          # Home page
-│   │   ├── projects.astro       # Projects showcase
-│   │   ├── skills.astro         # Skills overview
-│   │   ├── experience.astro     # Professional experience
-│   │   ├── connect.astro        # Contact information
-│   │   ├── ai-chat.astro        # AI assistant interface
-│   │   └── writings.astro       # Blog/writings section
-│   │
-│   ├── styles/          # Global styles and Tailwind configuration
-│   │   └── global.css          # Global styles
-│   │
-│   └── types/           # TypeScript type definitions
-│       ├── fuse.js.d.ts        # Fuse.js type definitions
-│       └── mark.js.d.ts        # mark.js type definitions
-│
-├── .gitignore
-├── astro.config.mjs
-├── package.json
-├── README.md
-└── tailwind.config.js
+```bash
+pnpm install
+pnpm dev
 ```
 
-## 🚀 Development
+It opens at http://localhost:4321. `pnpm build` writes the finished site to `dist`.
 
-### Prerequisites
+Some project pages show the latest version and release date from GitHub. They're read once during the build, and if GitHub can't be reached, the pages use the values already in the data files. Setting `GITHUB_TOKEN` gives the build a higher GitHub rate limit, but it isn't required.
 
-- Node.js (v18 or later)
-- pnpm package manager
+## The résumé PDF
 
-### Setup
+The PDF is the `/resume-print` page printed by Chrome. After changing `src/data/resume.ts`, keep `pnpm dev` running and run:
 
-1. Clone the repository
+```bash
+pnpm resume:pdf
+```
 
-   ```bash
-   git clone https://github.com/wSoltani/portfolio.git
-   cd portfolio
-   ```
+It replaces `public/wassim-soltani-resume.pdf`. If Chrome isn't in its usual place, point `CHROME` at it.
 
-2. Install dependencies
+## Where things are
 
-   ```bash
-   pnpm install
-   ```
+The words live in `src/data`, with the projects in `projects.ts` and the résumé in `resume.ts`. Each project has its own page in `src/pages/projects`.
 
-3. Start the development server
+The striped pattern is Flowlines, in `src/lib/flowlines.ts`. Every project gets its own version, and the same code draws the share images in `src/pages/og` and the generator on the About page. The map's terrain comes from `src/lib/terrain.ts`.
 
-   ```bash
-   pnpm dev
-   ```
+## Deploying
 
-4. Open your browser and visit `http://localhost:4321`
-
-## 🚢 Deployment
-
-This project is deployed as a Cloudflare Worker on [wsoltani.com](https://wsoltani.com). The deployment is handled automatically through Cloudflare's build and deployment pipeline.
-
-### Local Development
-
-To run the project locally:
-
-1. Install dependencies:
-
-   ```bash
-   pnpm install
-   ```
-
-2. Start the development server:
-
-   ```bash
-   pnpm dev
-   ```
-
-3. Open your browser to `http://localhost:4321`
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                | Action                                           |
-| :--------------------- | :----------------------------------------------- |
-| `pnpm install`         | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check out [Astro's documentation](https://docs.astro.build) or jump into [Astro's Discord server](https://astro.build/chat).
+Cloudflare builds and deploys every push to `main`. Its settings are in `wrangler.jsonc`, and old addresses are redirected in `public/_redirects`.
