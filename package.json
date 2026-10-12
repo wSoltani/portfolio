@@ -26,5 +26,9 @@
     "@resvg/resvg-js": "^2.6.2",
     "@types/d3-contour": "^3.0.6",
     "satori": "^0.47.1"
+  },
+  "packageManager": "pnpm@11.5.0",
+  "engines": {
+    "node": ">=22.12.0"
   }
 }
