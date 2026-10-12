@@ -1,0 +1,10 @@
+// Cloudflare Workers settings. The site is static: the build writes it to dist,
+// and missing pages get the site's own 404 page.
+{
+  "name": "wsoltani",
+  "compatibility_date": "2025-05-26",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}
