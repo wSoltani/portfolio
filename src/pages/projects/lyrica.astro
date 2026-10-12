@@ -1,0 +1,197 @@
+---
+// Lyrica has its own format: no screenshots, and the page is about the technical side.
+import Showcase from "../../layouts/Showcase.astro";
+import Diagram from "../../components/showcase/Diagram.astro";
+import { bySlug } from "../../data/projects";
+import { STRIP } from "../../data/lyrica-strip";
+
+const p = bySlug("lyrica");
+const words = ["Every", "word,", "right", "when", "it's", "sung."];
+
+const history = [
+  { x: -6, top: 200, w: 200, d: "About 2016", t: "A first channel with 2 videos. I lost access to it." },
+  { x: 229, top: 0, w: 230, d: "Feb 2018", t: "First video on my current channel: a couple of months between classes." },
+  { x: 520, top: 200, w: 230, d: "Sep 2020 – Feb 2021", t: "4 more videos. Some reached 12k, 15k and 24k views." },
+  { gap: true, x: 0, top: 0, w: 0, d: "2021 – 2026", t: "Over five years without a video." },
+  { right: -14, top: 200, w: 230, d: "Oct 4, 2026", t: "The first Lyrica prototype. I can post again.", now: true },
+];
+const dots = [229, 520, 523, 532, 565];
+const years = [["2016", -14], ["2018", 210], ["2020", 434], ["2022", 658], ["2024", 882], ["2026", 1106]] as const;
+
+const pipeEdges = `<g stroke="#4a4a4a" stroke-width="1.5" fill="none"><path d="M200 100 H 242"/><path d="M450 100 H 492"/><path d="M700 100 H 742"/><path d="M950 100 H 992"/><path d="M200 296 H 242"/><path d="M450 296 H 560 V 168"/><path d="M640 160 V 296 H 742"/><path d="M950 296 H 1100 V 168"/></g><g fill="#4a4a4a"><path d="M242 95 L 250 100 L 242 105 Z"/><path d="M492 95 L 500 100 L 492 105 Z"/><path d="M742 95 L 750 100 L 742 105 Z"/><path d="M992 95 L 1000 100 L 992 105 Z"/><path d="M242 291 L 250 296 L 242 301 Z"/><path d="M555 168 L 560 160 L 565 168 Z"/><path d="M742 291 L 750 296 L 742 301 Z"/><path d="M1095 168 L 1100 160 L 1105 168 Z"/></g>`;
+const pipe = [
+  { k: "song", x: 0, y: 40, w: 200, h: 120, title: "Song", sub: "FLAC, WAV, MP3, M4A, OGG or Opus", icon: "music" },
+  { k: "lyr", x: 0, y: 236, w: 200, h: 120, title: "Lyrics", sub: "Plain text, with [Verse] and [Chorus] tags", icon: "lines" },
+  { k: "voc", x: 250, y: 40, w: 200, h: 120, title: "Voice", sub: "MelBand RoFormer pulls the vocal out of the mix", icon: "mic" },
+  { k: "anc", x: 250, y: 236, w: 200, h: 120, title: "Line anchors", sub: "Synced lyrics from LRCLIB give each line a start time", icon: "anchor" },
+  { k: "aln", x: 500, y: 40, w: 200, h: 120, title: "Word timing", sub: "wav2vec2 finds where each letter is sung", icon: "pulse" },
+  { k: "fix", x: 750, y: 40, w: 200, h: 120, title: "Holds, repeats", sub: "Word ends follow the voice; repeated lines are found", icon: "hold" },
+  { k: "mus", x: 750, y: 236, w: 200, h: 120, title: "Beats, sections", sub: "Tempo, beats, downbeats, and where sections start", icon: "bars" },
+  { k: "edi", x: 1000, y: 40, w: 200, h: 120, title: "Check by ear", sub: "Unsure words are underlined for review", icon: "ear" },
+];
+const pipeExplain = [
+  { k: "song", title: "The original file is never touched.", body: "Lyrica decodes a copy to analyse and keeps the upload exactly as it was, at its full bit depth and sample rate, for the finished video." },
+  { k: "lyr", title: "My text is the source of truth.", body: "Section tags become the song's sections and are never timed as words. (x2) at the end of a line means it's sung twice, and a line in parentheses is a backing vocal that still gets timed." },
+  { k: "voc", title: "Listen to the voice alone.", body: "Every later step works on the isolated vocal, so drums and guitars can't drag a word off its spot. The vocal is saved under the audio's fingerprint, so analysing a song again skips this step." },
+  { k: "anc", title: "Borrow the timing, never the words.", body: "Lyrica looks the song up on LRCLIB and matches my lines to its synced lines with Needleman–Wunsch, the same kind of alignment used on DNA, so missing or extra lines don't throw it off. Only the start times are kept, as soft hints for the word timing." },
+  { k: "aln", title: "Ask where, not what.", body: "Lyrica never asks a model what was sung: screams and stretched vowels make that hopeless. It already has the words, so a multilingual wav2vec2 model scores every letter at every moment, and one Viterbi pass over the whole song finds the best path through all of them. In one pass, lines can't steal syllables from each other, and no word can land where the vocal is silent." },
+  { k: "fix", title: "Words end when the singer stops.", body: "This kind of model places letters on short spikes, so raw word ends come too early. Each word is stretched while the voice stays loud, and long holds are marked as held notes. Singing that no word covers is tested against the lines around it, to catch a line sung twice but written once." },
+  { k: "mus", title: "Sections come from my tags.", body: "Each tagged section gets its real start and end from the timed words, and the audio only fills the gaps, like an intro or an instrumental. Tempo, beats, and the low, mid and high end are measured 50 times a second." },
+  { k: "edi", title: "I still sign off on every word.", body: "Each word comes with a confidence score: how strongly the model preferred that letter over every other at that moment. Under 0.3, the word is underlined in the editor. I listen, fix what's off and tick it off, and I can always go back to what the agent produced." },
+];
+
+const runEdges = `<rect x="232.5" y="0.5" width="735" height="383" rx="14" fill="none" stroke="#3a3040" stroke-dasharray="5 4"/><g stroke="#4a4a4a" stroke-width="1.5" fill="none"><path d="M200 100 H 242"/><path d="M450 100 H 492"/><path d="M700 100 H 742"/><path d="M1000 100 H 958"/><path d="M600 160 V 228"/><path d="M670 160 V 196 H 850 V 228"/></g><g fill="#4a4a4a"><path d="M242 95 L 250 100 L 242 105 Z"/><path d="M492 95 L 500 100 L 492 105 Z"/><path d="M742 95 L 750 100 L 742 105 Z"/><path d="M958 95 L 950 100 L 958 105 Z"/><path d="M595 228 L 600 236 L 605 228 Z"/><path d="M845 228 L 850 236 L 855 228 Z"/></g>`;
+const run = [
+  { k: "me", x: 0, y: 40, w: 200, h: 140, title: "Me", sub: "The only user. No accounts, sign-up or roles.", icon: "user" },
+  { k: "acc", x: 250, y: 40, w: 200, h: 140, title: "Cloudflare Access", sub: "Sign-in required for every page and API call.", icon: "lock" },
+  { k: "wk", x: 500, y: 40, w: 200, h: 140, title: "Worker", sub: "API and web app. Uploads go to R2 in 32 MB parts, with no storage keys.", icon: "worker" },
+  { k: "d1", x: 500, y: 236, w: 200, h: 140, title: "D1", sub: "Songs, lyrics and status. 30 days of point-in-time restore.", icon: "db" },
+  { k: "hub", x: 750, y: 40, w: 200, h: 140, title: "Job hub", sub: "Durable Object: the job queue and the agent's WebSocket. Dropped jobs are requeued.", icon: "queue" },
+  { k: "r2", x: 750, y: 236, w: 200, h: 140, title: "R2", sub: "Audio and analyses. A daily job deletes orphaned files.", icon: "box" },
+  { k: "agent", x: 1000, y: 40, w: 200, h: 140, title: "Lyrica Agent", sub: "Outbound connection only, authenticated with a token. No open ports.", icon: "agent" },
+];
+const runLabels = [
+  { x: 0, y: 8, small: true, text: "Anywhere" },
+  { x: 248, y: 8, small: true, text: "Cloudflare" },
+  { x: 1000, y: 8, small: true, text: "At home" },
+];
+---
+
+<Showcase slug="lyrica" title="Lyrica" description="A private app that times every word of a song's lyrics with machine learning, on my own GPU.">
+  <section slot="hero" class="sc-hero">
+    <div class="ly-hero">
+      <div class="ly-text">
+        <span class="ly-name">Lyrica</span>
+        <h1 class="ly-title" aria-label="Every word, right when it's sung.">
+          {words.map((w, i) => <><span class={`w w${i}`} aria-hidden="true">{w}</span>{i < words.length - 1 && " "}</>)}
+        </h1>
+        <p class="ly-sub">I give it a song and its lyrics. It pulls out the voice, times every word with machine learning, and hands me the result to check by ear.</p>
+        <p class="ly-facts parts"><span>A private app</span><span>Since Oct 4, 2026</span></p>
+      </div>
+      <div class="ly-strip" aria-hidden="true">
+        <svg viewBox="0 0 1200 170" set:html={STRIP + '<text x="664" y="92" font-size="12" fill="#cf7fcb">held note</text><text x="581" y="92" font-size="12" fill="#e8a33d" text-anchor="end">check by ear</text>'} />
+        <div class="ly-head" />
+      </div>
+    </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">Why I built it</h2>
+    <div class="hist">
+      <div class="hist-line" />
+      <div class="hist-gap"><span>Over five years without a video</span></div>
+      {dots.map((x) => <span class="hist-dot" style={`left:${x}px`} />)}
+      <span class="hist-dot first" />
+      <span class="hist-dot now" />
+      {years.map(([y, x]) => <span class="hist-year" style={`left:${x}px`}>{y}</span>)}
+      {history.map((h) => (
+        <div class:list={["hist-item", { now: h.now, gap: h.gap }]} style={`${h.right !== undefined ? `right:${h.right}px;text-align:right` : `left:${h.x}px`};top:${h.top}px;width:${h.w}px`}>
+          <span class="hist-d">{h.d}</span>
+          <span class="hist-t">{h.t}</span>
+        </div>
+      ))}
+    </div>
+    <div class="concept-more" style="margin-top: 0">
+      <div class="quote"><q>I don't like those lazy videos that just print an entire section on screen.</q></div>
+      <div class="prose">
+        <p>I've made lyric videos for fun for about ten years. I like the ones where you can tell care went into them, so I synced every line, and often every word, by hand and by ear. With my attention to detail, a good video took me well over a month.</p>
+        <p>People liked them, but the timing was so tedious that I stopped in 2021, even though I loved making them. Lyrica does that hardest part now, so I can post again and spend my time on the creative side.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <div class="sec-head">
+      <h2 class="h2">From a song to timed words</h2>
+      <p class="sec-sub">All of this runs on my own GPU. A 3:17 song takes about 53 seconds on an RTX 3060 Ti.</p>
+    </div>
+    <Diagram height={364} nodes={pipe} edges={pipeEdges} labels={[{ x: 462, y: 306, small: true, text: "each line’s start time" }, { x: 462, y: 324, small: true, text: "goes to word timing" }]} explain={pipeExplain} initial="aln" />
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <div class="sec-head">
+      <h2 class="h2">Where it runs</h2>
+      <p class="sec-sub">The app lives on Cloudflare. The heavy lifting happens on my own PC.</p>
+    </div>
+    <div class="run"><Diagram height={384} nodes={run} edges={runEdges} labels={runLabels} accentIcons /></div>
+    <div class="built-foot" style="margin-top: 12px">
+      <div class="chips">{p.tech.map((t) => <a class="pill" href={`/map?t=${encodeURIComponent(t)}`}>{t}</a>)}</div>
+    </div>
+  </section>
+</Showcase>
+
+<script>
+  // The hero, on one GSAP timeline: each word lights up as the playhead reaches it in
+  // the timing strip below, holds, and fades for the next pass. It pauses off screen.
+  import { gsap, ScrollTrigger, reduced } from "../../scripts/motion";
+  const words = [...document.querySelectorAll<HTMLElement>(".ly-title .w")];
+  const head = document.querySelector<HTMLElement>(".ly-head");
+  if (words.length && head && !reduced()) {
+    const LOOP = 6, DIM = "rgba(242, 238, 244, 0.16)", LIT = "#f2eef4";
+    const at = [0, 0.45, 1.15, 1.5, 1.77, 2.02]; // when each word is sung, in seconds
+    const tl = gsap.timeline({ repeat: -1, defaults: { ease: "none" } });
+    tl.fromTo(head, { left: "4.1667%", autoAlpha: 1 }, { left: "94.1667%", duration: 3.6 }, 0).set(head, { autoAlpha: 0 }, 3.63);
+    words.forEach((w, i) => {
+      const last = i === words.length - 1;
+      tl.fromTo(w, { color: DIM, textShadow: "0 0 0px rgba(142, 43, 139, 0)" },
+        { color: last ? "#cf7fcb" : LIT, textShadow: last ? "0 0 32px rgba(142, 43, 139, 1)" : "0 0 0px rgba(142, 43, 139, 0)", duration: 0.05 }, at[i])
+        .to(w, { color: DIM, textShadow: "0 0 0px rgba(142, 43, 139, 0)", duration: 0.54 }, 5.16);
+    });
+    tl.set({}, {}, LOOP).pause(0);
+    gsap.delayedCall(0.5, () => tl.play());
+    ScrollTrigger.create({ trigger: ".ly-hero", start: "top bottom", end: "bottom top", onToggle: (self) => (self.isActive ? tl.time() > 0 && tl.play() : tl.pause()) });
+  }
+</script>
+
+<style>
+  .ly-hero { background: var(--p-bg); border: 1px solid var(--p-line); border-radius: 12px; padding: 64px 72px 40px; display: flex; flex-direction: column; gap: 40px; min-height: 552px; justify-content: space-between; }
+  .ly-text { display: flex; flex-direction: column; gap: 22px; }
+  .ly-name { font-size: 22px; font-weight: 600; letter-spacing: -0.01em; color: var(--p-accent); }
+  .ly-title { margin: 0; font-size: clamp(44px, 6.5vw, 84px); font-weight: 600; letter-spacing: -0.035em; line-height: 1; }
+  /* Lit by default, so the line reads even without the animation; dimmed only while it runs. */
+  .w { color: #f2eef4; }
+  .w5 { color: #cf7fcb; }
+  :global(.motion) .w { color: rgba(242, 238, 244, 0.16); }
+  .ly-sub { font-size: 18px; line-height: 1.6; color: var(--p-soft); max-width: 62ch; }
+  .ly-facts { font-size: 13px; color: #a29aa9; }
+  .ly-strip { position: relative; width: 100%; max-width: 1200px; aspect-ratio: 1200 / 170; font-family: var(--font); }
+  .ly-strip svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .ly-head { position: absolute; left: 4.1667%; top: 8.2%; width: 2px; height: 70.6%; background: #f2eef4; border-radius: 1px; }
+  @media (prefers-reduced-motion: reduce) {
+    .w { color: #f2eef4; }
+    .w5 { color: #cf7fcb; }
+    .ly-head { display: none; }
+  }
+
+  .sec-head { display: flex; flex-direction: column; gap: 10px; }
+  .sec-sub { font-size: 16px; color: #a29aa9; }
+
+  .hist { position: relative; width: 1200px; max-width: 100%; height: 290px; }
+  .hist-line { position: absolute; left: 0; right: 0; top: 139px; height: 2px; background: #3a3a3a; }
+  .hist-gap { position: absolute; left: 577px; width: 610px; top: 126px; height: 28px; border-radius: 6px; background: repeating-linear-gradient(135deg, #1c171f 0 8px, #141016 8px 16px); border: 1px dashed #3a3040; }
+  .hist-gap span { position: absolute; left: 0; right: 0; top: -30px; text-align: center; font-size: 15px; color: #a29aa9; }
+  .hist-dot { position: absolute; top: 134px; width: 12px; height: 12px; border-radius: 50%; background: var(--body); }
+  .hist-dot.first { left: -6px; border: 2px solid var(--subtle); background: var(--ink); }
+  .hist-dot.now { left: 1196px; top: 131px; width: 18px; height: 18px; background: var(--p-accent); box-shadow: 0 0 0 7px #8e2b8b55; }
+  .hist-year { position: absolute; top: 164px; font-size: 12px; color: #6f6675; }
+  .hist-item { position: absolute; display: flex; flex-direction: column; gap: 4px; }
+  .hist-d { font-size: 13px; color: var(--body); }
+  .hist-item.now .hist-d { color: var(--p-accent); }
+  .hist-t { font-size: 15px; line-height: 1.4; color: var(--body); }
+  .hist-item.gap { display: none; }
+
+  .run :global(.node-s) { color: #c9c0cc; }
+
+  @media (max-width: 1279px) {
+    .ly-hero { padding: 40px; min-height: 0; }
+    /* The history becomes a plain list on narrower screens. */
+    .hist { height: auto; display: flex; flex-direction: column; gap: 16px; border-left: 2px solid #3a3a3a; padding-left: 20px; margin-left: 6px; }
+    .hist-line, .hist-gap, .hist-dot, .hist-year { display: none; }
+    .hist-item { position: static; width: auto !important; text-align: left !important; }
+    .hist-item.gap { display: flex; }
+    .hist-item.gap .hist-t { color: #a29aa9; }
+  }
+  @media (max-width: 767px) {
+    .ly-hero { padding: 28px 20px; }
+  }
+</style>

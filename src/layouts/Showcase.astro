@@ -1,0 +1,46 @@
+---
+import Base from "./Base.astro";
+import End from "../components/showcase/End.astro";
+import "../styles/showcase.css";
+import { bySlug, nextOf, live } from "../data/projects";
+import { SITE } from "../data/site";
+
+interface Props { slug: string; title: string; description: string; }
+const { slug, title, description } = Astro.props;
+const p = bySlug(slug);
+const next = nextOf(slug);
+const t = p.theme;
+const L = await live(p);
+const url = `${SITE.url}/projects/${slug}`;
+const app: Record<string, unknown> = {
+  "@type": "SoftwareApplication", name: p.name, description, url, applicationCategory: p.kind, author: { "@id": `${SITE.url}/#me` },
+  ...(L.version && !p.status ? { softwareVersion: L.version, datePublished: L.date?.toISOString().slice(0, 10) } : {}),
+  ...(p.repo ? { codeRepository: `https://github.com/${p.repo}`, offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } } : {}),
+};
+const crumbs = { "@type": "BreadcrumbList", itemListElement: [
+  { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+  { "@type": "ListItem", position: 2, name: p.name, item: url },
+] };
+const vars = `--p-bg:${t.bg};--p-line:${t.line};--p-accent:${t.accent};--p-soft:${t.soft};--p-sel:${t.sel};--p-sep:${t.sep};--p-chip:${t.chip};--p-ink:${t.ink};--p-dim:${t.dim}`;
+---
+
+<Base title={title} description={description} image={`/og/${slug}.png`} schema={[app, crumbs]}>
+  <div class="sc" style={vars}>
+    <slot name="hero" />
+    <a href="#more" class="scroll-cue" aria-label="Scroll down"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg></a>
+    <span id="more"></span>
+    <div class="wrap">
+      <slot />
+    </div>
+    <slot name="after" />
+    <End project={p.name} slug={slug} next={{ name: next.name, slug: next.slug }} />
+  </div>
+</Base>
+
+<script>
+  // The scroll cue fades once you start scrolling.
+  const cue = document.querySelector<HTMLElement>(".scroll-cue");
+  const hideCue = () => cue?.classList.toggle("gone", scrollY > 40);
+  addEventListener("scroll", hideCue, { passive: true });
+  hideCue();
+</script>

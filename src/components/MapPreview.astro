@@ -1,0 +1,25 @@
+---
+// A preview of the Map, drawn from the same terrain. With `focus`, it frames that
+// project's peak and lights its rings, the way the Map shows it when picked.
+import { W, H, peaks, terrain } from "../lib/terrain";
+
+interface Props { focus?: string; aspect: number; class?: string; label?: string }
+const { focus, aspect, class: cls, label = "Map of projects" } = Astro.props;
+const rings = terrain(3, 0.8);
+const peak = focus ? peaks.find((p) => p.slug === focus) : undefined;
+// Frame: the whole map, or a window around the focused peak that stays inside the map.
+let vw = W, vh = W / aspect;
+if (vh > H) { vh = H; vw = H * aspect; }
+let vx = (W - vw) / 2, vy = (H - vh) * 0.4;
+if (peak) {
+  vw = Math.min(W, 760); vh = vw / aspect;
+  vx = Math.max(0, Math.min(W - vw, peak.x - vw / 2));
+  vy = Math.max(0, Math.min(H - vh, peak.y - vh / 2));
+}
+---
+<svg viewBox={`${vx.toFixed(0)} ${vy.toFixed(0)} ${vw.toFixed(0)} ${vh.toFixed(0)}`} preserveAspectRatio="xMidYMid slice" role="img" aria-label={label} class={cls}>
+  <g fill="none" stroke-width="1.2">
+    {rings.map((r) => <path d={r.d} stroke={r.p && r.p === focus ? "#d65bc8" : "#363636"} />)}
+  </g>
+  {peaks.map((p) => <circle cx={p.x} cy={p.y} r={p.slug === focus ? 5 : p.featured ? 3.5 : 2.5} fill={p.slug === focus ? "#d65bc8" : p.featured ? "#adadad" : "#666"} />)}
+</svg>

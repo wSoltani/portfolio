@@ -1,0 +1,93 @@
+---
+import Base from "../layouts/Base.astro";
+import Flow from "../components/Flow.astro";
+---
+
+<Base title="Nothing here" description="This page doesn't exist." noindex>
+  <div class="wrap nf">
+    <div class="text">
+      <h1 class="h1" data-title>404<br />Nothing here</h1>
+      <p class="sub">This pattern is made from the address you typed, so at least you got that. <span class="cool">Isn't that cool?</span></p>
+      <div class="actions">
+        <a href="/" class="btn">Back home</a>
+        <button type="button" class="btn btn-outline nope" data-nope>No, it's not</button>
+      </div>
+    </div>
+    <div class="art" data-404>
+      <Flow width={520} height={520} seed="/404" class="pat" />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .nf { padding-top: 96px; display: grid; grid-template-columns: 1fr 520px; gap: 64px; align-items: center; }
+  .text { display: flex; flex-direction: column; gap: 20px; }
+  .sub { font-size: 22px; line-height: 1.5; color: var(--body); max-width: 34ch; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .cool { color: var(--text); }
+  /* Solid, so it stays readable wherever it lands, stripes included. Same weight as its neighbor. */
+  .nope { position: relative; z-index: 10; will-change: transform; font-weight: 600; background: var(--raised); border-color: #5a5a5a; }
+  .nope:hover { background: var(--raised); }
+  .art :global(.pat) { width: 100%; aspect-ratio: 1; height: auto; border-radius: 12px; }
+  @media (max-width: 1023px) { .nf { grid-template-columns: 1fr; gap: 40px; } .art { max-width: 520px; } .sub { font-size: 19px; } }
+</style>
+
+<script>
+  import { flowPath } from "../lib/flowlines";
+  import { gsap, settle, reduced } from "../scripts/motion";
+  // Seeded by the address that was typed, so every missing page has its own pattern.
+  // The page's signature: the stripes swirl into that pattern from straight.
+  const svg = document.querySelector<SVGSVGElement>("[data-404] svg");
+  if (svg) {
+    svg.dataset.seed = location.pathname.toLowerCase();
+    if (reduced()) svg.querySelector("path")!.setAttribute("d", flowPath({ width: 520, height: 520, seed: svg.dataset.seed }));
+    else settle(svg, { duration: 1.4, from: 0, delay: 0.15 });
+  }
+
+  // "No, it's not" can't be clicked. It sits still until the cursor reaches it, slips away
+  // the moment it does, before a press can land, and from then on it moves off as soon
+  // as the pointer comes close.
+  const no = document.querySelector<HTMLButtonElement>("[data-nope]")!;
+  let awake = false;
+  let moving = false;
+  const flee = (px: number, py: number) => {
+    awake = true;
+    // Where it sits without any offset, measured from where it is right now.
+    const r = no.getBoundingClientRect();
+    const home = { left: r.left - (gsap.getProperty(no, "x") as number), top: r.top - (gsap.getProperty(no, "y") as number) };
+    const pad = 16, top = 88;
+    let tx = 0, ty = 0;
+    for (let i = 0; i < 30; i++) {
+      tx = pad + Math.random() * Math.max(0, innerWidth - r.width - pad * 2);
+      ty = top + Math.random() * Math.max(0, innerHeight - r.height - top - pad);
+      if (Math.hypot(tx + r.width / 2 - px, ty + r.height / 2 - py) > 320) break;
+    }
+    const to = { x: tx - home.left, y: ty - home.top };
+    if (reduced()) { gsap.set(no, to); return; }
+    // One slow, smooth glide. For its first half second the pointer is ignored, so it
+    // can't ricochet off the cursor several times in a row.
+    moving = true;
+    gsap.to(no, { ...to, duration: 1.6, ease: "power2.out", overwrite: true });
+    gsap.delayedCall(0.5, () => (moving = false));
+  };
+  // Checked every frame, not only when the mouse moves, so a cursor resting on it counts too.
+  let pointer: { x: number; y: number } | null = null;
+  addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") pointer = { x: e.clientX, y: e.clientY }; });
+  document.documentElement.addEventListener("pointerleave", () => (pointer = null));
+  gsap.ticker.add(() => {
+    if (moving || !pointer) return;
+    const r = no.getBoundingClientRect();
+    const dx = Math.max(r.left - pointer.x, 0, pointer.x - r.right);
+    const dy = Math.max(r.top - pointer.y, 0, pointer.y - r.bottom);
+    if (Math.hypot(dx, dy) < (awake ? 60 : 1)) flee(pointer.x, pointer.y);
+  });
+  no.addEventListener("pointerdown", (e) => { e.preventDefault(); if (!moving) flee(e.clientX, e.clientY); });
+  no.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (moving) return;
+    const r = no.getBoundingClientRect();
+    flee(r.left + r.width / 2, r.top + r.height / 2);
+  });
+  // If the window shrinks, bring it back into view.
+  addEventListener("resize", () => { const r = no.getBoundingClientRect(); if (r.right > innerWidth || r.bottom > innerHeight) flee(innerWidth / 2, innerHeight / 2); });
+</script>

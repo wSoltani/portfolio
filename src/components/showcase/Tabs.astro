@@ -1,0 +1,24 @@
+---
+// Panels are passed as children: <div class="tabpanel" data-tab="Name" hidden>…</div>.
+// Leave the initial one without `hidden`.
+interface Props { names: string[]; initial: string; label: string; }
+const { names, initial, label } = Astro.props;
+---
+
+<div data-tabs style="display: contents">
+  <div class="tabs" role="tablist" aria-label={label}>
+    {names.map((n) => <button type="button" role="tab" class="tab" aria-selected={n === initial ? "true" : "false"} data-tab={n}>{n}</button>)}
+  </div>
+  <slot />
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>("[data-tabs]")) {
+    root.querySelector(".tabs")!.addEventListener("click", (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>(".tab");
+      if (!b) return;
+      root.querySelectorAll<HTMLElement>(".tab").forEach((t) => t.setAttribute("aria-selected", String(t === b)));
+      root.querySelectorAll<HTMLElement>(".tabpanel").forEach((p) => (p.hidden = p.dataset.tab !== b.dataset.tab));
+    });
+  }
+</script>

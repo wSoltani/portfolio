@@ -1,0 +1,177 @@
+---
+import { Image } from "astro:assets";
+import Showcase from "../../layouts/Showcase.astro";
+import Icon from "../../components/Icon.astro";
+import Timeline from "../../components/showcase/Timeline.astro";
+import Diagram from "../../components/showcase/Diagram.astro";
+import Tabs from "../../components/showcase/Tabs.astro";
+import Facts from "../../components/showcase/Facts.astro";
+import { bySlug, live } from "../../data/projects";
+import dialog from "../../assets/syncify/dialog.png";
+
+const p = bySlug("syncify");
+const L = await live(p);
+const repo = `https://github.com/${p.repo}`;
+const file = L.assets.find((a) => a.name === "syncify.js")?.url ?? `${repo}/releases/latest`;
+
+const steps = [
+  { icon: "cloudUp", t: "Back up", b: "Open Syncify from the top bar, your profile menu or Ctrl+Alt+S, and back up in one click." },
+  { icon: "layers", t: "Kept online", b: "Your backup is saved online along with the two before it." },
+  { icon: "cloudDown", t: "Restore", b: "After a reinstall, a broken update or on another computer, pick a backup and restore it." },
+  { icon: "checkCircle", t: "Back as it was", b: "Spotify reloads, and Marketplace puts your extensions, themes and snippets back." },
+];
+
+const miles = [
+  { d: "May 28, 2026", t: "Planned, built, released", body: "Syncify was planned and built on May 28, and v1.0.1 went out that night. The plan already set the rules it still follows: no account to create, your backup found through your Spotify account, and a full backup never replaced by an empty one. Automatic backups were switched off by default the same day." },
+  { d: "June 2", t: "Version history", body: "v1.1.0 started keeping your last three backups instead of one, so a broken or accidental backup, or one made automatically, can't replace the only good copy. The dialog also started showing which version of Syncify you're running." },
+  { d: "August 20", t: "Marketplace moved its data", body: "People setting up Spotify from scratch got an “empty backup” error. Marketplace had started saving its data in a different part of Spotify's storage, one that survives when Spotify resets your profile, and Syncify was still reading the old one. A Syncify user, zoltan, traced it and sent the fix, which shipped in v1.1.1." },
+  { d: "Oct 7, 2026", t: "Spotify's new top bar", body: "A Spotify update made extension buttons vanish from the top bar for some people, Syncify's included. v1.1.2 puts the button back whenever Spotify redraws the bar, adds Syncify to the profile menu, and opens it from anywhere with Ctrl+Alt+S (⌘⌥S on a Mac)." },
+];
+
+const edges = `<g stroke="#4a4a4a" stroke-width="1.5" fill="none"><path d="M230 106 H 282"/><path d="M520 106 H 672"/><path d="M910 106 H 962"/><path d="M1085 172 V 232 H 115 V 180"/></g><g fill="#4a4a4a"><path d="M282 101 L 290 106 L 282 111 Z"/><path d="M672 101 L 680 106 L 672 111 Z"/><path d="M962 101 L 970 106 L 962 111 Z"/><path d="M110 180 L 115 172 L 120 180 Z"/></g>`;
+const nodes = [
+  { k: "mkt", x: 0, y: 40, w: 230, h: 132, title: "Your setup", sub: "Marketplace's list of the extensions, themes and snippets you installed", icon: "list" },
+  { k: "ext", x: 290, y: 40, w: 230, h: 132, title: "Syncify", sub: "Packs that list up with a fingerprint of your Spotify username", icon: "syncify" },
+  { k: "srv", x: 680, y: 40, w: 230, h: 132, title: "Syncify server", sub: "Checks it's Marketplace data and files it under the fingerprint", icon: "server" },
+  { k: "kv", x: 970, y: 40, w: 230, h: 132, title: "Your backups", sub: "The latest one, plus the two before it", icon: "db" },
+];
+const labels = [
+  { x: 0, y: 0, text: "On your computer, inside Spotify" },
+  { x: 680, y: 0, text: "Online" },
+  { x: 530, y: 76, w: 140, center: true, small: true, text: "backup + fingerprint" },
+  { x: 0, y: 222, band: true, text: "Restore: the list comes back, Spotify reloads, and Marketplace reinstalls everything" },
+];
+const explain = [
+  { k: "mkt", title: "Marketplace does the reinstalling.", body: "Syncify saves Marketplace's own record of what you installed and how it's set up, not the extensions themselves. After a restore, Spotify reloads and Marketplace downloads everything again. That keeps backups small, and Syncify never needs access to the files on your computer." },
+  { k: "ext", title: "A good backup never gets replaced by an empty one.", body: "Syncify won't upload a backup with nothing in it. Automatic backups stay off unless you turn them on, and even then, if this computer has less than half of what's in your online backup, Syncify stops and asks you to restore first. That's the usual sign of a fresh install, not of a setup you changed on purpose." },
+  { k: "srv", title: "No account to create, and nothing to leak.", body: "Your backup is filed under your Spotify account, so it follows you to any computer where you use Spotify. Syncify only sends a fingerprint of your username, a fixed string of letters and numbers that can't be turned back into the name, so the server finds your backup without knowing whose it is. It accepts nothing but Marketplace data under 512 KB, and has no logins or passwords to protect." },
+  { k: "kv", title: "Three restore points.", body: "Each backup keeps the two before it, so a broken or accidental backup never leaves you without a good copy. If the three ever grow too large to store together, the oldest goes first and the latest is always kept." },
+];
+const facts = [
+  { value: "4.9k", label: "Accounts backed up" },
+  { value: String(L.stars ?? 29), label: "GitHub stars" },
+  { value: String(L.releases ?? 4), label: "Releases" },
+  { value: "MIT", label: "Open source" },
+];
+---
+
+<Showcase slug="syncify" title="Syncify" description="A Spicetify extension that backs up your Marketplace extensions, themes and snippets, and restores them when Spotify breaks.">
+  <section slot="hero" class="sc-hero">
+    <div class="sc-hero-card">
+      <div class="sc-hero-text">
+        <h1 class="wordmark"><Icon name="syncify" size={48} stroke={2.25} /><span>SYNCIFY</span></h1>
+        <p class="sc-hero-title">Your Spicetify setup needs a savepoint.</p>
+        <p class="sc-hero-sub">Back up the extensions, themes and snippets you added to Spotify, and get them back in one click when an update breaks them or you move to a new computer.</p>
+        <div class="sc-actions">
+          <a class="sc-btn" href="https://github.com/spicetify/marketplace">Get it in Marketplace</a>
+          <a class="sc-btn outline" href={file}><Icon name="download" />syncify.js</a>
+          <a class="sc-round" href={repo} aria-label="Source code on GitHub"><Icon name="github" size={20} /></a>
+        </div>
+        <p class="sc-facts parts"><span>{L.versionLabel}</span><span>{L.dateLabel}</span><span>Free and open source (MIT)</span></p>
+      </div>
+      <Image src={dialog} alt="The Syncify dialog open in Spotify, with three saved backups" widths={[490, 882]} sizes="490px" class="sc-shot dialog" priority />
+    </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">How it works</h2>
+    <ol class="how">
+      {steps.map((s, i) => (
+        <li class="how-card">
+          <span class="how-top"><Icon name={s.icon} size={22} /><span class="how-n">{i + 1}</span></span>
+          <span class="how-t">{s.t}</span>
+          <span class="how-b">{s.b}</span>
+        </li>
+      ))}
+    </ol>
+    <div class="saves">
+      <div class="chips" style="align-items: center"><span class="small" style="color: var(--subtle); margin-right: 6px">What it saves</span>{["Extensions", "Themes", "Snippets", "Marketplace settings"].map((c) => <span class="chip">{c}</span>)}</div>
+      <span class="small">Can also back up when Spotify starts, if you turn it on</span>
+    </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">Concept</h2>
+    <Timeline miles={miles} />
+    <div class="concept-more">
+      <div class="quote"><q>Getting wiped and having to redo everything has to be exhausting.</q></div>
+      <div class="prose">
+        <p>Spicetify adds extensions and themes to the Spotify desktop app, and Spotify updates kept wiping mine. My setup is light, a few extensions for things I need and one for fun, but friends of mine run dozens of extensions and detailed themes.</p>
+        <p>On the Spicetify subreddit, lots of people had the same problem. Some said Spicetify's own local backup got wiped too, and it only runs when you remember to run it, unless you can write a script to schedule it. Syncify keeps your setup online instead, and can back it up every time Spotify starts.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">How it's built</h2>
+    <Diagram height={256} nodes={nodes} edges={edges} labels={labels} explain={explain} initial="srv" stackNote="Restore: the list comes back, Spotify reloads, and Marketplace reinstalls everything." />
+    <div class="built-foot">
+      <div class="chips">{p.tech.map((t) => <a class="pill" href={`/map?t=${encodeURIComponent(t)}`}>{t}</a>)}</div>
+      <div class="doc-links"><a href={repo}>Source ↗</a></div>
+    </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">How it's shaped</h2>
+    <Tabs names={["Name", "Audience", "Pricing", "Launch", "Support"]} initial="Name" label="How Syncify is shaped">
+      <div class="tabpanel" data-tab="Name">
+        <div class="panel tab-card">
+          <span class="mark"><Icon name="syncify" size={36} stroke={2.25} /><span>Syncify</span></span>
+          <div class="kv"><span>Spotify</span><span>The music app</span></div>
+          <div class="kv"><span>Spicetify</span><span>Adds some spice to it</span></div>
+          <div class="kv"><span>Syncify</span><span>Syncs Spicetify</span></div>
+        </div>
+        <p class="prose">First came Spotify. Spicetify came along to add some spice to it, and Syncify came along to sync Spicetify.</p>
+      </div>
+      <div class="tabpanel" data-tab="Audience" hidden>
+        <div class="panel tab-card">
+          <span class="big-quote">For anyone with a Spicetify setup worth keeping.</span>
+          <div class="kv2"><span>Windows, macOS and Linux</span><span>Wherever Spicetify runs</span></div>
+        </div>
+        <p class="prose">People who've put time into their extensions and themes, and anyone who uses Spotify on more than one computer, since a backup made on one restores on the other.</p>
+      </div>
+      <div class="tabpanel" data-tab="Pricing" hidden>
+        <div class="panel tab-card">
+          <div class="price"><b>$0</b><span>no accounts, no limits</span></div>
+          <div class="kv"><span>MIT</span><span>Open source</span></div>
+          <div class="kv"><span>Ko-fi</span><span>Optional tips</span></div>
+        </div>
+        <p class="prose">Syncify is free and open source. A Ko-fi link in the dialog lets people chip in if it saved their setup.</p>
+      </div>
+      <div class="tabpanel" data-tab="Launch" hidden>
+        <div class="panel tab-card">
+          <span class="label" style="color: var(--subtle)">Released May 28, 2026</span>
+          <div class="kv2"><span>Spicetify Marketplace</span><span>Install inside Spotify</span></div>
+          <div class="kv2"><span>GitHub releases</span><span>syncify.js, for manual installs</span></div>
+        </div>
+        <p class="prose">Syncify is listed in the Spicetify Marketplace, so most people install it from inside Spotify. Every release also goes up on GitHub with the file attached, for people who add extensions by hand.</p>
+      </div>
+      <div class="tabpanel" data-tab="Support" hidden>
+        <div class="panel tab-card">
+          <span class="label" style="color: var(--subtle)">On GitHub</span>
+          <div class="kv"><span>7</span><span>Issues and pull requests, all closed</span></div>
+          <div class="kv"><span>1</span><span>Fix sent in by a user</span></div>
+        </div>
+        <p class="prose">Questions and bug reports go through GitHub issues, and each one gets an answer with steps to narrow the problem down. When Marketplace changed where it keeps its data, a user traced the cause and sent the fix.</p>
+      </div>
+    </Tabs>
+  </section>
+
+  <Facts slot="after" items={facts} />
+</Showcase>
+
+<style>
+  .wordmark { display: flex; align-items: center; gap: 14px; margin: 0; font-size: 30px; font-weight: 700; letter-spacing: 0.04em; }
+  .dialog { width: auto; max-height: 552px; justify-self: center; border-color: #2a2a2a; }
+  .how { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .how-card { background: var(--p-bg); border: 1px solid #2a2a2a; border-radius: 10px; padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 12px; }
+  .how-top { display: flex; align-items: center; justify-content: space-between; color: var(--p-accent); }
+  .how-n { font-size: 13px; color: #6e6e6e; }
+  .how-t { font-size: 17px; font-weight: 600; }
+  .how-b { font-size: 15px; line-height: 1.55; color: #c4c4c4; }
+  .saves { display: flex; justify-content: space-between; align-items: center; gap: 16px 24px; flex-wrap: wrap; border-top: 1px solid #262626; padding-top: 20px; }
+  .chip { font-size: 14px; color: var(--body); border: 1px solid var(--p-chip); border-radius: 999px; padding: 6px 12px; }
+  .mark { display: flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+  @media (max-width: 1023px) { .how { grid-template-columns: repeat(2, minmax(0, 1fr)); } .dialog { max-height: 440px; } }
+  @media (max-width: 599px) { .how { grid-template-columns: 1fr; } }
+</style>

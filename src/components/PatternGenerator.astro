@@ -1,0 +1,153 @@
+---
+// The public Flowlines generator: the same code that draws the covers, share images and 404 page.
+import Flow from "./Flow.astro";
+
+const sizes = [
+  { id: "desktop", label: "Desktop", w: 2560, h: 1440 },
+  { id: "phone", label: "Phone", w: 1170, h: 2532 },
+  { id: "square", label: "Square", w: 2048, h: 2048 },
+  { id: "banner", label: "Banner", w: 1500, h: 500 },
+];
+---
+
+<div class="gen" data-gen>
+  <div class="controls">
+    <h2 class="h2">Pattern</h2>
+    <label class="field"><span>Text</span><input id="seed" value="Wassim Soltani" maxlength="80" spellcheck="false" autocomplete="off" /></label>
+    <fieldset class="field">
+      <legend>Colors</legend>
+      <div class="seg">
+        <label><input type="radio" name="colors" value="ink" checked /><span>Ink on magenta</span></label>
+        <label><input type="radio" name="colors" value="magenta" /><span>Magenta on ink</span></label>
+      </div>
+    </fieldset>
+    <fieldset class="field">
+      <legend>Size</legend>
+      <div class="sizes">
+        {sizes.map((s, i) => <label><input type="radio" name="size" value={s.id} data-w={s.w} data-h={s.h} checked={i === 0} /><span>{s.label}</span></label>)}
+      </div>
+    </fieldset>
+    <div class="actions">
+      <button type="button" class="btn" data-download>Download</button>
+      <button type="button" class="btn btn-outline" data-copy>Copy link</button>
+    </div>
+    <p class="note">The project covers, share images and 404 page on this site all come from this generator.</p>
+  </div>
+  <div class="preview">
+    <div class="frame" data-frame style="aspect-ratio: 2560 / 1440">
+      <Flow width={1280} height={720} seed="Wassim Soltani" class="art" />
+    </div>
+    <span class="label parts"><span>Preview</span><span data-size-label>2560 × 1440</span></span>
+  </div>
+</div>
+
+<style>
+  .gen { padding-top: 96px; display: grid; grid-template-columns: 380px 1fr; gap: 56px; }
+  .controls { display: flex; flex-direction: column; gap: 28px; }
+  .field { display: flex; flex-direction: column; gap: 8px; border: 0; padding: 0; margin: 0; min-width: 0; }
+  .field > span, legend { font-size: 14px; color: var(--muted); padding: 0; }
+  legend { margin-bottom: 8px; }
+  #seed { height: 48px; padding: 0 14px; border-radius: 6px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--text); font: inherit; font-size: 16px; }
+  #seed:focus-visible { border-color: var(--text); }
+  .seg { display: flex; gap: 4px; font-size: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 4px; }
+  .seg label, .sizes label { position: relative; }
+  .seg label { flex: 1 1 0; }
+  .seg input, .sizes input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .seg span { display: block; text-align: center; padding: 8px 0; border-radius: 6px; color: var(--muted); }
+  .seg input:checked + span { background: var(--wine-raised); color: var(--text); }
+  .sizes { display: flex; gap: 6px; flex-wrap: wrap; font-size: 14px; }
+  .sizes span { display: block; border: 1px solid var(--line-strong); border-radius: 6px; padding: 7px 12px; color: var(--muted); }
+  .sizes input:checked + span { border-color: var(--text); color: var(--text); }
+  .seg input:focus-visible + span, .sizes input:focus-visible + span { box-shadow: 0 0 0 2px var(--ink), -1px 0 0 4px var(--split-red), 1px 0 0 4px var(--split-blue), 0 0 0 4px var(--text); }
+  .actions { display: flex; gap: 10px; margin-top: 8px; }
+  .note { font-size: 14px; line-height: 1.55; color: var(--subtle); margin-top: 8px; }
+  .preview { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; min-width: 0; }
+  .frame { width: 100%; max-height: 640px; border-radius: 12px; overflow: hidden; }
+  .frame :global(svg) { width: 100%; height: 100%; display: block; }
+  @media (max-width: 1023px) { .gen { grid-template-columns: 1fr; gap: 32px; } }
+</style>
+
+<script>
+  import { flowPath } from "../lib/flowlines";
+
+  const root = document.querySelector<HTMLElement>("[data-gen]")!;
+  const input = root.querySelector<HTMLInputElement>("#seed")!;
+  const frame = root.querySelector<HTMLElement>("[data-frame]")!;
+  const label = root.querySelector<HTMLElement>("[data-size-label]")!;
+  const svg = frame.querySelector("svg")!;
+  const path = svg.querySelector("path")!;
+  const INK = "#0d0d0d", MAGENTA = "#94288c";
+
+  const state = () => {
+    const size = root.querySelector<HTMLInputElement>("input[name=size]:checked")!;
+    const colors = root.querySelector<HTMLInputElement>("input[name=colors]:checked")!.value;
+    return { text: input.value.trim() || "Wassim Soltani", w: +size.dataset.w!, h: +size.dataset.h!, size: size.value, colors };
+  };
+  const paint = (s: ReturnType<typeof state>) => (s.colors === "ink" ? { fg: INK, bg: MAGENTA } : { fg: MAGENTA, bg: INK });
+
+  // Drawn at half size, so the stripes keep the same width at any output size.
+  const draw = () => {
+    const s = state();
+    const w = Math.round(s.w / 2), h = Math.round(s.h / 2);
+    svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
+    path.setAttribute("d", flowPath({ width: w, height: h, seed: s.text }));
+    const { fg, bg } = paint(s);
+    svg.style.background = bg;
+    svg.style.color = fg;
+    frame.style.aspectRatio = `${s.w} / ${s.h}`;
+    const tall = s.h > s.w;
+    frame.style.width = tall ? "auto" : "100%";
+    frame.style.height = tall ? "min(640px, 80vh)" : "";
+    label.textContent = `${s.w} × ${s.h}`;
+  };
+
+  let t = 0;
+  input.addEventListener("input", () => { clearTimeout(t); t = window.setTimeout(draw, 120); });
+  root.addEventListener("change", draw);
+
+  root.querySelector("[data-download]")!.addEventListener("click", async () => {
+    const s = state();
+    const { fg, bg } = paint(s);
+    const xml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${svg.getAttribute("viewBox")}" width="${s.w}" height="${s.h}"><rect width="100%" height="100%" fill="${bg}"/><path fill="${fg}" fill-rule="evenodd" d="${path.getAttribute("d")}"/></svg>`;
+    const img = new Image();
+    img.src = URL.createObjectURL(new Blob([xml], { type: "image/svg+xml" }));
+    await img.decode();
+    const c = document.createElement("canvas");
+    c.width = s.w;
+    c.height = s.h;
+    c.getContext("2d")!.drawImage(img, 0, 0, s.w, s.h);
+    URL.revokeObjectURL(img.src);
+    c.toBlob((b) => {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(b!);
+      const slug = s.text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "pattern";
+      a.download = `flowlines-${slug}-${s.size}.png`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }, "image/png");
+  });
+
+  const copy = root.querySelector<HTMLButtonElement>("[data-copy]")!;
+  copy.addEventListener("click", async () => {
+    const s = state();
+    const url = new URL(location.href);
+    url.search = new URLSearchParams({ text: s.text, colors: s.colors, size: s.size }).toString();
+    url.hash = "pattern";
+    try {
+      await navigator.clipboard.writeText(url.href);
+      copy.textContent = "Copied";
+    } catch {
+      copy.textContent = "Couldn't copy";
+    }
+    setTimeout(() => (copy.textContent = "Copy link"), 1600);
+  });
+
+  // A shared link opens with its settings.
+  const q = new URLSearchParams(location.search);
+  if (q.get("text")) input.value = q.get("text")!.slice(0, 80);
+  for (const [k, v] of [["colors", q.get("colors")], ["size", q.get("size")]] as const) {
+    const el = v ? root.querySelector<HTMLInputElement>(`input[name=${k}][value="${CSS.escape(v)}"]`) : null;
+    if (el) el.checked = true;
+  }
+  draw();
+</script>

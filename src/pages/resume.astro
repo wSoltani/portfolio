@@ -1,0 +1,82 @@
+---
+import Base from "../layouts/Base.astro";
+import { JOBS, EDU, SKILLS, LANG } from "../data/resume";
+
+---
+
+<Base title="Résumé" description="Experience, education and skills." image="/og/resume.png">
+  <div class="wrap resume">
+    <header class="top">
+      <div class="who">
+        <h1 class="h1" data-title>Résumé</h1>
+        <p class="sub parts"><span>Wassim Soltani</span><span>Software engineer</span><span>Tunisia, working remotely</span></p>
+      </div>
+      <a href="/wassim-soltani-resume.pdf" class="btn btn-outline pdf" download>Download PDF</a>
+    </header>
+
+    <section class="sec" data-reveal>
+      <h2 class="h3">Experience</h2>
+      {JOBS.map((j) => (
+        <div class="row">
+          <span class="when">{j.when}</span>
+          <div class="what">
+            <span class="title">{j.role} <span class="org">{j.org}</span></span>
+            <ul>{j.lines.map((l) => <li>{l}</li>)}</ul>
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <section class="sec" data-reveal>
+      <h2 class="h3">Projects</h2>
+      <div class="row single"><p class="p">My own products, from Netherstone to Switchflare, are on the <a href="/" class="link">home page</a>.</p></div>
+    </section>
+
+    <section class="sec" data-reveal>
+      <h2 class="h3">Education</h2>
+      {EDU.map((e) => (
+        <div class="row">
+          <span class="when">{e.w}</span>
+          <div class="what" style="gap: 6px">
+            <span class="title">{e.t} <span class="org">{e.o}</span></span>
+            {e.d && <p class="p">{e.d}</p>}
+          </div>
+        </div>
+      ))}
+    </section>
+
+    <section class="sec" data-reveal>
+      <h2 class="h3">Skills</h2>
+      {SKILLS.map(([a, b]) => <div class="row kv"><span class="when">{a}</span><p class="p">{b}</p></div>)}
+    </section>
+
+    <section class="sec" data-reveal>
+      <h2 class="h3">Languages</h2>
+      {LANG.map(([a, b]) => <div class="row kv"><span class="when">{a}</span><p class="p">{b}</p></div>)}
+    </section>
+  </div>
+</Base>
+
+<style>
+  .top { padding-top: 96px; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+  .who { display: flex; flex-direction: column; gap: 12px; }
+  .sub { font-size: 18px; color: var(--body); }
+  .sec { padding-top: 64px; display: flex; flex-direction: column; }
+  .sec .h3 { margin-bottom: 8px; }
+  .row { display: grid; grid-template-columns: 200px 1fr; gap: 32px; padding: 24px 0; border-top: 1px solid #262626; }
+  .row.kv { padding: 16px 0; }
+  .row.single { grid-template-columns: 1fr; padding: 16px 0; }
+  .when { font-size: 14px; color: var(--subtle); padding-top: 3px; }
+  .what { display: flex; flex-direction: column; gap: 10px; }
+  .title { font-size: 18px; font-weight: 600; }
+  .org { color: var(--muted); font-weight: 400; margin-left: 0.5em; }
+  ul { margin: 0; padding-left: 18px; font-size: 16px; line-height: 1.6; color: var(--body); }
+  li { margin: 0 0 6px; }
+  .p { font-size: 16px; line-height: 1.6; color: var(--body); }
+  .link { text-decoration-color: #4a4a4a; }
+  @media (max-width: 767px) {
+    .row { grid-template-columns: 1fr; gap: 6px; }
+    .row.kv { grid-template-columns: 110px 1fr; gap: 16px; }
+  }
+
+</style>

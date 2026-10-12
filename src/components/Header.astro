@@ -1,0 +1,38 @@
+---
+import { Image } from "astro:assets";
+import avatar from "../assets/brand/avatar.webp";
+
+interface Props { current?: "projects" | "map" | "contact"; avatar?: boolean; }
+const { current, avatar: showAvatar = true } = Astro.props;
+const items = [
+  { id: "projects", label: "Projects", href: "/#projects" },
+  { id: "map", label: "Map", href: "/map" },
+  { id: "contact", label: "Contact", href: "/contact" },
+] as const;
+---
+
+<header class="bar">
+  <div class="wrap row">
+    <a href="/" class="home" aria-label="Wassim Soltani, home">
+      {showAvatar && <Image src={avatar} alt="" width={28} height={28} densities={[1, 2]} class="av" loading="eager" />}
+      <span>Wassim Soltani</span>
+    </a>
+    <nav aria-label="Main">
+      {items.map((i) => (
+        <a href={i.href} class:list={["item", { on: current === i.id }]} aria-current={current === i.id ? "page" : undefined}>{i.label}</a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .bar { height: 72px; flex-shrink: 0; border-bottom: 1px solid var(--line); display: flex; align-items: center; }
+  .row { display: flex; justify-content: space-between; align-items: center; }
+  .home { display: flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 600; font-size: 15px; }
+  .av { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+  nav { display: flex; gap: 8px; font-size: 15px; }
+  .item { text-decoration: none; color: var(--muted); padding: 7px 12px; border-radius: 6px; transition: color var(--fast) ease, background var(--fast) ease; }
+  .item:hover { color: var(--text); }
+  .item.on { color: var(--text); background: var(--wine-raised); }
+  @media (max-width: 400px) { .home span { font-size: 14px; } }
+</style>

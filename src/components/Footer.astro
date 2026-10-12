@@ -1,0 +1,33 @@
+---
+import Flow from "./Flow.astro";
+import { SITE } from "../data/site";
+
+interface Props { flush?: boolean; }
+const { flush = false } = Astro.props;
+---
+
+<footer class:list={["foot", { flush }]}>
+  <Flow width={1440} height={48} seed="wsoltani.com" period={28} settle class="band" />
+  <div class="wrap links">
+    <nav aria-label="Footer" class="group">
+      <a href="/resume">Résumé</a>
+      <a href="/about-this-site">About this site</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <div class="group">
+      <a href={SITE.github} rel="me noopener" target="_blank">GitHub ↗</a>
+      <a href={SITE.linkedin} rel="me noopener" target="_blank">LinkedIn ↗</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .foot { position: relative; z-index: 1; margin-top: 96px; background: var(--wine); }
+  .foot.flush { margin-top: 0; }
+  .band { display: block; width: 100%; height: 48px; }
+  .links { display: flex; justify-content: space-between; align-items: center; gap: 24px 32px; flex-wrap: wrap; padding-top: 40px; padding-bottom: 48px; font-size: 15px; }
+  .group { display: flex; gap: 12px 32px; flex-wrap: wrap; }
+  a { color: var(--muted); text-decoration: none; }
+  a:hover { color: var(--orchid); }
+  @media (max-width: 639px) { .links { flex-direction: column; align-items: flex-start; } .band { height: 32px; } }
+</style>

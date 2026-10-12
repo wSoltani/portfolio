@@ -1,0 +1,118 @@
+---
+import { Image } from "astro:assets";
+import Showcase from "../../layouts/Showcase.astro";
+import Icon from "../../components/Icon.astro";
+import Diagram from "../../components/showcase/Diagram.astro";
+import Tabs from "../../components/showcase/Tabs.astro";
+import { bySlug } from "../../data/projects";
+import hero from "../../assets/switchflare/hero.png";
+
+const p = bySlug("switchflare");
+const site = "https://switchflare.wsoltani.com/";
+
+const does = [
+  { icon: "switch", t: "One click to switch", b: "Pick an account, and your open Cloudflare tabs reload into it, on the same page. No logging out and back in." },
+  { icon: "plusCircle", t: "New logins get saved", b: "Log in to Cloudflare the usual way. Switchflare notices the new account and offers to save it." },
+  { icon: "tag", t: "A color for each account", b: "Name each account and give it a color, so you always know which one you are working in." },
+  { icon: "clock", t: "Expired logins get flagged", b: "When a saved login expires, the account is marked so you can log in again. Its name, color and notes stay." },
+];
+
+const edges = `<g stroke="#4a4a4a" stroke-width="1.5" fill="none"><path d="M250 102 H 308"/><path d="M566 102 H 624"/><path d="M882 102 H 940"/></g><g fill="#4a4a4a"><path d="M308 97 L 316 102 L 308 107 Z"/><path d="M624 97 L 632 102 L 624 107 Z"/><path d="M940 97 L 948 102 L 940 107 Z"/></g>`;
+const nodes = [
+  { k: "pin", x: 0, y: 40, w: 250, h: 124, title: "Your PIN", sub: "Entered once per browser session. Never stored anywhere.", icon: "keypad" },
+  { k: "key", x: 316, y: 40, w: 250, h: 124, title: "Encryption key", sub: "Derived from the PIN with PBKDF2, 100,000 iterations. Never written to disk.", icon: "key" },
+  { k: "vault", x: 632, y: 40, w: 250, h: 124, title: "The vault", sub: "Saved logins, encrypted with AES-GCM. Unlocked only in the background worker’s memory.", icon: "lock" },
+  { k: "tabs", x: 948, y: 40, w: 250, h: 124, title: "Cloudflare tabs", sub: "The saved cookies are put back, and open tabs reload into the chosen account.", icon: "tabs" },
+];
+const labels = [
+  { x: 0, y: 0, text: "In your browser" },
+  { x: 250, y: 76, w: 66, center: true, small: true, text: "the PIN" },
+  { x: 566, y: 76, w: 66, center: true, small: true, text: "the key" },
+  { x: 882, y: 76, w: 66, center: true, small: true, text: "cookies" },
+];
+---
+
+<Showcase slug="switchflare" title="Switchflare" description="A browser extension that saves your Cloudflare logins and switches between them in one click, without logging out. Not released yet.">
+  <section slot="hero" class="sc-hero">
+    <div class="sc-hero-card sf">
+      <div class="sc-hero-text">
+        <h1 class="wordmark"><span style="display: flex; color: var(--p-accent)"><Icon name="switch" size={40} stroke={2} /></span><span>Switchflare</span></h1>
+        <p class="sc-hero-title">Switch Cloudflare accounts in one click.</p>
+        <p class="sc-hero-sub">A browser extension that saves your Cloudflare logins and switches between them without logging out. Everything stays encrypted on your computer.</p>
+        <div class="sc-actions"><a class="sc-btn" href={site}>Website<Icon name="external" /></a></div>
+        <p class="sc-facts parts"><span>Not released yet</span><span>Since May 2026</span></p>
+      </div>
+      <Image src={hero} alt="Switchflare on the Cloudflare dashboard, asking to unlock the vault" widths={[480, 740, 1040]} sizes="(min-width: 1280px) 740px, (min-width: 1024px) 45vw, calc(100vw - 48px)" class="sc-shot" style="border-radius: 8px" priority />
+    </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">What it does</h2>
+    <ul class="does">
+      {does.map((d) => (
+        <li><span style="display: flex; color: var(--p-accent)"><Icon name={d.icon} size={22} /></span><span class="t">{d.t}</span><span class="b">{d.b}</span></li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">Concept</h2>
+    <div class="concept-more" style="margin-top: 0">
+      <div class="quote"><q>Just does what it says.</q></div>
+      <div class="prose">
+        <p>I work across several Cloudflare accounts, and Cloudflare only lets you be logged in to one at a time. Every move between them meant logging out, logging back in, and going through two-factor again.</p>
+        <p>Switchflare saves each login once and swaps between them in a click. It's for anyone in the same spot: freelancers with client accounts, agencies, or anyone keeping work and personal apart.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">How it's built</h2>
+    <p class="prose">Saved logins never leave your computer. There is no Switchflare account and no cloud sync. The vault locks again after 15, 30 or 60 minutes.</p>
+    <Diagram height={172} nodes={nodes} edges={edges} labels={labels} accentIcons />
+    <div class="built-foot">
+      <div class="chips">{p.tech.map((t) => <a class="pill" href={`/map?t=${encodeURIComponent(t)}`}>{t}</a>)}</div>
+    </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">How it's shaped</h2>
+    <Tabs names={["Name", "Audience", "Pricing"]} initial="Name" label="How Switchflare is shaped">
+      <div class="tabpanel short" data-tab="Name">
+        <div class="panel tab-card">
+          <span class="mark"><span style="display: flex; color: var(--p-accent)"><Icon name="switch" size={34} stroke={2} /></span><span>Switchflare</span></span>
+          <div class="kv"><span>Switch</span><span>Between accounts</span></div>
+          <div class="kv"><span>Flare</span><span>From Cloudflare</span></div>
+        </div>
+        <p class="prose">Switchflare is switch plus the flare from Cloudflare.</p>
+      </div>
+      <div class="tabpanel short" data-tab="Audience" hidden>
+        <div class="panel tab-card"><span class="big-quote">For people who live in the Cloudflare dashboard.</span></div>
+        <p class="prose">Freelancers with client accounts, agencies, and anyone who keeps work and personal accounts apart.</p>
+      </div>
+      <div class="tabpanel short" data-tab="Pricing" hidden>
+        <div class="panel tab-card">
+          <span class="big-quote">Free for up to 3 accounts.</span>
+          <div class="kv"><span>Paid</span><span>For more accounts and extra features</span></div>
+        </div>
+        <p class="prose"><span>Plans and prices are on the <a href={site} class="accent-inline">Switchflare website</a>.</span></p>
+      </div>
+    </Tabs>
+  </section>
+</Showcase>
+
+<style>
+  .sf { grid-template-columns: 480px 1fr; }
+  .wordmark { display: flex; align-items: center; gap: 14px; margin: 0; font-size: 40px; font-weight: 600; letter-spacing: -0.02em; }
+  .mark { display: flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+  .does { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .does li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .does .t { font-size: 17px; font-weight: 600; }
+  .does .b { font-size: 14px; line-height: 1.55; color: #c9c9c9; }
+  .tabpanel.short { min-height: 240px; }
+  .accent-inline { color: var(--p-accent); }
+  :global(.sc .node-s) { color: #c9c0cc; }
+  @media (max-width: 1279px) { .sf { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+  @media (max-width: 1023px) { .sf { grid-template-columns: 1fr; } .does { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tabpanel.short { min-height: 0; } }
+  @media (max-width: 599px) { .does { grid-template-columns: 1fr; } }
+</style>

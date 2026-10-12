@@ -1,0 +1,58 @@
+---
+export interface Milestone { d: string; t: string; body: string; }
+interface Props { miles: Milestone[]; }
+const { miles } = Astro.props;
+---
+
+<div data-miles style="display: contents">
+  <div class="miles">
+    <div class="miles-row" style={`--n:${miles.length}`}>
+      {miles.map((m, i) => (
+        <button type="button" class:list={["mile", { on: i === 0 }]} aria-pressed={i === 0 ? "true" : "false"} data-i={i}>
+          <span class="mile-dot" />
+          <span class="mile-d">{m.d}</span>
+          <span class="mile-t">{m.t}</span>
+        </button>
+      ))}
+    </div>
+    <span class="mile-mark" aria-hidden="true"></span>
+  </div>
+  <div class="panel mile-body" aria-live="polite">
+    {miles.map((m, i) => <p class:list={["panel-text", { on: i === 0 }]} data-i={i}>{m.body}</p>)}
+  </div>
+</div>
+
+<script>
+  import { gsap, T, EASE, reduced } from "../../scripts/motion";
+
+  for (const root of document.querySelectorAll<HTMLElement>("[data-miles]")) {
+    const track = root.querySelector<HTMLElement>(".miles")!;
+    const mark = root.querySelector<HTMLElement>(".mile-mark")!;
+    // The marker sits on the chosen milestone's dot and slides to the next one.
+    const place = (btn: HTMLElement, animate: boolean) => {
+      const dot = btn.querySelector<HTMLElement>(".mile-dot")!.getBoundingClientRect();
+      const box = track.getBoundingClientRect();
+      const to = { x: dot.left - box.left, y: dot.top - box.top };
+      if (animate && !reduced()) gsap.to(mark, { ...to, duration: T.slow, ease: EASE.move, overwrite: true });
+      else gsap.set(mark, to);
+    };
+    const active = () => root.querySelector<HTMLElement>(".mile.on")!;
+    track.classList.add("has-mark");
+    place(active(), false);
+    new ResizeObserver(() => place(active(), false)).observe(track);
+
+    root.addEventListener("click", (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>(".mile");
+      if (!b || b.classList.contains("on")) return;
+      root.querySelectorAll<HTMLElement>(".mile").forEach((m) => {
+        const on = m === b;
+        m.classList.toggle("on", on);
+        m.setAttribute("aria-pressed", String(on));
+      });
+      root.querySelectorAll<HTMLElement>(".mile-body p").forEach((p) => p.classList.toggle("on", p.dataset.i === b.dataset.i));
+      place(b, true);
+      const body = root.querySelector<HTMLElement>(`.mile-body p[data-i="${b.dataset.i}"]`)!;
+      if (!reduced()) gsap.from(body, { autoAlpha: 0, y: 8, duration: T.base, ease: EASE.enter });
+    });
+  }
+</script>

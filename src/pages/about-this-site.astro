@@ -1,0 +1,30 @@
+---
+import Base from "../layouts/Base.astro";
+import PatternGenerator from "../components/PatternGenerator.astro";
+import { SITE } from "../data/site";
+---
+
+<Base title="About this site" description="How this site is built, where the avatar and Flowlines come from, and the pattern generator." image="/og/about-this-site.png">
+  <div class="wrap">
+    <header class="top">
+      <h1 class="h1" data-title>About this site</h1>
+      <dl class="rows" data-reveal>
+        <div class="row"><dt>Built with</dt><dd>Astro, with GSAP for the animations, served from Cloudflare. The code is <a href={`${SITE.github}/portfolio`} class="link">on GitHub ↗</a></dd></div>
+        <div class="row"><dt>Avatar</dt><dd>A photo of me that I edited in Photoshop. I used to make these as profile pictures for the sites I was on, back when editing and design were a hobby.</dd></div>
+        <div class="row"><dt>Flowlines</dt><dd>The stripes from the avatar, turned into a pattern for the rest of the site. They're contour lines in magenta and ink, and they never cross.</dd></div>
+        <div class="row"><dt>Type</dt><dd>Instrument Sans.</dd></div>
+      </dl>
+    </header>
+    <div id="pattern" data-reveal><PatternGenerator /></div>
+  </div>
+</Base>
+
+<style>
+  .top { padding-top: 96px; display: flex; flex-direction: column; gap: 48px; }
+  .rows { margin: 0; display: flex; flex-direction: column; border-bottom: 1px solid #262626; }
+  .row { display: grid; grid-template-columns: 200px 1fr; gap: 32px; align-items: baseline; padding: 22px 0; border-top: 1px solid #262626; }
+  dt { font-size: 15px; color: var(--subtle); }
+  dd { margin: 0; font-size: 18px; line-height: 1.6; color: var(--body); max-width: 60ch; }
+  .link { text-decoration-color: #4a4a4a; }
+  @media (max-width: 767px) { .row { grid-template-columns: 1fr; gap: 6px; } dd { font-size: 17px; } }
+</style>

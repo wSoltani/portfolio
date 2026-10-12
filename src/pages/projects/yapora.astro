@@ -1,0 +1,148 @@
+---
+import { Image } from "astro:assets";
+import Showcase from "../../layouts/Showcase.astro";
+import Icon from "../../components/Icon.astro";
+import Tour from "../../components/showcase/Tour.astro";
+import Timeline from "../../components/showcase/Timeline.astro";
+import Diagram from "../../components/showcase/Diagram.astro";
+import Tabs from "../../components/showcase/Tabs.astro";
+import YaporaMark from "../../components/showcase/YaporaMark.astro";
+import { bySlug, live } from "../../data/projects";
+import { ypTour } from "../../data/tours";
+import Avatar from "../../assets/yapora/Avatar.webp";
+import Halo from "../../assets/yapora/Halo.webp";
+import Mouth from "../../assets/yapora/Mouth.webp";
+import Audio from "../../assets/yapora/Audio.webp";
+import Stage from "../../assets/yapora/Stage.webp";
+import Output1 from "../../assets/yapora/Output1.webp";
+import Output2 from "../../assets/yapora/Output2.webp";
+import Profile from "../../assets/yapora/Profile.webp";
+import "@fontsource/inter/600.css";
+
+const p = bySlug("yapora");
+const L = await live(p);
+const repo = `https://github.com/${p.repo}`;
+const win = L.assets.find((a) => a.name.endsWith("-setup.exe"))?.url ?? L.releaseUrl;
+const steps = ypTour({ Avatar, Halo, Mouth, Audio, Stage, Output1, Output2, Profile });
+
+const miles = [
+  { d: "Sep 20–30, 2026", t: "A page inside OBS", body: "The first Yapora was a web page loaded into OBS as a Browser Source, with the avatar drawn so it stays sharp at any size. It worked, but OBS never asks for microphone access, so you had to relaunch OBS with special flags and keep a terminal window open while you streamed." },
+  { d: "Sep 30", t: "A desktop app", body: "The same night it became a Windows app. Yapora started reading the microphone itself and streaming the avatar to OBS, so OBS needed no flags or permissions. Profiles, audio files and video export came with it, and v0.0.1 beta went public that morning." },
+  { d: "Oct 3, 2026", t: "Transparent videos", body: "v0.0.2 let WebM exports keep a transparent background, so the avatar drops straight over other footage in OBS or a video editor. MP4 can't store transparency, so it still exports as green screen, and the export panel tells you which one you'll get." },
+];
+
+const edges = `<g stroke="#4a4a4a" stroke-width="1.5" fill="none"><path d="M220 106 H 292"/><path d="M520 106 H 592"/><path d="M820 106 H 952"/><path d="M710 172 V 302 H 952"/></g><g fill="#4a4a4a"><path d="M292 101 L 300 106 L 292 111 Z"/><path d="M592 101 L 600 106 L 592 111 Z"/><path d="M952 101 L 960 106 L 952 111 Z"/><path d="M952 297 L 960 302 L 952 307 Z"/></g>`;
+const nodes = [
+  { k: "snd", x: 0, y: 40, w: 220, h: 132, title: "Your sound", sub: "Your microphone, an audio file, or a test signal", icon: "mic" },
+  { k: "eng", x: 300, y: 40, w: 220, h: 132, title: "Audio engine", sub: "Listens, and splits the sound into frequencies 60 times a second", icon: "wave" },
+  { k: "stg", x: 600, y: 40, w: 220, h: 132, title: "The stage", sub: "Your avatar, halo and mouth react to those levels", icon: "target" },
+  { k: "obs", x: 960, y: 40, w: 220, h: 132, title: "OBS", sub: "Shows your avatar as a Browser Source", icon: "cast" },
+  { k: "vid", x: 960, y: 236, w: 220, h: 132, title: "Video file", sub: "MP4 or WebM, rendered frame by frame", icon: "film" },
+];
+const labels = [
+  { x: 0, y: 0, text: "Inside Yapora, on your computer" },
+  { x: 960, y: 0, text: "Where it shows up" },
+  { x: 836, y: 78, small: true, text: "live" },
+  { x: 800, y: 274, small: true, text: "export" },
+];
+const explain = [
+  { k: "snd", title: "Anything you can hear can drive it.", body: "The avatar can follow your microphone, an audio file, or a speech-like test signal for setting things up without talking. An audio file plays through the device you choose, like headphones or a virtual cable, so you hear it while the avatar moves." },
+  { k: "eng", title: "The app listens, so OBS doesn't have to.", body: "OBS never asks for microphone access, so the first Yapora, a page loaded inside OBS, only worked if you relaunched OBS with special flags. Now Yapora reads the microphone itself and sends the levels along. OBS needs no flags and no permissions." },
+  { k: "stg", title: "One look, live and on video.", body: "The halo and mouth react through the same settings whether you're streaming or exporting, and both are drawn from the same shapes. A video moves exactly the way your stream does, and what you see while editing is what you get." },
+  { k: "obs", title: "OBS only watches.", body: "Yapora serves your avatar on a local address that you add to OBS as a Browser Source. OBS just displays it: it connects whenever it starts, and your edits show up on stream as you make them. The live view is kept simple enough to work in the older browser built into OBS 28 to 30." },
+  { k: "vid", title: "Never drops a frame.", body: "Exports render frame by frame instead of recording in real time, so they finish faster than the audio plays and never drift out of sync. Yapora only offers formats your computer can encode. WebM keeps a transparent background. MP4 can't, so it exports as green screen." },
+];
+---
+
+<Showcase slug="yapora" title="Yapora" description="A Windows app that turns any image into an avatar that reacts to your voice, live in OBS or rendered to a video.">
+  <section slot="hero" class="sc-hero">
+    <div class="sc-hero-card">
+      <div class="sc-hero-text">
+        <h1 class="wordmark"><YaporaMark size={56} /><span>Yapora</span></h1>
+        <p class="sc-hero-title">Turn any image into an avatar that talks when you do.</p>
+        <p class="sc-hero-sub">Pick an image, frame it, and drag a mouth onto its face. It moves with your voice, live in OBS while you stream, or in a finished video made from any audio file.</p>
+        <div class="sc-actions">
+          <a class="sc-btn" href={win}><Icon name="download" />Windows</a>
+          <a class="sc-round" href={repo} aria-label="Source code on GitHub"><Icon name="github" size={20} /></a>
+        </div>
+        <p class="sc-facts parts"><span>{L.versionLabel}</span><span>{L.dateLabel}</span><span>Free</span><span>Windows</span></p>
+      </div>
+      <Image src={Avatar} alt="Yapora: an avatar on the stage, with its settings beside it" widths={[480, 800, 1400]} sizes="(min-width: 1280px) 700px, (min-width: 1024px) 45vw, calc(100vw - 48px)" class="sc-shot" style="border-radius: 8px" priority />
+    </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">Tour</h2>
+    <Tour project="Yapora" steps={steps} />
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">Concept</h2>
+    <Timeline miles={miles} />
+    <div class="concept-more">
+      <div class="quote"><q>Not just a talking avatar, but an actual audio-visual element for whatever sound you want.</q></div>
+      <div class="prose">
+        <p>I made Yapora because a friend and I wanted to make a video together. Neither of us wanted webcams, since they're low quality and the video was just for fun, so we thought of how some people record Discord while they talk. Seeing who's speaking helps the viewer follow along.</p>
+        <p>But recording Discord is inconsistent. It's low quality and looks bad zoomed in, and recording your screen and then uploading to YouTube adds artifacts and drops the quality further. So I made my own.</p>
+        <p>Yapora turned out customizable enough to make finished videos on its own. It can be center stage or one element of your screen. Use it however you want, and it responds to creativity.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">How it's built</h2>
+    <Diagram height={376} nodes={nodes} edges={edges} labels={labels} rules={[{ x: 890, y: 0, h: 376 }]} explain={explain} initial="eng" />
+    <div class="built-foot">
+      <div class="chips">{p.tech.map((t) => <a class="pill" href={`/map?t=${encodeURIComponent(t)}`}>{t}</a>)}</div>
+      <div class="doc-links"><a href={repo}>Source ↗</a></div>
+    </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">How it's shaped</h2>
+    <Tabs names={["Name", "Identity", "Audience", "Pricing", "Launch"]} initial="Identity" label="How Yapora is shaped">
+      <div class="tabpanel" data-tab="Name" hidden>
+        <div class="panel tab-card">
+          <span class="mark"><YaporaMark size={40} /><span>Yapora</span></span>
+          <div class="kv"><span>Yap</span><span>Talking</span></div>
+          <div class="kv"><span>Aura</span><span>The glow around your avatar</span></div>
+        </div>
+        <p class="prose">Yapora is yap plus aura: you talk, and your avatar glows and moves with you.</p>
+      </div>
+      <div class="tabpanel" data-tab="Identity">
+        <div class="panel tab-card" style="gap: 28px">
+          <span class="mark"><YaporaMark size={40} /><span>Yapora</span></span>
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <div class="swatch" style="box-shadow: 0 0 0 1px #3a3542"><i style="background:#18181b" /><i style="background:#8b5cf6" /><i style="background:#ec4899" /><i style="background:#ffffff" /></div>
+            <span style="font-size: 14px; color: var(--p-accent)">From the logo: the avatar, the halo and the mouth</span>
+          </div>
+        </div>
+        <div class="prose" style="gap: 16px">
+          <span class="h3" style="font-size: 24px; letter-spacing: -0.015em; color: var(--text)">A reactive avatar for streams and videos.</span>
+          <span>The logo is the app in miniature: a dark disc for the avatar, the halo ring around it with the same small gap, and the spectrum mouth. The halo runs from violet to pink.</span>
+          <span style="font-family: Inter, var(--font); font-size: 22px; font-weight: 600; color: var(--text)">Inter</span>
+        </div>
+      </div>
+      <div class="tabpanel" data-tab="Audience" hidden>
+        <div class="panel tab-card"><span class="big-quote">“It can be center-stage on screen, it can be just an element of your screen, you're free to use it however you want.”</span></div>
+        <p class="prose">Yapora is for anyone who wants a voice on screen without a webcam: streamers, friends making a video for fun, or anyone who wants a sound to have something to look at.</p>
+      </div>
+      <div class="tabpanel" data-tab="Pricing" hidden>
+        <div class="panel tab-card"><div class="price"><b>$0</b><span>the app</span></div></div>
+        <p class="prose">Yapora is free to download, and its source is public on GitHub.</p>
+      </div>
+      <div class="tabpanel" data-tab="Launch" hidden>
+        <div class="panel tab-card">
+          <span class="label" style="color: var(--subtle)">Public beta since Sep 30, 2026</span>
+          <div class="kv2"><span>Windows</span><span>The only platform for now</span></div>
+        </div>
+        <p class="prose">Yapora went public as a beta on Sep 30, 2026, and v0.0.2 followed on Oct 3. Each release goes up on GitHub with both installers and a plain list of what it can't do yet. The installer isn't code-signed yet, so Windows asks you to confirm the first time you run it.</p>
+      </div>
+    </Tabs>
+  </section>
+</Showcase>
+
+<style>
+  .wordmark { display: flex; align-items: center; gap: 16px; margin: 0; font-size: 40px; font-weight: 600; letter-spacing: -0.02em; }
+  .mark { display: flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+</style>

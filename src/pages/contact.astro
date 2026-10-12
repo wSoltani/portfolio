@@ -1,0 +1,114 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import { SITE } from "../data/site";
+
+const topics = ["Project", "Question", "Something else"];
+---
+
+<Base title="Contact" description="I'm in Tunisia and work remotely. Write to me here, or find me on LinkedIn or GitHub." nav="contact" image="/og/contact.png">
+  <div class="wrap">
+    <header class="top">
+      <h1 class="h1" data-title>Contact</h1>
+      <p class="lead">I'm in Tunisia and work remotely. Write to me here, or find me on LinkedIn or GitHub.</p>
+    </header>
+
+    <div class="layout" data-reveal>
+      <form class="form" data-contact action={SITE.contactEndpoint} method="post" novalidate>
+        <div class="two">
+          <label class="field"><span>Name</span><input name="name" autocomplete="name" required maxlength="120" /></label>
+          <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required maxlength="200" /></label>
+        </div>
+        <fieldset class="field">
+          <legend>Topic</legend>
+          <div class="seg">
+            {topics.map((t, i) => (
+              <label><input type="radio" name="subject" value={t} checked={i === 0} /><span>{t}</span></label>
+            ))}
+          </div>
+        </fieldset>
+        <label class="field"><span>Message</span><textarea name="message" rows="8" required maxlength="5000"></textarea></label>
+        <div class="send">
+          <button type="submit" class="btn">Send</button>
+          <p class="status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+
+      <div class="links">
+        <a href={`mailto:${SITE.email}`}><Icon name="mail" size={18} /><span>{SITE.email}</span></a>
+        <a href={SITE.linkedin} rel="me noopener" target="_blank"><Icon name="linkedin" size={18} /><span>LinkedIn ↗</span></a>
+        <a href={SITE.github} rel="me noopener" target="_blank"><Icon name="github" size={18} /><span>GitHub ↗</span></a>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .top { padding-top: 96px; display: flex; flex-direction: column; gap: 16px; }
+  .lead { max-width: 60ch; }
+  .layout { padding-top: 56px; display: grid; grid-template-columns: 1fr 360px; gap: 80px; align-items: start; }
+  .form { display: flex; flex-direction: column; gap: 24px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 8px; border: 0; margin: 0; padding: 0; min-width: 0; }
+  .field > span, legend { font-size: 14px; color: var(--muted); padding: 0; margin-bottom: 8px; }
+  .field > span { margin-bottom: 0; }
+  input:not([type="radio"]), textarea {
+    width: 100%; height: 48px; padding: 0 14px; border-radius: 6px; border: 1px solid var(--line-strong); background: var(--surface);
+    color: var(--text); font: inherit; font-size: 16px; transition: border-color var(--fast) ease;
+  }
+  textarea { height: 200px; padding: 12px 14px; resize: vertical; line-height: 1.5; }
+  input:hover, textarea:hover { border-color: #555; }
+  input:focus-visible, textarea:focus-visible { border-color: var(--text); }
+  .field [aria-invalid="true"] { border-color: var(--crimson); }
+  .seg { display: flex; gap: 4px; font-size: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 4px; }
+  .seg label { flex: 1 1 0; position: relative; }
+  .seg input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .seg span { display: block; text-align: center; padding: 8px 4px; border-radius: 6px; color: var(--muted); transition: background var(--fast) ease, color var(--fast) ease; }
+  .seg label:hover span { color: var(--text); }
+  .seg input:checked + span { background: var(--wine-raised); color: var(--text); }
+  .seg input:focus-visible + span { box-shadow: 0 0 0 2px var(--ink), -1px 0 0 4px var(--split-red), 1px 0 0 4px var(--split-blue), 0 0 0 4px var(--text); }
+  .send { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .btn[disabled] { opacity: 0.6; cursor: default; }
+  .status { font-size: 14px; color: var(--muted); }
+  .status.ok { color: var(--text); }
+  .status.err { color: var(--crimson); }
+  .links { display: flex; flex-direction: column; border-bottom: 1px solid #262626; }
+  .links a { display: flex; gap: 14px; align-items: center; padding: 18px 0; border-top: 1px solid #262626; text-decoration: none; font-size: 16px; }
+  .links a :global(svg) { color: var(--muted); transition: color var(--fast) ease; }
+  .links a:hover :global(svg) { color: var(--orchid); }
+  @media (max-width: 1023px) { .layout { grid-template-columns: 1fr; gap: 56px; } }
+  @media (max-width: 599px) { .two { grid-template-columns: 1fr; } .seg span { font-size: 13px; } }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("[data-contact]")!;
+  const status = form.querySelector<HTMLElement>(".status")!;
+  const button = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+  const say = (text: string, kind = "") => { status.textContent = text; status.className = `status ${kind}`; };
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    let bad: HTMLElement | null = null;
+    for (const el of form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("input:not([type=radio]), textarea")) {
+      const ok = el.checkValidity() && el.value.trim() !== "";
+      el.setAttribute("aria-invalid", String(!ok));
+      if (!ok && !bad) bad = el;
+    }
+    if (bad) { say("Please fill in your name, a valid email and a message.", "err"); bad.focus(); return; }
+
+    const data = Object.fromEntries(new FormData(form).entries());
+    button.disabled = true;
+    say("Sending…");
+    try {
+      const res = await fetch(form.action, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+      if (!res.ok) throw new Error(String(res.status));
+      form.reset();
+      say("Sent. Thanks, I'll get back to you soon.", "ok");
+      button.textContent = "Sent";
+    } catch {
+      button.disabled = false;
+      say("That didn't go through. Try again, or email hello@wsoltani.com.", "err");
+    }
+  });
+  form.addEventListener("input", (e) => (e.target as HTMLElement).removeAttribute("aria-invalid"));
+</script>
