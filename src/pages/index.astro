@@ -224,8 +224,9 @@ const themeVars = (slug: string) => {
   .small-link { font-size: 14px; color: var(--muted); text-decoration: underline; text-decoration-color: var(--subtle); text-underline-offset: 3px; }
   /* The map sits half tucked behind the footer, and rises a little when you point at it. */
   /* The map runs on under the footer, which covers its lower part; pointing at it
-     lifts it a little and shows where it leads. */
-  .maps { position: relative; z-index: 0; margin-bottom: -170px; }
+     lifts it a little and shows where it leads. The overlap has to stay shorter than
+     the footer (157px here), or the map pokes out below it. */
+  .maps { position: relative; z-index: 0; margin-bottom: -136px; }
   .map-teaser { position: relative; display: block; height: 320px; border: 1px solid var(--line); border-bottom: 0; border-radius: 12px 12px 0 0; overflow: hidden; text-decoration: none; transition: transform var(--slow) var(--ease-out), border-color var(--fast) ease; }
   .map-teaser:hover, .map-teaser:focus-visible { transform: translateY(-40px); border-color: var(--wine-line); }
   .map-chip { position: absolute; left: 20px; top: 18px; font-size: 14px; color: var(--text); background: var(--wine); border: 1px solid var(--wine-line); border-radius: 6px; padding: 6px 10px; opacity: 0; transform: translateY(4px); transition: opacity var(--base) ease, transform var(--base) var(--ease-out); }
