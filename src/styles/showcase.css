@@ -147,7 +147,6 @@ button.node:hover { border-color: var(--line-strong); }
 .kv2 { display: grid; grid-template-columns: 1fr auto; gap: 16px; border-top: 1px solid var(--p-sep); padding-top: 14px; }
 .kv2 > :first-child { font-size: 16px; font-weight: 600; }
 .kv2 > :last-child { font-size: 14px; color: var(--p-accent); }
-.kv2 > .dim { color: var(--muted); }
 .big-quote { font-size: 24px; line-height: 1.45; font-weight: 600; letter-spacing: -0.01em; color: var(--text); }
 .price { display: flex; align-items: baseline; gap: 12px; }
 .price b { font-size: 44px; font-weight: 600; letter-spacing: -0.02em; }
