@@ -41,18 +41,20 @@
 .tour { display: flex; flex-direction: column; gap: 16px; }
 .tour-frame { position: relative; aspect-ratio: 860 / 484; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--surface); }
 .tour-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
+.tour-stage { position: absolute; left: 0; top: 0; width: 100%; aspect-ratio: 860 / 484; transform-origin: 0 0; }
 .tour-shot { opacity: 0; }
 .tour-shot.on { opacity: 1; }
 .tour-hl { position: absolute; inset: 0; z-index: 3; pointer-events: none; opacity: 0; }
 .tour-hl.on { opacity: 1; }
 .tour-hl i { position: absolute; background: var(--p-dim); }
-.tour-hl b { position: absolute; box-shadow: inset 0 0 0 2px var(--p-accent); border-radius: 4px; }
+.tour-hl b { position: absolute; box-shadow: inset 0 0 0 calc(2px / var(--z, 1)) var(--p-accent); border-radius: calc(4px / var(--z, 1)); }
 .tour-spots { position: absolute; inset: 0; z-index: 4; display: none; }
 .tour-spots.on { display: block; }
 .spot {
   all: unset; position: absolute; width: 20px; height: 20px; margin: -10px 0 0 -10px; box-sizing: border-box; border-radius: 50%; cursor: pointer;
   background: var(--ink); border: 2px solid var(--p-accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--p-accent) 15%, transparent);
   transition: background var(--fast) ease, box-shadow var(--fast) ease;
+  scale: calc(1 / var(--z, 1));
 }
 .spot.on, .spot:hover { background: var(--p-accent); box-shadow: 0 0 0 6px color-mix(in srgb, var(--p-accent) 25%, transparent); }
 .spot:focus-visible { box-shadow: 0 0 0 2px var(--ink), -1px 0 0 4px var(--split-red), 1px 0 0 4px var(--split-blue), 0 0 0 4px var(--text); }
@@ -69,6 +71,9 @@
 .step.on .step-n { color: inherit; }
 .step.on { border-color: var(--p-line); background: var(--p-sel); color: var(--p-accent); }
 .tour-line { margin: 0; font-size: 15px; line-height: 1.55; color: var(--body); }
+.tour-notes { display: none; margin: 12px 0 0; padding: 0; list-style: none; flex-direction: column; gap: 2px; }
+.note { all: unset; cursor: pointer; display: block; padding: 8px 12px; border-radius: 8px; font-size: 14px; line-height: 1.5; color: var(--body); }
+.note.on { background: var(--p-sel); color: var(--p-soft); }
 
 /* Concept timeline */
 .miles { position: relative; }
@@ -191,6 +196,9 @@ button.node:hover { border-color: var(--line-strong); }
   .mile { display: grid; grid-template-columns: 14px 1fr; column-gap: 16px; row-gap: 2px; padding: 8px 0; margin-left: -8px; }
   .mile-dot { grid-row: span 2; margin-top: 3px; }
   .mile-body { padding: 20px; }
+  .tour-frame { aspect-ratio: 4 / 3; }
+  .tour-caption { display: none; }
+  .tour-notes.on { display: flex; }
   .thumbs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .lightbox { padding: 16px; }
   .tab-card { padding: 24px; }

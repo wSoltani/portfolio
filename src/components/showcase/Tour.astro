@@ -46,6 +46,7 @@ const dims = (b: ReturnType<typeof box>) => [
   <p class="tour-line" aria-live="polite">{steps[0].line}</p>
   <div>
     <div class="tour-frame">
+      <div class="tour-stage" data-stage>
       {steps.map((s, i) => (
         <Image src={s.img} alt={`${project}, ${s.name}`} widths={[860, 1720]} sizes="(min-width: 1280px) 1200px, 100vw" class:list={["tour-shot", { on: i === 0 }]} data-shot={i} loading="lazy" />
       ))}
@@ -56,13 +57,19 @@ const dims = (b: ReturnType<typeof box>) => [
       {steps.map((s, i) => (
         <div class:list={["tour-spots", { on: i === 0 }]} data-spots={i}>
           {s.spots.map((p, j) => (
-            <button type="button" class:list={["spot", { on: j === 0 }]} style={`left:${px(p.x)};top:${py(p.y)}`} aria-label={p.text} data-j={j} data-pop={popStyle(p)} />
+            <button type="button" class:list={["spot", { on: j === 0 }]} style={`left:${px(p.x)};top:${py(p.y)}`} aria-label={p.text} data-j={j} data-x={p.x} data-y={p.y} data-pop={popStyle(p)} />
           ))}
         </div>
       ))}
       <span class="pop" aria-hidden="true" style={popStyle(steps[0].spots[0])}>{steps[0].spots[0]?.text}</span>
+      </div>
     </div>
     <p class="tour-caption" aria-live="polite">{steps[0].spots[0]?.text}</p>
+    {steps.map((s, i) => (
+      <ol class:list={["tour-notes", { on: i === 0 }]} data-notes={i}>
+        {s.spots.map((p, j) => <li><button type="button" class:list={["note", { on: j === 0 }]} data-j={j}>{p.text}</button></li>)}
+      </ol>
+    ))}
   </div>
 </div>
 
@@ -73,6 +80,8 @@ const dims = (b: ReturnType<typeof box>) => [
     const pop = root.querySelector<HTMLElement>(".pop")!;
     const cap = root.querySelector<HTMLElement>(".tour-caption")!;
     const line = root.querySelector<HTMLElement>(".tour-line")!;
+    const stage = root.querySelector<HTMLElement>("[data-stage]")!;
+    const phone = matchMedia("(max-width: 767px)");
     const hl = root.querySelector<HTMLElement>("[data-hl]")!;
     const [top, bottom, left, right] = hl.querySelectorAll<HTMLElement>("i");
     const ring = hl.querySelector<HTMLElement>("b")!;
@@ -81,6 +90,8 @@ const dims = (b: ReturnType<typeof box>) => [
     const showSpot = (btn: HTMLElement | null) => {
       if (!btn) { pop.hidden = true; cap.textContent = ""; return; }
       btn.parentElement!.querySelectorAll(".spot").forEach((s) => s.classList.toggle("on", s === btn));
+      root.querySelectorAll<HTMLElement>(`[data-notes="${current}"] .note`).forEach((n) => n.classList.toggle("on", n.dataset.j === btn.dataset.j));
+      zoomTo(btn, true);
       pop.hidden = false;
       pop.setAttribute("style", btn.dataset.pop!);
       pop.textContent = cap.textContent = btn.getAttribute("aria-label");
@@ -102,6 +113,22 @@ const dims = (b: ReturnType<typeof box>) => [
       gsap.to(right, { ...o, left: p(x1), top: p(y0), width: p(100 - x1), height: p(y1 - y0) });
     };
 
+    // Phones show the screenshot at twice the size in a 4:3 frame, centered on the open spot.
+    // The spots are scaled back so they stay the same size.
+    const FW = 860, FH = 484, Z = 2, W = FW / Z, H = W * 3 / 4;
+    const zoomTo = (spot: HTMLElement | null, animate: boolean) => {
+      let z = 1, left = 0, top = 0;
+      if (phone.matches && spot) {
+        z = Z;
+        left = Math.min(Math.max(Number(spot.dataset.x) - W / 2, 0), FW - W);
+        top = Math.min(Math.max(Number(spot.dataset.y) - H / 2, 0), FH - H);
+      }
+      const transform = `scale(${z}) translate(${(-left / FW) * 100}%, ${(-top / FH) * 100}%)`;
+      stage.style.setProperty("--z", String(z));
+      if (animate && !reduced()) gsap.to(stage, { transform, duration: T.slow, ease: EASE.move, overwrite: true });
+      else gsap.set(stage, { transform });
+    };
+
     const showStep = (btn: HTMLElement) => {
       const i = btn.dataset.step!;
       if (i === current) return;
@@ -115,6 +142,8 @@ const dims = (b: ReturnType<typeof box>) => [
         s.setAttribute("aria-selected", String(on));
       });
       root.querySelectorAll<HTMLElement>("[data-spots]").forEach((s) => s.classList.toggle("on", s.dataset.spots === i));
+      root.querySelectorAll<HTMLElement>("[data-notes]").forEach((n) => n.classList.toggle("on", n.dataset.notes === i));
+
       const spots = root.querySelectorAll<HTMLElement>(`[data-spots="${i}"] .spot`);
       if (reduced()) {
         prev.classList.remove("on");
@@ -137,11 +166,15 @@ const dims = (b: ReturnType<typeof box>) => [
     };
 
     root.addEventListener("click", (e) => {
-      const t = (e.target as HTMLElement).closest<HTMLElement>(".step, .spot");
+      const t = (e.target as HTMLElement).closest<HTMLElement>(".step, .spot, .note");
       if (!t) return;
       if (t.matches(".step")) showStep(t);
+      else if (t.matches(".note")) showSpot(root.querySelector<HTMLElement>(`[data-spots="${current}"] .spot[data-j="${t.dataset.j}"]`));
       else showSpot(t);
     });
+    const zoomCurrent = () => zoomTo(root.querySelector<HTMLElement>(`[data-spots="${current}"] .spot.on`), false);
+    phone.addEventListener("change", zoomCurrent);
+    zoomCurrent();
     for (const type of ["mouseover", "focusin"]) {
       root.addEventListener(type, (e) => {
         const t = (e.target as HTMLElement).closest<HTMLElement>(".spot");
