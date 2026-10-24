@@ -38,7 +38,7 @@
 .sc-shot { width: 100%; border-radius: 10px; border: 1px solid var(--p-line); box-shadow: 0 40px 80px -30px #000; }
 
 /* Tour */
-.tour { display: grid; grid-template-columns: minmax(0, 860px) minmax(240px, 1fr); gap: 40px; align-items: start; }
+.tour { display: flex; flex-direction: column; gap: 16px; }
 .tour-frame { position: relative; aspect-ratio: 860 / 484; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--surface); }
 .tour-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
 .tour-shot { opacity: 0; }
@@ -62,16 +62,13 @@
   border-radius: 6px; padding: 7px 11px; box-shadow: 0 8px 24px -8px #000; pointer-events: none;
 }
 .tour-caption { display: none; font-size: 14px; line-height: 1.5; color: var(--p-soft); min-height: 42px; }
-.tour-steps { display: flex; flex-direction: column; gap: 2px; }
-.step { all: unset; cursor: pointer; display: flex; flex-direction: column; gap: 6px; padding: 11px 16px; border-radius: 8px; border: 1px solid transparent; transition: background var(--fast) ease; }
+.tour-steps { display: flex; flex-wrap: wrap; gap: 4px; }
+.step { all: unset; cursor: pointer; display: flex; gap: 8px; padding: 8px 10px; border-radius: 8px; border: 1px solid transparent; font-size: 15px; font-weight: 600; color: var(--muted); transition: background var(--fast) ease; }
 .step:hover { background: var(--surface); }
-.step-name { font-size: 15px; font-weight: 600; color: var(--muted); display: flex; gap: 10px; }
 .step-n { font-weight: 400; color: var(--subtle); min-width: 1ch; }
 .step.on .step-n { color: inherit; }
-.step-line { display: none; font-size: 14px; line-height: 1.55; color: var(--body); }
-.step.on { border-color: var(--p-line); background: var(--p-sel); }
-.step.on .step-name { color: var(--p-accent); }
-.step.on .step-line { display: block; }
+.step.on { border-color: var(--p-line); background: var(--p-sel); color: var(--p-accent); }
+.tour-line { margin: 0; font-size: 15px; line-height: 1.55; color: var(--body); }
 
 /* Concept timeline */
 .miles { position: relative; }
@@ -176,10 +173,6 @@ button.node:hover { border-color: var(--line-strong); }
 @media (max-width: 1279px) {
   .sc-hero { padding: 24px var(--gutter) 0; }
   .sc-hero-card { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; padding: 40px; min-height: 0; }
-  .tour { grid-template-columns: 1fr; gap: 20px; }
-  .tour-steps { flex-direction: row; flex-wrap: wrap; gap: 6px; }
-  .step { padding: 8px 12px; }
-  .step.on .step-line { display: none; }
   .tour-caption { display: block; }
   .pop { display: none; }
   .concept-more { grid-template-columns: 1fr; gap: 28px; }

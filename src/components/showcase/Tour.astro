@@ -33,10 +33,21 @@ const dims = (b: ReturnType<typeof box>) => [
 ---
 
 <div class="tour" data-tour>
+  <div class="tour-steps" role="tablist" aria-label={`${project} tour`}>
+    {steps.map((s, i) => {
+      const b = box(s.hl);
+      return (
+        <button type="button" role="tab" class:list={["step", { on: i === 0 }]} aria-selected={i === 0 ? "true" : "false"} data-step={i} data-line={s.line} data-box={b.on ? [b.x0, b.y0, b.x1, b.y1].join(",") : ""}>
+          <span class="step-n">{i + 1}</span>{s.name}
+        </button>
+      );
+    })}
+  </div>
+  <p class="tour-line" aria-live="polite">{steps[0].line}</p>
   <div>
     <div class="tour-frame">
       {steps.map((s, i) => (
-        <Image src={s.img} alt={`${project}, ${s.name}`} widths={[860, 1720]} sizes="(min-width: 1280px) 860px, 100vw" class:list={["tour-shot", { on: i === 0 }]} data-shot={i} loading="lazy" />
+        <Image src={s.img} alt={`${project}, ${s.name}`} widths={[860, 1720]} sizes="(min-width: 1280px) 1200px, 100vw" class:list={["tour-shot", { on: i === 0 }]} data-shot={i} loading="lazy" />
       ))}
       <div class:list={["tour-hl", { on: first.on }]} data-hl>
         {dims(first).map((d) => <i style={d} />)}
@@ -53,17 +64,6 @@ const dims = (b: ReturnType<typeof box>) => [
     </div>
     <p class="tour-caption" aria-live="polite">{steps[0].spots[0]?.text}</p>
   </div>
-  <div class="tour-steps" role="tablist" aria-label={`${project} tour`}>
-    {steps.map((s, i) => {
-      const b = box(s.hl);
-      return (
-        <button type="button" role="tab" class:list={["step", { on: i === 0 }]} aria-selected={i === 0 ? "true" : "false"} data-step={i} data-box={b.on ? [b.x0, b.y0, b.x1, b.y1].join(",") : ""}>
-          <span class="step-name"><span class="step-n">{i + 1}</span>{s.name}</span>
-          <span class="step-line">{s.line}</span>
-        </button>
-      );
-    })}
-  </div>
 </div>
 
 <script>
@@ -72,6 +72,7 @@ const dims = (b: ReturnType<typeof box>) => [
   for (const root of document.querySelectorAll<HTMLElement>("[data-tour]")) {
     const pop = root.querySelector<HTMLElement>(".pop")!;
     const cap = root.querySelector<HTMLElement>(".tour-caption")!;
+    const line = root.querySelector<HTMLElement>(".tour-line")!;
     const hl = root.querySelector<HTMLElement>("[data-hl]")!;
     const [top, bottom, left, right] = hl.querySelectorAll<HTMLElement>("i");
     const ring = hl.querySelector<HTMLElement>("b")!;
@@ -107,6 +108,7 @@ const dims = (b: ReturnType<typeof box>) => [
       const prev = root.querySelector<HTMLElement>(`[data-shot="${current}"]`)!;
       const next = root.querySelector<HTMLElement>(`[data-shot="${i}"]`)!;
       current = i;
+      line.textContent = btn.dataset.line!;
       root.querySelectorAll<HTMLElement>(".step").forEach((s) => {
         const on = s === btn;
         s.classList.toggle("on", on);
