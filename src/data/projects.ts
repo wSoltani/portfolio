@@ -31,7 +31,7 @@ export const PROJECTS: Project[] = [
     line: "Keeps your documents, drawings and files in a folder on your computer, synced across your devices and fully offline.",
     llms: "A desktop app for Windows, macOS and Linux. Keeps your documents, drawings and files in a folder on your computer, synced across your devices and fully offline.",
     repo: "Netherstone-HQ/Netherstone",
-    fallback: { version: "0.4.0-beta.2", date: "2026-10-24" },
+    fallback: { version: "0.5.0-beta.1", date: "2026-10-25" },
     theme: { bg: "#141516", line: "#2b6a5b", accent: "#8fd1be", soft: "#c4ebdf", sel: "#141516", sep: "#23302c", chip: "#333b38", ink: "#141516", dim: "#0d0d0dcc" },
     tech: ["Tauri", "Rust", "React", "Plate", "Excalidraw", "SQLite", "Git"],
   },
