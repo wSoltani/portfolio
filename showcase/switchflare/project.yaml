@@ -1,0 +1,42 @@
+name: Switchflare
+status: featured
+kind: personal
+order: 5
+category: Browser extension
+when: Not released yet
+line: Switch between Cloudflare accounts in one click.
+llms: A browser extension for switching between Cloudflare accounts in one click. Not released yet.
+tech:
+  - TypeScript
+  - React
+  - Plasmo
+  - Tailwind CSS
+  - shadcn/ui
+  - WebCrypto
+note: Not released yet
+theme:
+  bg: "#111a19"
+  line: "#1f3b38"
+  accent: "#2ec4b6"
+  soft: "#d8f1ee"
+  sel: "#14211f"
+  sep: "#1f2e2c"
+  chip: "#24403c"
+  ink: "#0d1514"
+  dim: "#0d0d0dcc"
+tile:
+  headline: Switch Cloudflare accounts in one click.
+  sub: A browser extension that saves your Cloudflare logins and switches between them without logging out. Everything stays encrypted on your computer.
+  platforms:
+    - Browser extension
+  site:
+    label: Website ↗
+    href: https://switchflare.wsoltani.com/
+  image: ./hero.png
+  imageAlt: Switchflare on the Cloudflare dashboard, asking to unlock the vault
+map:
+  x: 1045
+  y: 475
+resume:
+  when: Not released yet
+  fact: Logins stay encrypted on your computer.

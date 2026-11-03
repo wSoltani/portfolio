@@ -17,8 +17,6 @@ export interface RepoFacts {
   license?: string;
 }
 
-const cache = new Map<string, Promise<RepoFacts>>();
-
 async function gh<T>(path: string): Promise<T | undefined> {
   const headers: Record<string, string> = { Accept: "application/vnd.github+json", "User-Agent": "wsoltani.com" };
   const token = process.env.GITHUB_TOKEN;
@@ -40,35 +38,40 @@ interface ApiRelease {
   assets: { name: string; browser_download_url: string }[];
 }
 
-/** Releases that start with a version number, newest first. Tags like "updates" are skipped. */
-export function repoFacts(repo: string): Promise<RepoFacts> {
-  let p = cache.get(repo);
-  if (!p) {
-    p = (async () => {
-      const [rels, meta] = await Promise.all([
-        gh<ApiRelease[]>(`repos/${repo}/releases?per_page=100`),
-        gh<{ stargazers_count: number; license: { spdx_id: string } | null }>(`repos/${repo}`),
-      ]);
-      const releases = (rels ?? [])
-        .filter((r) => !r.draft && /^v?\d/.test(r.tag_name))
-        .map((r) => ({
-          tag: r.tag_name,
-          version: r.tag_name.replace(/^v/, ""),
-          date: new Date(r.published_at),
-          url: r.html_url,
-          assets: r.assets.map((a) => ({ name: a.name, url: a.browser_download_url })),
-        }))
-        .sort((a, b) => b.date.getTime() - a.date.getTime());
-      return {
-        releases,
-        latest: releases[0],
-        stars: meta?.stargazers_count,
-        license: meta?.license?.spdx_id,
-      };
-    })();
-    cache.set(repo, p);
-  }
+interface ApiRepo {
+  stargazers_count: number;
+  license: { spdx_id: string } | null;
+}
+
+const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+
+// One request per repo, however many projects read it.
+const raw = new Map<string, Promise<[ApiRelease[] | undefined, ApiRepo | undefined]>>();
+const fetchRepo = (repo: string) => {
+  let p = raw.get(repo);
+  if (!p) raw.set(repo, (p = Promise.all([gh<ApiRelease[]>(`repos/${repo}/releases?per_page=100`), gh<ApiRepo>(`repos/${repo}`)])));
   return p;
+};
+
+/**
+ * Releases whose tag is the prefix, an optional "v", then a version number, newest first.
+ * Each project sets its own prefix, like "@netherstone/nethermark@"; tags that don't fit,
+ * like "updates", are skipped.
+ */
+export async function repoFacts(repo: string, tagPrefix = ""): Promise<RepoFacts> {
+  const tag = new RegExp(`^${escape(tagPrefix)}v?(\\d.*)$`);
+  const [rels, meta] = await fetchRepo(repo);
+  const releases = (rels ?? [])
+    .filter((r) => !r.draft && tag.test(r.tag_name))
+    .map((r) => ({
+      tag: r.tag_name,
+      version: r.tag_name.match(tag)![1],
+      date: new Date(r.published_at),
+      url: r.html_url,
+      assets: r.assets.map((a) => ({ name: a.name, url: a.browser_download_url })),
+    }))
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
+  return { releases, latest: releases[0], stars: meta?.stargazers_count, license: meta?.license?.spdx_id };
 }
 
 const DATE = new Intl.DateTimeFormat("en-US", { timeZone: "Africa/Tunis", month: "short", day: "numeric", year: "numeric" });

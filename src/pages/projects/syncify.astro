@@ -7,11 +7,10 @@ import Diagram from "../../components/showcase/Diagram.astro";
 import Tabs from "../../components/showcase/Tabs.astro";
 import Facts from "../../components/showcase/Facts.astro";
 import { bySlug, live } from "../../data/projects";
-import dialog from "../../assets/syncify/dialog.png";
 
 const p = bySlug("syncify");
 const L = await live(p);
-const repo = `https://github.com/${p.repo}`;
+const repo = `https://github.com/${p.releases!.repo}`;
 const file = L.assets.find((a) => a.name === "syncify.js")?.url ?? `${repo}/releases/latest`;
 
 const steps = [
@@ -19,13 +18,6 @@ const steps = [
   { icon: "layers", t: "Kept online", b: "Your backup is saved online along with the two before it." },
   { icon: "cloudDown", t: "Restore", b: "After a reinstall, a broken update or on another computer, pick a backup and restore it." },
   { icon: "checkCircle", t: "Back as it was", b: "Spotify reloads, and Marketplace puts your extensions, themes and snippets back." },
-];
-
-const miles = [
-  { d: "May 28, 2026", t: "Planned, built, released", body: "Syncify was planned and built on May 28, and v1.0.1 went out that night. The plan already set the rules it still follows: no account to create, your backup found through your Spotify account, and a full backup never replaced by an empty one. Automatic backups were switched off by default the same day." },
-  { d: "June 2", t: "Version history", body: "v1.1.0 started keeping your last three backups instead of one, so a broken or accidental backup, or one made automatically, can't replace the only good copy. The dialog also started showing which version of Syncify you're running." },
-  { d: "August 20", t: "Marketplace moved its data", body: "People setting up Spotify from scratch got an “empty backup” error. Marketplace had started saving its data in a different part of Spotify's storage, one that survives when Spotify resets your profile, and Syncify was still reading the old one. A Syncify user, zoltan, traced it and sent the fix, which shipped in v1.1.1." },
-  { d: "Oct 7, 2026", t: "Spotify's new top bar", body: "A Spotify update made extension buttons vanish from the top bar for some people, Syncify's included. v1.1.2 puts the button back whenever Spotify redraws the bar, adds Syncify to the profile menu, and opens it from anywhere with Ctrl+Alt+S (⌘⌥S on a Mac)." },
 ];
 
 const edges = `<g stroke="#4a4a4a" stroke-width="1.5" fill="none"><path d="M230 106 H 282"/><path d="M520 106 H 672"/><path d="M910 106 H 962"/><path d="M1085 172 V 232 H 115 V 180"/></g><g fill="#4a4a4a"><path d="M282 101 L 290 106 L 282 111 Z"/><path d="M672 101 L 680 106 L 672 111 Z"/><path d="M962 101 L 970 106 L 962 111 Z"/><path d="M110 180 L 115 172 L 120 180 Z"/></g>`;
@@ -60,8 +52,8 @@ const facts = [
     <div class="sc-hero-card">
       <div class="sc-hero-text">
         <h1 class="wordmark"><Icon name="syncify" size={48} stroke={2.25} /><span>SYNCIFY</span></h1>
-        <p class="sc-hero-title">Your Spicetify setup needs a savepoint.</p>
-        <p class="sc-hero-sub">Back up the extensions, themes and snippets you added to Spotify, and get them back in one click when an update breaks them or you move to a new computer.</p>
+        <p class="sc-hero-title">{p.tile.headline}</p>
+        <p class="sc-hero-sub">{p.tile.sub}</p>
         <div class="sc-actions">
           <a class="sc-btn" href="https://github.com/spicetify/marketplace">Get it in Marketplace</a>
           <a class="sc-btn outline" href={file}><Icon name="download" />syncify.js</a>
@@ -69,7 +61,7 @@ const facts = [
         </div>
         <p class="sc-facts parts"><span>{L.versionLabel}</span><span>{L.dateLabel}</span><span>Free and open source (MIT)</span></p>
       </div>
-      <Image src={dialog} alt="The Syncify dialog open in Spotify, with three saved backups" widths={[490, 882]} sizes="490px" class="sc-shot dialog" priority />
+      <Image src={p.tile.image!} alt={p.tile.imageAlt!} widths={[490, 882]} sizes="490px" class="sc-shot dialog" priority />
     </div>
   </section>
 
@@ -92,7 +84,7 @@ const facts = [
 
   <section class="sc-sec" data-reveal>
     <h2 class="h2">Concept</h2>
-    <Timeline miles={miles} />
+    <Timeline miles={p.timeline!} />
     <div class="concept-more">
       <div class="quote"><q>Getting wiped and having to redo everything has to be exhausting.</q></div>
       <div class="prose">

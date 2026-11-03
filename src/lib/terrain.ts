@@ -1,31 +1,18 @@
 // The Map's terrain: every project as a peak on one landscape. Featured projects are the
 // tall ones; archived projects are small hills. Used by the Map page and its previews.
 import { contours } from "d3-contour";
-import { PROJECTS } from "../data/projects";
-import { ARCHIVE } from "../data/archive";
+import { PROJECTS, ARCHIVE } from "../data/projects";
 
 export const W = 1240, H = 620;
 
 export interface Peak { slug: string; name: string; x: number; y: number; r: number; h: number; featured: boolean; kind: string; when: string; tech: string[]; href: string; lx?: number; ly?: number; }
-const meta: Record<string, { x: number; y: number; when: string }> = {
-  netherstone: { x: 300, y: 290, when: "First release Oct 2026" },
-  yapora: { x: 585, y: 175, when: "First release Sep 2026" },
-  lyrica: { x: 905, y: 245, when: "Since Oct 2026" },
-  syncify: { x: 735, y: 470, when: "First release May 2026" },
-  switchflare: { x: 1045, y: 475, when: "Not released yet" },
-};
-// Where the archived projects sit: small hills around the edges.
-const spots: Record<string, { x: number; y: number }> = {
-  void: { x: 1000, y: 95 }, flyd: { x: 85, y: 150 }, qmims: { x: 130, y: 540 },
-  nomad: { x: 1150, y: 300 }, quickplan: { x: 1150, y: 150 }, store: { x: 470, y: 560 },
-};
 export const peaks: Peak[] = [
   ...PROJECTS.map((p, i) => ({
-    slug: p.slug, name: p.name, x: meta[p.slug].x, y: meta[p.slug].y, r: i === 0 ? 92 : 78, h: i === 0 ? 250 : 200,
-    featured: true, kind: p.kind, when: meta[p.slug].when, tech: p.tech, href: `/projects/${p.slug}`,
+    slug: p.slug, name: p.name, ...p.map, r: i === 0 ? 92 : 78, h: i === 0 ? 250 : 200,
+    featured: true, kind: p.category, when: p.when, tech: p.tech, href: `/projects/${p.slug}`,
   })),
   ...ARCHIVE.map((a) => ({
-    slug: a.slug, name: a.name, kind: a.kind, when: a.when, tech: a.tech, ...spots[a.slug],
+    slug: a.slug, name: a.name, kind: a.category, when: a.when, tech: a.tech, ...a.map,
     r: 46, h: 110, featured: false, href: "/archive",
   })),
 ];

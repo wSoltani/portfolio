@@ -1,5 +1,5 @@
 ---
-export interface Milestone { d: string; t: string; body: string; }
+export interface Milestone { date: string; title: string; body: string; }
 interface Props { miles: Milestone[]; }
 const { miles } = Astro.props;
 ---
@@ -10,8 +10,8 @@ const { miles } = Astro.props;
       {miles.map((m, i) => (
         <button type="button" class:list={["mile", { on: i === 0 }]} aria-pressed={i === 0 ? "true" : "false"} data-i={i}>
           <span class="mile-dot" />
-          <span class="mile-d">{m.d}</span>
-          <span class="mile-t">{m.t}</span>
+          <span class="mile-d">{m.date}</span>
+          <span class="mile-t">{m.title}</span>
         </button>
       ))}
     </div>

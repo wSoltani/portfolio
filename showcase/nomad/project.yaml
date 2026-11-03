@@ -1,0 +1,19 @@
+name: Nomad
+status: archived
+kind: personal
+order: 4
+category: Game prototype
+when: Apr 2025
+line: A 2D dungeon crawler prototype with procedurally generated dungeons.
+tech:
+  - TypeScript
+  - React
+  - Phaser
+  - rot.js
+  - Zustand
+  - Supabase
+  - Vite
+links: []
+map:
+  x: 1150
+  y: 300
