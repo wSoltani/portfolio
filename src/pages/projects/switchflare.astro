@@ -5,10 +5,9 @@ import Icon from "../../components/Icon.astro";
 import Diagram from "../../components/showcase/Diagram.astro";
 import Tabs from "../../components/showcase/Tabs.astro";
 import { bySlug } from "../../data/projects";
-import hero from "../../assets/switchflare/hero.png";
 
 const p = bySlug("switchflare");
-const site = "https://switchflare.wsoltani.com/";
+const site = p.tile.site!.href;
 
 const does = [
   { icon: "switch", t: "One click to switch", b: "Pick an account, and your open Cloudflare tabs reload into it, on the same page. No logging out and back in." },
@@ -37,12 +36,12 @@ const labels = [
     <div class="sc-hero-card sf">
       <div class="sc-hero-text">
         <h1 class="wordmark"><span style="display: flex; color: var(--p-accent)"><Icon name="switch" size={40} stroke={2} /></span><span>Switchflare</span></h1>
-        <p class="sc-hero-title">Switch Cloudflare accounts in one click.</p>
-        <p class="sc-hero-sub">A browser extension that saves your Cloudflare logins and switches between them without logging out. Everything stays encrypted on your computer.</p>
+        <p class="sc-hero-title">{p.tile.headline}</p>
+        <p class="sc-hero-sub">{p.tile.sub}</p>
         <div class="sc-actions"><a class="sc-btn" href={site}>Website<Icon name="external" /></a></div>
-        <p class="sc-facts parts"><span>Not released yet</span><span>Since May 2026</span></p>
+        <p class="sc-facts parts"><span>{p.note}</span><span>Since May 2026</span></p>
       </div>
-      <Image src={hero} alt="Switchflare on the Cloudflare dashboard, asking to unlock the vault" widths={[480, 740, 1040]} sizes="(min-width: 1280px) 740px, (min-width: 1024px) 45vw, calc(100vw - 48px)" class="sc-shot" style="border-radius: 8px" priority />
+      <Image src={p.tile.image!} alt={p.tile.imageAlt!} widths={[480, 740, 1040]} sizes="(min-width: 1280px) 740px, (min-width: 1024px) 45vw, calc(100vw - 48px)" class="sc-shot" style="border-radius: 8px" priority />
     </div>
   </section>
 

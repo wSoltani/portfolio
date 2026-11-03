@@ -8,28 +8,12 @@ import Diagram from "../../components/showcase/Diagram.astro";
 import Tabs from "../../components/showcase/Tabs.astro";
 import YaporaMark from "../../components/showcase/YaporaMark.astro";
 import { bySlug, live } from "../../data/projects";
-import { ypTour } from "../../data/tours";
-import Avatar from "../../assets/yapora/Avatar.webp";
-import Halo from "../../assets/yapora/Halo.webp";
-import Mouth from "../../assets/yapora/Mouth.webp";
-import Audio from "../../assets/yapora/Audio.webp";
-import Stage from "../../assets/yapora/Stage.webp";
-import Output1 from "../../assets/yapora/Output1.webp";
-import Output2 from "../../assets/yapora/Output2.webp";
-import Profile from "../../assets/yapora/Profile.webp";
 import "@fontsource/inter/600.css";
 
 const p = bySlug("yapora");
 const L = await live(p);
-const repo = `https://github.com/${p.repo}`;
+const repo = `https://github.com/${p.releases!.repo}`;
 const win = L.assets.find((a) => a.name.endsWith("-setup.exe"))?.url ?? L.releaseUrl;
-const steps = ypTour({ Avatar, Halo, Mouth, Audio, Stage, Output1, Output2, Profile });
-
-const miles = [
-  { d: "Sep 20–30, 2026", t: "A page inside OBS", body: "The first Yapora was a web page loaded into OBS as a Browser Source, with the avatar drawn so it stays sharp at any size. It worked, but OBS never asks for microphone access, so you had to relaunch OBS with special flags and keep a terminal window open while you streamed." },
-  { d: "Sep 30", t: "A desktop app", body: "The same night it became a Windows app. Yapora started reading the microphone itself and streaming the avatar to OBS, so OBS needed no flags or permissions. Profiles, audio files and video export came with it, and v0.0.1 beta went public that morning." },
-  { d: "Oct 3, 2026", t: "Transparent videos", body: "v0.0.2 let WebM exports keep a transparent background, so the avatar drops straight over other footage in OBS or a video editor. MP4 can't store transparency, so it still exports as green screen, and the export panel tells you which one you'll get." },
-];
 
 const edges = `<g stroke="#4a4a4a" stroke-width="1.5" fill="none"><path d="M220 106 H 292"/><path d="M520 106 H 592"/><path d="M820 106 H 952"/><path d="M710 172 V 302 H 952"/></g><g fill="#4a4a4a"><path d="M292 101 L 300 106 L 292 111 Z"/><path d="M592 101 L 600 106 L 592 111 Z"/><path d="M952 101 L 960 106 L 952 111 Z"/><path d="M952 297 L 960 302 L 952 307 Z"/></g>`;
 const nodes = [
@@ -59,26 +43,26 @@ const explain = [
     <div class="sc-hero-card">
       <div class="sc-hero-text">
         <h1 class="wordmark"><YaporaMark size={56} /><span>Yapora</span></h1>
-        <p class="sc-hero-title">Turn any image into an avatar that talks when you do.</p>
-        <p class="sc-hero-sub">Pick an image, frame it, and drag a mouth onto its face. It moves with your voice, live in OBS while you stream, or in a finished video made from any audio file.</p>
+        <p class="sc-hero-title">{p.tile.headline}</p>
+        <p class="sc-hero-sub">{p.tile.sub}</p>
         <div class="sc-actions">
           <a class="sc-btn" href={win}><Icon name="download" />Windows</a>
           <a class="sc-round" href={repo} aria-label="Source code on GitHub"><Icon name="github" size={20} /></a>
         </div>
         <p class="sc-facts parts"><span>{L.versionLabel}</span><span>{L.dateLabel}</span><span>Free</span><span>Windows</span></p>
       </div>
-      <Image src={Avatar} alt="Yapora: an avatar on the stage, with its settings beside it" widths={[480, 800, 1400]} sizes="(min-width: 1280px) 700px, (min-width: 1024px) 45vw, calc(100vw - 48px)" class="sc-shot" style="border-radius: 8px" priority />
+      <Image src={p.tile.image!} alt={p.tile.imageAlt!} widths={[480, 800, 1400]} sizes="(min-width: 1280px) 700px, (min-width: 1024px) 45vw, calc(100vw - 48px)" class="sc-shot" style="border-radius: 8px" priority />
     </div>
   </section>
 
   <section class="sc-sec" data-reveal>
     <h2 class="h2">Tour</h2>
-    <Tour project="Yapora" steps={steps} />
+    <Tour project="Yapora" steps={p.tour!} />
   </section>
 
   <section class="sc-sec" data-reveal>
     <h2 class="h2">Concept</h2>
-    <Timeline miles={miles} />
+    <Timeline miles={p.timeline!} />
     <div class="concept-more">
       <div class="quote"><q>Not just a talking avatar, but an actual audio-visual element for whatever sound you want.</q></div>
       <div class="prose">

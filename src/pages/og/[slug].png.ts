@@ -7,14 +7,11 @@ import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
 import sharp from "sharp";
 import { flowPath } from "../../lib/flowlines";
+import { PROJECTS } from "../../data/projects";
 
 export const CARDS: Record<string, { label: string; title: string }> = {
   default: { label: "Wassim Soltani", title: "Software engineer, mostly." },
-  netherstone: { label: "Netherstone", title: "Your knowledge, set in stone." },
-  syncify: { label: "Syncify", title: "Your Spicetify setup needs a savepoint." },
-  yapora: { label: "Yapora", title: "Turn any image into an avatar that talks when you do." },
-  lyrica: { label: "Lyrica", title: "Every word, right when it's sung." },
-  switchflare: { label: "Switchflare", title: "Switch Cloudflare accounts in one click." },
+  ...Object.fromEntries(PROJECTS.map((p) => [p.slug, { label: p.name, title: p.tile.headline }])),
   map: { label: "Map", title: "Every project on one map." },
   archive: { label: "Archive", title: "Older projects I've stopped working on." },
   resume: { label: "Resume", title: "Experience, education and skills." },

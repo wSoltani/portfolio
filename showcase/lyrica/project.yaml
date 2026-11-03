@@ -1,0 +1,43 @@
+name: Lyrica
+status: featured
+kind: personal
+order: 4
+category: Private app
+when: Since Oct 2026
+line: Times every word of a song's lyrics with machine learning, on my own GPU.
+llms: A private app that times every word of a song's lyrics with machine learning, on my own GPU.
+tech:
+  - Python
+  - PyTorch
+  - wav2vec2
+  - MelBand RoFormer
+  - librosa
+  - TypeScript
+  - React
+  - Hono
+  - Cloudflare Workers
+  - D1
+  - R2
+  - Durable Objects
+note: Since Oct 4, 2026
+theme:
+  bg: "#131017"
+  line: "#3a2440"
+  accent: "#cf7fcb"
+  soft: "#ece3ee"
+  sel: "#1d1320"
+  sep: "#2a2030"
+  chip: "#3a3040"
+  ink: "#131017"
+  dim: "#0d0d0dcc"
+tile:
+  headline: Every word, right when it's sung.
+  sub: I give it a song and its lyrics. It pulls out the voice, times every word with machine learning, and hands me the result to check by ear.
+  platforms:
+    - A private app
+map:
+  x: 905
+  y: 245
+resume:
+  when: In use since Oct 2026
+  fact: A 3:17 song takes about 53 seconds on an RTX 3060 Ti; the app itself runs on Cloudflare.

@@ -1,0 +1,17 @@
+name: flyd Operator Sim
+status: archived
+kind: personal
+order: 2
+category: Web game
+when: May 2025
+line: A simulation game where you are the on-call engineer keeping a Fly.io region healthy.
+tech:
+  - TypeScript
+  - React
+  - Next.js
+  - Tailwind CSS
+  - shadcn/ui
+links: []
+map:
+  x: 85
+  y: 150

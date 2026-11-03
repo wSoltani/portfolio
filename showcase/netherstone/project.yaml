@@ -1,0 +1,196 @@
+name: Netherstone
+status: featured
+kind: personal
+order: 1
+category: Desktop app
+when: First release Oct 2026
+line: Keeps your documents, drawings and files in a folder on your computer, synced across your devices and fully offline.
+llms: A desktop app for Windows, macOS and Linux. Keeps your documents, drawings and files in a folder on your computer, synced across your devices and fully offline.
+tech:
+  - Tauri
+  - Rust
+  - React
+  - Plate
+  - Excalidraw
+  - SQLite
+  - Git
+releases:
+  repo: Netherstone-HQ/Netherstone
+fallback:
+  version: 0.5.0-beta.1
+  date: "2026-10-25"
+theme:
+  bg: "#141516"
+  line: "#2b6a5b"
+  accent: "#8fd1be"
+  soft: "#c4ebdf"
+  sel: "#141516"
+  sep: "#23302c"
+  chip: "#333b38"
+  ink: "#141516"
+  dim: "#0d0d0dcc"
+tile:
+  headline: Your knowledge, set in stone.
+  sub: "A desktop app for your knowledge: documents, drawings, files and more. Every shard is a plain Markdown file in a folder you choose, readable by any app and fully available offline."
+  points:
+    - title: Your files, your folder.
+      text: A vault is an ordinary folder of Markdown files.
+    - title: A writing editor, not a code editor.
+      text: Rich formatting as you type.
+    - title: Free sync you own.
+      text: Back up each vault to your own private GitHub.
+  platforms:
+    - Windows
+    - macOS
+    - Linux
+  site:
+    label: netherstone.app ↗
+    href: https://netherstone.app
+  logo: ./lockup-dark.svg
+  image: ./hero.png
+  imageAlt: Netherstone editor with a shard open
+map:
+  x: 300
+  y: 290
+resume:
+  when: Public beta since Oct 2026
+  fact: Free and open source (GPL-3.0), on Windows, macOS and Linux.
+tour:
+  - name: Vault
+    line: A vault is a folder on your computer. Each shard in it is a Markdown file any app can open.
+    image: ./Vault.webp
+    hl: [ 0, 23, 190, 484 ]
+    spots:
+      - { x: 148, y: 37, side: r, text: "Switch vaults, open or start one, or import files into this one" }
+      - { x: 15, y: 66, side: r, text: "Editor, Tags and Canvas, one click each" }
+      - { x: 82, y: 92, side: r, text: Shards you pin stay at the top }
+      - { x: 82, y: 154, side: r, text: "Recent shards, to pick up where you left off" }
+      - { x: 175, y: 237, side: r, text: "Folders and shards. Drag them to rearrange, or start a new one with +" }
+  - name: Editor
+    line: Formatting appears as you type, so you never look at Markdown symbols.
+    image: ./Editor.webp
+    hl: [ 30, 52, 860, 80 ]
+    spots:
+      - { x: 130, y: 66, side: b, text: "Type / or press + for headings, lists, to-dos, tables, callouts, toggles, columns, dates, equations and code in 80+ languages" }
+      - { x: 94, y: 66, side: b, text: "Add images, video, audio, PDFs and other files" }
+      - { x: 188, y: 66, side: b, text: Turn any block into another type }
+      - { x: 256, y: 66, side: b, text: Text size }
+      - { x: 370, y: 66, side: b, text: "Bold, italic, underline, strikethrough, code, highlight and colors" }
+      - { x: 536, y: 66, side: b, text: "Alignment, lists, to-dos and toggles" }
+      - { x: 627, y: 66, side: b, text: Links and tables }
+      - { x: 694, y: 66, side: b, text: Line spacing and indentation }
+      - { x: 827, y: 66, side: b, text: Switch to Viewing to read without changing anything }
+  - name: Links
+    line: Shards connect, so your knowledge works as a whole.
+    image: ./Links.webp
+    hl: [ 681, 52, 860, 484 ]
+    spots:
+      - { x: 690, y: 66, side: l, text: "Every heading in the shard, one click away" }
+      - { x: 690, y: 141, side: l, text: Shards this one links to with @ }
+      - { x: 690, y: 206, side: l, text: "Shards that link back to this one, with the line that links" }
+      - { x: 690, y: 354, side: l, text: "Dates, words and file size at a glance, with tags that open Tags" }
+  - name: Search
+    line: Find any word across thousands of shards in milliseconds.
+    image: ./Search.webp
+    hl: [ 230, 58, 630, 363 ]
+    spots:
+      - { x: 240, y: 74, side: l, text: Ctrl+K (⌘K on a Mac) searches every shard at once }
+      - { x: 240, y: 106, side: l, text: "Commands show up too, like Show history" }
+      - { x: 240, y: 137, side: l, text: Each result shows where the word appears. Open it from the keyboard }
+  - name: Files
+    line: Drop images, video, audio and PDFs into a shard, and place drawings anywhere.
+    image: ./Files.webp
+    spots:
+      - { x: 435, y: 195, side: t, text: "Drawings sit in the shard like images, and update when you edit them" }
+      - { x: 244, y: 280, side: r, text: "Files are copied into the vault, so they travel with your shards" }
+      - { x: 608, y: 280, side: l, text: "Open the file, show it in its folder, or link to the original instead" }
+      - { x: 235, y: 354, side: r, text: To-do lists you can tick off }
+  - name: Research
+    line: Read and write in one window.
+    image: ./Research.webp
+    hl: [ 459, 52, 860, 484 ]
+    spots:
+      - { x: 817, y: 37, side: l, text: Open or close the browser panel }
+      - { x: 497, y: 66, side: r, text: "Back, forward and reload" }
+      - { x: 760, y: 66, side: l, text: Type an address or a search }
+      - { x: 821, y: 66, side: l, text: Open the page in your own browser }
+  - name: Sync
+    line: Keeps your vault up to date on every computer you use, for free.
+    image: ./Sync.webp
+    hl: [ 0, 22, 200, 168 ]
+    spots:
+      - { x: 173, y: 37, side: r, text: "Sync, with its status on the button" }
+      - { x: 132, y: 89, side: r, text: Backs up your vault to a private GitHub repository and keeps it the same on every device }
+      - { x: 178, y: 116, side: r, text: "The repository is yours, on your own GitHub account" }
+      - { x: 74, y: 147, side: r, text: "Sync now, or turn it off. If a shard changed on two devices, you choose which version to keep" }
+  - name: History
+    line: Every shard and drawing keeps its earlier versions on your computer.
+    image: ./History.webp
+    spots:
+      - { x: 795, y: 37, side: l, text: The history of the open shard or drawing }
+      - { x: 845, y: 155, side: l, text: "Each version says what changed, including changes from another device or from outside the app" }
+      - { x: 428, y: 66, side: b, text: Highlight what's different from the current shard }
+      - { x: 645, y: 66, side: b, text: Bring that version back }
+  - name: Overview
+    line: "Your whole vault on one page: what you write, charts from your tables, and what needs fixing."
+    image: ./Overview.webp
+    spots:
+      - { x: 15, y: 436, side: r, text: "Overview, from the rail" }
+      - { x: 158, y: 177, side: r, text: "A writing calendar for the past year, counting words from every device" }
+      - { x: 715, y: 121, side: l, text: "The shards you worked on that day, and how many words you added" }
+      - { x: 156, y: 293, side: r, text: Every chart drawn from a table in your shards }
+      - { x: 620, y: 293, side: l, text: "Broken links to fix, and files no shard uses anymore" }
+  - name: Import
+    line: Bring in Word, PDF, web pages, Markdown, text and CSV files, with their formatting.
+    image: ./Import.webp
+    hl: [ 290, 137, 570, 347 ]
+    spots:
+      - { x: 300, y: 221, side: l, text: "Pick files, or a whole folder. You can also drop them on the window" }
+      - { x: 300, y: 266, side: l, text: "Word, PDF, Markdown, web pages, text and CSV" }
+      - { x: 300, y: 290, side: l, text: Images and files a shard uses come along into the vault }
+  - name: Export
+    line: PDF, Word or web page, with a live preview.
+    image: ./Export.webp
+    hl: [ 80, 15, 780, 469 ]
+    spots:
+      - { x: 335, y: 250, side: r, text: A live preview of exactly what you get }
+      - { x: 603, y: 92, side: l, text: "PDF, Word or web page" }
+      - { x: 603, y: 153, side: l, text: Newsreader or Geist }
+      - { x: 603, y: 226, side: l, text: "Text size, paper and margins" }
+      - { x: 603, y: 341, side: l, text: The title and page number at the foot of each page }
+  - name: Make it yours
+    line: Make Netherstone look and read the way you like.
+    image: ./Themes.webp
+    hl: [ 340, 106, 710, 400 ]
+    spots:
+      - { x: 345, y: 160, side: l, text: "Light, Dark, Match system, plus Tyrant, Bloodline and Citadel" }
+      - { x: 345, y: 377, side: l, text: "Make everything bigger or smaller, here or with Ctrl+= and Ctrl+−" }
+      - { x: 92, y: 134, side: r, text: "Newsreader, Geist or your system font, text size and line width are under Editor" }
+timeline:
+  - date: Apr 16, 2026
+    title: First project files
+    body: Netherstone started on April 16 with a plain Markdown editor. Two days later Plate replaced it, and the rest of the month went into making it fast, along with the browser panel, Excalidraw drawings and recent shards in the sidebar.
+  - date: End of May
+    title: Paused
+    body: May brought @ mentions in place of wikilinks, and a canvas mode for drawing. Large shards were still slow to open, because the rich editor draws every block. A workaround that loaded shards a little at a time stayed janky, so the project went on hold.
+  - date: June
+    title: Plate's update
+    body: Plate 53.0.7 came out on June 3 and made large documents load about 2.7 times faster.
+  - date: September
+    title: Picked back up
+    body: Back on it, Netherstone moved to Plate 53 and split each shard into groups of 100 blocks, so the ones off screen aren't drawn. Git sync, attachments and drawings saved in the vault came in the same stretch.
+  - date: Oct 4, 2026
+    title: Public beta
+    body: Netherstone 0.1.0 beta 1 went public on October 4, with first-run onboarding and updates from GitHub releases. Beta 2 followed two days later with folders in the sidebar.
+  - date: Oct 7, 2026
+    title: Export and themes
+    body: "0.2 added export to PDF, Word and web pages, and three new themes: Tyrant, Bloodline and Citadel. Its second beta let you drag shards into folders and turned the table of contents into an Outline."
+  - date: Oct 16, 2026
+    title: A new layout
+    body: 0.3 rebuilt the layout around a rail for Editor, Tags and Canvas, a sidebar with Pinned and Recent shards, and a right sidebar with Outline, Links and Details. The whole interface can be zoomed too.
+  - date: Oct 21, 2026
+    title: Vault health
+    body: 0.4 was about the health of a vault. Every shard and drawing keeps its earlier versions, Overview shows a writing calendar, charts from tables and broken links, and Import brings in Word, PDF, web pages and CSV. Beta 2 followed on October 24.
+  - date: Oct 25, 2026
+    title: Gallery and history
+    body: 0.5 added a Gallery of every attachment in a vault. History now saves a version every ten minutes while you write, shows which device made each one, and can free up the space old attachment versions take. Big files copy in without holding up saves.

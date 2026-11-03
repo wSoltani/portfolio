@@ -13,9 +13,9 @@ const t = p.theme;
 const L = await live(p);
 const url = `${SITE.url}/projects/${slug}`;
 const app: Record<string, unknown> = {
-  "@type": "SoftwareApplication", name: p.name, description, url, applicationCategory: p.kind, author: { "@id": `${SITE.url}/#me` },
-  ...(L.version && !p.status ? { softwareVersion: L.version, datePublished: L.date?.toISOString().slice(0, 10) } : {}),
-  ...(p.repo ? { codeRepository: `https://github.com/${p.repo}`, offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } } : {}),
+  "@type": "SoftwareApplication", name: p.name, description, url, applicationCategory: p.category, author: { "@id": `${SITE.url}/#me` },
+  ...(L.version && !p.note ? { softwareVersion: L.version, datePublished: L.date?.toISOString().slice(0, 10) } : {}),
+  ...(p.releases ? { codeRepository: `https://github.com/${p.releases.repo}`, offers: { "@type": "Offer", price: "0", priceCurrency: "USD" } } : {}),
 };
 const crumbs = { "@type": "BreadcrumbList", itemListElement: [
   { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },

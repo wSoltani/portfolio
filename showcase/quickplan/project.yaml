@@ -1,0 +1,20 @@
+name: Quickplan
+status: archived
+kind: personal
+order: 5
+category: Web app
+when: Apr 2025
+line: Paste raw meeting notes and get a summary, key points or an action plan.
+tech:
+  - TypeScript
+  - React
+  - Tailwind CSS
+  - Zustand
+  - Vite
+  - Hono
+  - Cloudflare Workers
+  - Workers AI
+links: []
+map:
+  x: 1150
+  y: 150

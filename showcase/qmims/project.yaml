@@ -1,0 +1,22 @@
+name: qmims
+status: archived
+kind: personal
+order: 3
+category: CLI
+when: May 2025
+line: A command-line tool that writes and edits README files with AI. My first open-source project, published on npm.
+tech:
+  - TypeScript
+  - Node.js
+  - Kiro CLI
+  - Jest
+links:
+  - label: npm
+    href: https://www.npmjs.com/package/qmims
+  - label: Docs
+    href: https://qmims.vercel.app
+  - label: GitHub
+    href: https://github.com/wSoltani/qmims
+map:
+  x: 130
+  y: 540

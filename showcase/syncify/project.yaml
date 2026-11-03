@@ -1,0 +1,59 @@
+name: Syncify
+status: featured
+kind: personal
+order: 2
+category: Spicetify extension
+when: First release May 2026
+line: Backs up your Marketplace extensions, themes and snippets, and restores them when Spotify breaks.
+llms: A Spicetify extension. Backs up your Marketplace extensions, themes and snippets, and restores them when Spotify breaks.
+tech:
+  - TypeScript
+  - React
+  - Spicetify
+  - Cloudflare Workers
+  - Cloudflare KV
+  - esbuild
+  - GitHub Actions
+releases:
+  repo: wSoltani/syncify
+fallback:
+  version: 1.1.2
+  date: "2026-10-07"
+theme:
+  bg: "#121212"
+  line: "#1f5c3a"
+  accent: "#1ed760"
+  soft: "#c9f2d7"
+  sel: "#0f1a13"
+  sep: "#23302a"
+  chip: "#2f3a33"
+  ink: "#0d0d0d"
+  dim: "#0d0d0dcc"
+tile:
+  headline: Your Spicetify setup needs a savepoint.
+  sub: Back up the extensions, themes and snippets you added to Spotify, and get them back in one click when an update breaks them or you move to a new computer.
+  platforms:
+    - Windows
+    - macOS
+    - Linux
+  image: ./dialog.png
+  imageAlt: The Syncify dialog open in Spotify, with three saved backups
+map:
+  x: 735
+  y: 470
+resume:
+  when: Released May 2026
+  fact: 4.9k accounts backed up. Free and open source (MIT).
+timeline:
+  - date: May 28, 2026
+    title: Planned, built, released
+    body: "Syncify was planned and built on May 28, and v1.0.1 went out that night. The plan already set the rules it still follows: no account to create, your backup found through your Spotify account, and a full backup never replaced by an empty one. Automatic backups were switched off by default the same day."
+  - date: June 2
+    title: Version history
+    body: v1.1.0 started keeping your last three backups instead of one, so a broken or accidental backup, or one made automatically, can't replace the only good copy. The dialog also started showing which version of Syncify you're running.
+  - date: August 20
+    title: Marketplace moved its data
+    body: People setting up Spotify from scratch got an “empty backup” error. Marketplace had started saving its data in a different part of Spotify's storage, one that survives when Spotify resets your profile, and Syncify was still reading the old one. A Syncify user, zoltan, traced it and sent the fix, which shipped in v1.1.1.
+  - date: Oct 7, 2026
+    title: Spotify's new top bar
+    body: A Spotify update made extension buttons vanish from the top bar for some people, Syncify's included. v1.1.2 puts the button back whenever Spotify redraws the bar, adds Syncify to the profile menu, and opens it from anywhere with Ctrl+Alt+S (⌘⌥S on a Mac).

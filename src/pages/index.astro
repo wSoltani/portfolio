@@ -1,66 +1,22 @@
 ---
 import { Image } from "astro:assets";
-import type { ImageMetadata } from "astro";
 import Base from "../layouts/Base.astro";
 import Icon from "../components/Icon.astro";
 import YaporaMark from "../components/showcase/YaporaMark.astro";
-import { PROJECTS, live } from "../data/projects";
+import { FEATURED, live } from "../data/projects";
 import avatar from "../assets/brand/avatar.webp";
 import MapPreview from "../components/MapPreview.astro";
-import nsHero from "../assets/netherstone/hero.png";
-import nsLockup from "../assets/netherstone/lockup-dark.svg";
-import syDialog from "../assets/syncify/dialog.png";
-import ypAvatar from "../assets/yapora/Avatar.webp";
-import sfHero from "../assets/switchflare/hero.png";
 
-const L = Object.fromEntries(await Promise.all(PROJECTS.map(async (p) => [p.slug, await live(p)] as const)));
+const L = Object.fromEntries(await Promise.all(FEATURED.map(async (p) => [p.slug, await live(p)] as const)));
 const facts = (slug: string) => {
-  const p = PROJECTS.find((x) => x.slug === slug)!;
+  const p = FEATURED.find((x) => x.slug === slug)!;
   const l = L[slug];
-  return { parts: [p.kind, p.status ?? l.versionLabel].filter(Boolean) as string[], live: p.status ? undefined : l };
+  return { parts: [p.category, p.note ?? l.versionLabel].filter(Boolean) as string[], live: p.note ? undefined : l };
 };
-
-// What a tile shows when it opens: the project's own hero, framed by the site.
-const open: Record<string, { headline: string; sub: string; points?: [string, string][]; platforms: string[]; site?: { label: string; href: string }; img?: ImageMetadata; imgAlt?: string }> = {
-  netherstone: {
-    headline: "Your knowledge, set in stone.",
-    sub: "A desktop app for your knowledge: documents, drawings, files and more. Every shard is a plain Markdown file in a folder you choose, readable by any app and fully available offline.",
-    points: [
-      ["Your files, your folder.", "A vault is an ordinary folder of Markdown files."],
-      ["A writing editor, not a code editor.", "Rich formatting as you type."],
-      ["Free sync you own.", "Back up each vault to your own private GitHub."],
-    ],
-    platforms: ["Windows", "macOS", "Linux"],
-    site: { label: "netherstone.app ↗", href: "https://netherstone.app" },
-    img: nsHero, imgAlt: "Netherstone editor with a shard open",
-  },
-  syncify: {
-    headline: "Your Spicetify setup needs a savepoint.",
-    sub: "Back up the extensions, themes and snippets you added to Spotify, and get them back in one click when an update breaks them or you move to a new computer.",
-    platforms: ["Windows", "macOS", "Linux"],
-    img: syDialog, imgAlt: "The Syncify dialog open in Spotify, with three saved backups",
-  },
-  yapora: {
-    headline: "Turn any image into an avatar that talks when you do.",
-    sub: "Pick an image, frame it, and drag a mouth onto its face. It moves with your voice, live in OBS while you stream, or in a finished video made from any audio file.",
-    platforms: ["Windows"],
-    img: ypAvatar, imgAlt: "Yapora: an avatar on the stage, with its settings beside it",
-  },
-  lyrica: {
-    headline: "Every word, right when it's sung.",
-    sub: "I give it a song and its lyrics. It pulls out the voice, times every word with machine learning, and hands me the result to check by ear.",
-    platforms: ["A private app"],
-  },
-  switchflare: {
-    headline: "Switch Cloudflare accounts in one click.",
-    sub: "A browser extension that saves your Cloudflare logins and switches between them without logging out. Everything stays encrypted on your computer.",
-    platforms: ["Browser extension"],
-    site: { label: "Website ↗", href: "https://switchflare.wsoltani.com/" },
-    img: sfHero, imgAlt: "Switchflare on the Cloudflare dashboard, asking to unlock the vault",
-  },
-};
+// Projects with a mark of their own below. Any other project shows its name.
+const marked = new Set(["netherstone", "syncify", "yapora", "lyrica", "switchflare"]);
 const themeVars = (slug: string) => {
-  const t = PROJECTS.find((x) => x.slug === slug)!.theme;
+  const t = FEATURED.find((x) => x.slug === slug)!.theme;
   return `--p-bg:${t.bg};--p-line:${t.line};--p-accent:${t.accent};--p-soft:${t.soft};--p-sel:${t.sel}`;
 };
 ---
@@ -77,14 +33,14 @@ const themeVars = (slug: string) => {
   <section class="wrap featured" id="projects" aria-labelledby="featured">
     <h2 id="featured" class="sec-label">Featured</h2>
     <div class="grid" data-featured>
-      {PROJECTS.map((p, i) => {
-        const o = open[p.slug];
+      {FEATURED.map((p, i) => {
+        const o = p.tile;
         return (
           <article class:list={["tile", { big: i === 0 }]} data-slug={p.slug} style={themeVars(p.slug)}>
             <a href={`/projects/${p.slug}`} class="tile-link" aria-expanded="false" aria-controls={`open-${p.slug}`}>
               {i === 0 ? (
                 <>
-                  <Image src={nsHero} alt="" widths={[600, 1200]} sizes="600px" class="big-shot" loading="eager" />
+                  {o.image && <Image src={o.image} alt="" widths={[600, 1200]} sizes="600px" class="big-shot" loading="eager" />}
                   <span class="big-text">
                     <span class="tile-name big-name">{p.name}</span>
                     <span class="tile-line">{p.line}</span>
@@ -98,6 +54,7 @@ const themeVars = (slug: string) => {
                     {p.slug === "yapora" && <span class="art-mark"><YaporaMark size={40} />Yapora</span>}
                     {p.slug === "switchflare" && <span class="art-mark"><span style="display:flex;color:var(--p-accent)"><Icon name="switch" size={32} stroke={2} /></span>Switchflare</span>}
                     {p.slug === "lyrica" && <span class="art-lyrica"><span>Every word, right when it's</span> <b>sung.</b></span>}
+                    {!marked.has(p.slug) && <span class="art-mark">{p.name}</span>}
                   </span>
                   <span class="tile-body">
                     <span class="tile-name">{p.name}</span>
@@ -110,24 +67,25 @@ const themeVars = (slug: string) => {
             <div class="open" id={`open-${p.slug}`} hidden>
               <div class="open-card">
                 <div class="open-text">
-                  {p.slug === "netherstone" && <img src={nsLockup.src} alt="Netherstone" width="199" height="44" loading="lazy" class="open-logo" />}
+                  {o.logo && <img src={o.logo.src} alt={p.name} width={Math.round((44 * o.logo.width) / o.logo.height)} height="44" loading="lazy" class="open-logo" />}
                   {p.slug === "syncify" && <span class="open-mark caps"><Icon name="syncify" size={36} stroke={2.25} />SYNCIFY</span>}
                   {p.slug === "yapora" && <span class="open-mark"><YaporaMark size={40} />Yapora</span>}
                   {p.slug === "lyrica" && <span class="open-mark" style="color: var(--p-accent); font-size: 22px">Lyrica</span>}
                   {p.slug === "switchflare" && <span class="open-mark"><span style="display:flex;color:var(--p-accent)"><Icon name="switch" size={34} stroke={2} /></span>Switchflare</span>}
+                  {!o.logo && !marked.has(p.slug) && <span class="open-mark">{p.name}</span>}
                   <span class="open-title">{o.headline}</span>
                   <span class="open-sub">{o.sub}</span>
                   {o.points && (
-                    <span class="open-points">{o.points.map(([a, b]) => <span><b>{a}</b> {b}</span>)}</span>
+                    <span class="open-points">{o.points.map((x) => <span><b>{x.title}</b> {x.text}</span>)}</span>
                   )}
-                  <span class="open-facts"><span class="parts">{o.platforms.map((x) => <span>{x}</span>)}</span>{!p.status && <span class="parts"><span>{L[p.slug].versionLabel}</span><span>{L[p.slug].dateLabel}</span></span>}{p.status && <span>{p.status}</span>}</span>
+                  <span class="open-facts"><span class="parts">{o.platforms.map((x) => <span>{x}</span>)}</span>{!p.note && <span class="parts"><span>{L[p.slug].versionLabel}</span><span>{L[p.slug].dateLabel}</span></span>}{p.note && <span>{p.note}</span>}</span>
                   <span class="open-actions">
                     <a href={`/projects/${p.slug}`} class="btn">View project</a>
                     {o.site && <a href={o.site.href} class="open-ext">{o.site.label}</a>}
                   </span>
                 </div>
                 <div class="open-art">
-                  {o.img ? <Image src={o.img} alt={o.imgAlt!} widths={[640, 1280]} sizes="640px" class:list={["open-img", { tall: p.slug === "syncify" }]} /> : <span class="open-lyrica" aria-hidden="true"><span>Every word, right when it's</span> <b>sung.</b></span>}
+                  {o.image ? <Image src={o.image} alt={o.imageAlt!} widths={[640, 1280]} sizes="640px" class:list={["open-img", { tall: p.slug === "syncify" }]} /> : <span class="open-lyrica" aria-hidden="true"><span>Every word, right when it's</span> <b>sung.</b></span>}
                 </div>
               </div>
               <button type="button" class="open-close" aria-label={`Close ${p.name}`}>×</button>

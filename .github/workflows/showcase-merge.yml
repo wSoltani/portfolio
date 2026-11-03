@@ -1,0 +1,104 @@
+# A branch named chore/showcase-<slug> that changes nothing outside showcase/<slug>/
+# is merged into main once the site builds with it. Any other branch, or one that
+# touches anything else, waits for a pull request and a review.
+name: Showcase merge
+
+on:
+  push:
+    branches: ["chore/showcase-*"]
+
+# One merge at a time, so two projects updating together never race for main.
+concurrency:
+  group: showcase-merge
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  check:
+    if: ${{ !github.event.deleted }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      ok: ${{ steps.scope.outputs.ok }}
+      main: ${{ steps.scope.outputs.main }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check the branch only changes its own folder
+        id: scope
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          slug="${BRANCH#chore/showcase-}"
+          if ! [[ "$slug" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+            echo "::notice::$BRANCH doesn't name a project folder, so it waits for review."
+            echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          changed="$(git diff --name-only --no-renames origin/main...HEAD)"
+          if [ -z "$changed" ]; then
+            echo "::notice::Nothing new for main."
+            echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          outside="$(printf '%s\n' "$changed" | grep -v "^showcase/$slug/" || true)"
+          if [ -n "$outside" ]; then
+            echo "::notice::Changes outside showcase/$slug/, so it waits for review:"
+            printf '%s\n' "$outside"
+            echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "main=$(git rev-parse origin/main)" >> "$GITHUB_OUTPUT"
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+
+      - name: Bring in main
+        if: steps.scope.outputs.ok == 'true'
+        env:
+          MAIN: ${{ steps.scope.outputs.main }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git merge --no-edit "$MAIN"
+
+      - uses: pnpm/action-setup@v4
+        if: steps.scope.outputs.ok == 'true'
+
+      - uses: actions/setup-node@v4
+        if: steps.scope.outputs.ok == 'true'
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Build
+        if: steps.scope.outputs.ok == 'true'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+  merge:
+    needs: check
+    if: needs.check.outputs.ok == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.check.outputs.main }}
+          fetch-depth: 0
+
+      # The same merge that was built. If main moved since, the push is refused rather
+      # than forced, and pushing the branch again runs the check on the new main.
+      - name: Merge into main
+        env:
+          BRANCH: ${{ github.ref_name }}
+          BRANCH_SHA: ${{ github.sha }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git merge --no-edit "$BRANCH_SHA" -m "Merge branch '$BRANCH'"
+          git push origin HEAD:main
