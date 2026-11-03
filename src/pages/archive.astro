@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 
-import { ARCHIVE } from "../data/archive";
+import { ARCHIVE } from "../data/projects";
 ---
 
 <Base title="Archive" description="Older projects I've stopped working on. They stay here as a record." image="/og/archive.png">
@@ -16,9 +16,9 @@ import { ARCHIVE } from "../data/archive";
         <div class="row" role="row">
           <span role="cell" class="name">{p.name}</span>
           <span role="cell" class="desc">{p.line}</span>
-          <span role="cell" class="meta">{p.kind}</span>
+          <span role="cell" class="meta">{p.category}</span>
           <span role="cell" class="meta">{p.when}</span>
-          <span role="cell" class="links">{p.links.map(([t, h]) => <a href={h} class="ext">{t} ↗</a>)}</span>
+          <span role="cell" class="links">{p.links.map((l) => <a href={l.href} class="ext">{l.label} ↗</a>)}</span>
         </div>
       ))}
     </div>

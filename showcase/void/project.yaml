@@ -1,0 +1,22 @@
+name: Void
+status: archived
+kind: personal
+order: 1
+category: Web app
+when: Jul 2025
+line: A dashboard and four Cloudflare Workers for product search, product Q&A and AI-written product descriptions.
+tech:
+  - TypeScript
+  - React
+  - Tailwind CSS
+  - Hono
+  - Cloudflare Workers
+  - Workers AI
+  - Vectorize
+  - D1
+  - Cloudflare KV
+  - Browser Rendering
+links: []
+map:
+  x: 1000
+  y: 95

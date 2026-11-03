@@ -6,19 +6,6 @@ import Flow from "../components/Flow.astro";
 import { JOBS, EDU, SKILLS, LANG } from "../data/resume";
 import { PROJECTS } from "../data/projects";
 import { SITE } from "../data/site";
-
-// When each project shipped, plus one fact worth a reader's time.
-const status: Record<string, string> = {
-  netherstone: "Public beta since Oct 2026", syncify: "Released May 2026", yapora: "Public beta since Sep 2026",
-  lyrica: "In use since Oct 2026", switchflare: "Not released yet",
-};
-const fact: Record<string, string> = {
-  netherstone: "Free and open source (GPL-3.0), on Windows, macOS and Linux.",
-  syncify: "4.9k accounts backed up. Free and open source (MIT).",
-  yapora: "Exports render frame by frame, so they never drop a frame or drift out of sync.",
-  lyrica: "A 3:17 song takes about 53 seconds on an RTX 3060 Ti; the app itself runs on Cloudflare.",
-  switchflare: "Logins stay encrypted on your computer.",
-};
 ---
 
 <!doctype html>
@@ -60,8 +47,8 @@ const fact: Record<string, string> = {
       <p class="note">My own products, which I build and run myself.</p>
       {PROJECTS.map((p) => (
         <article class="item project">
-          <div class="head"><h3>{p.name}<span>{" "}{p.kind}</span></h3><span class="when">{status[p.slug]}</span></div>
-          <p>{p.line} {fact[p.slug]}</p>
+          <div class="head"><h3>{p.name}<span>{" "}{p.category}</span></h3><span class="when">{p.resume.when}</span></div>
+          <p>{p.line} {p.resume.fact}</p>
           {p.tech.length > 0 && <p class="tech">{p.tech.join(", ")}</p>}
           <p class="url"><a href={`${SITE.url}/projects/${p.slug}`}>wsoltani.com/projects/{p.slug}</a></p>
         </article>

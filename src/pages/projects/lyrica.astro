@@ -66,7 +66,7 @@ const runLabels = [
           {words.map((w, i) => <><span class={`w w${i}`} aria-hidden="true">{w}</span>{i < words.length - 1 && " "}</>)}
         </h1>
         <p class="ly-sub">I give it a song and its lyrics. It pulls out the voice, times every word with machine learning, and hands me the result to check by ear.</p>
-        <p class="ly-facts parts"><span>A private app</span><span>Since Oct 4, 2026</span></p>
+        <p class="ly-facts parts"><span>A private app</span><span>{p.note}</span></p>
       </div>
       <div class="ly-strip" aria-hidden="true">
         <svg viewBox="0 0 1200 170" set:html={STRIP + '<text x="664" y="92" font-size="12" fill="#cf7fcb">held note</text><text x="581" y="92" font-size="12" fill="#e8a33d" text-anchor="end">check by ear</text>'} />
