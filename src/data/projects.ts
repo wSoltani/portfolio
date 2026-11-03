@@ -1,5 +1,5 @@
 // Every project, read from its own folder in showcase/. Home tiles, showcase pages,
-// the Archive, the Map, the résumé and llms.txt all read from here.
+// the Archive, the Map, the Resume and llms.txt all read from here.
 import { getCollection, type CollectionEntry } from "astro:content";
 import { repoFacts, shortDate, versionLabel } from "../lib/github";
 
