@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import Icon from "../components/Icon.astro";
 import { SITE } from "../data/site";
+import { RESUME } from "../data/nav";
 
 const topics = ["Project", "Question", "Something else"];
 ---
@@ -38,6 +39,7 @@ const topics = ["Project", "Question", "Something else"];
         <a href={`mailto:${SITE.email}`}><Icon name="mail" size={18} /><span>{SITE.email}</span></a>
         <a href={SITE.linkedin} rel="me noopener" target="_blank"><Icon name="linkedin" size={18} /><span>LinkedIn ↗</span></a>
         <a href={SITE.github} rel="me noopener" target="_blank"><Icon name="github" size={18} /><span>GitHub ↗</span></a>
+        <a href={RESUME.page}><Icon name="file" size={18} /><span>Resume</span></a>
       </div>
     </div>
   </div>

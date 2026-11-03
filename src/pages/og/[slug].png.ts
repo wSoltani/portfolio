@@ -17,7 +17,7 @@ export const CARDS: Record<string, { label: string; title: string }> = {
   switchflare: { label: "Switchflare", title: "Switch Cloudflare accounts in one click." },
   map: { label: "Map", title: "Every project on one map." },
   archive: { label: "Archive", title: "Older projects I've stopped working on." },
-  resume: { label: "Résumé", title: "Experience, education and skills." },
+  resume: { label: "Resume", title: "Experience, education and skills." },
   "about-this-site": { label: "About this site", title: "How this site is built, and the pattern behind it." },
   contact: { label: "Contact", title: "I'm in Tunisia and work remotely." },
 };
