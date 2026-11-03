@@ -1,4 +1,4 @@
-// Résumé content, shared by /resume and the printed PDF so they never drift apart.
+// Resume content, shared by /resume and the printed PDF so they never drift apart.
 
 export const JOBS = [
   {

@@ -13,7 +13,7 @@ ${PROJECTS.map((p) => `- [${p.name}](${SITE.url}/projects/${p.slug}): ${p.llms}`
 
 ## About
 
-- [Résumé](${SITE.url}/resume): Experience, education and skills.
+- [Resume](${SITE.url}/resume): Experience, education and skills.
 - [Contact](${SITE.url}/contact): How to reach me.
 - [About this site](${SITE.url}/about-this-site): How this site is built, and the Flowlines generator.
 
