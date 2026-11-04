@@ -435,7 +435,11 @@ export function mountAsk() {
       }
       if (kind === "resting" && until) {
         const when = new Date(until);
-        if (when.getTime() - Date.now() > 36 * 3600 * 1000) {
+        if (when.getTime() - Date.now() <= 36 * 3600 * 1000) {
+          // The daily limit resets at midnight UTC: show it in the visitor's own time.
+          card.querySelector("[data-title]")!.textContent =
+            `No more answers until ${when.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}`;
+        } else {
           card.querySelector("[data-title]")!.textContent =
             `No more answers until ${when.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })}`;
           card.querySelector("[data-body]")!.textContent = "There's a limit each month. The Work and Projects sections cover the same ground.";
