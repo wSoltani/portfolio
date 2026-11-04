@@ -1,0 +1,31 @@
+---
+// Syncify's logo: a four-colour disc inside a restore arrow. The gaps between the quarters and the notch
+// around the arrowhead are cut out with masks, so they show whatever the logo sits on.
+interface Props { size?: number; class?: string }
+const { size = 32, class: cls } = Astro.props;
+const id = `syncify-notch-${Math.random().toString(36).slice(2, 8)}`;
+const head = "M668 508 708 598 790 540";
+---
+
+<svg class={cls} width={size} height={size} viewBox="262 230 564 564" aria-hidden="true" focusable="false">
+  <defs>
+    <mask id={id} maskUnits="userSpaceOnUse" x="262" y="230" width="564" height="564">
+      <rect x="262" y="230" width="564" height="564" fill="#fff" />
+      <path d={head} fill="none" stroke="#000" stroke-width="76" stroke-linecap="round" stroke-linejoin="round" />
+    </mask>
+    <mask id={`${id}-gap`} maskUnits="userSpaceOnUse" x="340" y="340" width="344" height="344">
+      <rect x="340" y="340" width="344" height="344" fill="#fff" />
+      <path d="M512 340V684M340 512H684" stroke="#000" stroke-width="14" />
+    </mask>
+  </defs>
+  <g mask={`url(#${id})`}>
+    <g mask={`url(#${id}-gap)`} transform="rotate(15 512 512)">
+      <path d="M512 512V354A158 158 0 0 0 354 512Z" fill="#88bcf2" />
+      <path d="M512 512H670A158 158 0 0 0 512 354Z" fill="#6cd1d1" />
+      <path d="M512 512H354A158 158 0 0 0 512 670Z" fill="#d3c48c" />
+      <path d="M512 512V670A158 158 0 0 0 670 512Z" fill="#efa4c1" />
+    </g>
+  </g>
+  <path d="M563 720A214.5 214.5 0 1 1 708 598" fill="none" stroke="#f3f1ef" stroke-width="48" stroke-linecap="round" />
+  <path d={head} fill="none" stroke="#f3f1ef" stroke-width="48" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

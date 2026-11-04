@@ -4,8 +4,8 @@ kind: personal
 order: 1
 category: Desktop app
 when: First release Oct 2026
-line: Keeps your documents, drawings and files in a folder on your computer, synced across your devices and fully offline.
-llms: A desktop app for Windows, macOS and Linux. Keeps your documents, drawings and files in a folder on your computer, synced across your devices and fully offline.
+line: A free, open-source desktop app for Markdown documents and drawings, with a rich editor, links between documents and a built-in browser.
+llms: A free, open-source desktop app for Windows, macOS and Linux, for Markdown documents and drawings, with a rich editor, links between documents and a built-in browser. Everything except sync works offline.
 tech:
   - Tauri
   - Rust
@@ -52,7 +52,6 @@ tile:
   imageAlt: Netherstone editor with a shard open
 resume:
   when: Public beta since Oct 2026
-  line: "Keeps your documents, drawings and files in a folder on your computer, working offline and synced across your devices"
   facts:
     - "Free and open source (GPL-3.0)"
     - "Windows, macOS, Linux"

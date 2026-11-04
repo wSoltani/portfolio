@@ -4,8 +4,8 @@ kind: personal
 order: 2
 category: Spicetify extension
 when: First release May 2026
-line: Backs up your Marketplace extensions, themes and snippets, and restores them when Spotify breaks.
-llms: A Spicetify extension that backs up your Marketplace extensions, themes and snippets, and restores them when Spotify breaks. Its website, syncify.wsoltani.com, adds accounts, share codes and Discover.
+line: A Spicetify extension that backs up what you installed from Spicetify Marketplace and restores it in one click after a Spotify update or on a new computer.
+llms: A Spicetify extension that backs up what you installed from Spicetify Marketplace and restores it in one click after a Spotify update or on a new computer. Its website, syncify.wsoltani.com, adds accounts, share codes and Discover.
 tech:
   - TypeScript
   - React

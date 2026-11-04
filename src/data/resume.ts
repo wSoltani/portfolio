@@ -73,7 +73,9 @@ export const JOBS: Job[] = [
         items: [
           "Built and ran it solo, in production from 2024 to 2026",
           "Built an SSR Angular storefront and a JHipster back office with promotions, an audit log and restorable backups",
-          "Added semantic search on Workers AI and Vectorize",
+          "Built semantic search, similar-product recommendations and AI-written product descriptions on Workers AI and Vectorize",
+          "Built a GSM Arena import that fills in phone specs and clean product images, since entering them by hand was too slow for staff",
+          "Set up and ran the servers and the shop's own mail server",
         ],
       },
     ],
