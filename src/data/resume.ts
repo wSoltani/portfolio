@@ -7,7 +7,7 @@ import { WORK } from "./work";
 export const HEADLINE = "Senior software engineer";
 export const LOCATION = "Ariana, Tunisia, working remotely";
 export const SUMMARY =
-  "7 years of full-stack work across web apps, backends, browser extensions, desktop apps and AI features, including leading a development team. Takes ideas from the first decision to the day people start using them.";
+  "7 years of full-stack work across web applications, backends, browser extensions, desktop apps and AI features, including leading a development team. Takes ideas from the first decision to the day people start using them.";
 
 export interface WorkGroup {
   /** Shown as the group heading. */
@@ -33,7 +33,7 @@ export interface Job {
 
 export const JOBS: Job[] = [
   {
-    role: "Senior software engineer", org: "Vantage Labs", when: "Apr 2022 – Present",
+    role: "Senior software engineer", org: "Vantage Labs", when: "Apr 2022 - Present",
     intro: "Contract role through Blueblood, fully remote, on Vantage's AI writing and learning products",
     groups: [
       {
@@ -69,7 +69,7 @@ export const JOBS: Job[] = [
     ],
   },
   {
-    role: "Founder", org: "Blueblood", when: "Apr 2022 – Present",
+    role: "Founder", org: "Blueblood", when: "Apr 2022 - Present",
     intro: "Own company, used for the Vantage Labs contract and its own clients",
     lead: ["Onboarded and worked with interns on other Blueblood projects: one for 6 months, two for 3"],
     groups: [
@@ -87,7 +87,7 @@ export const JOBS: Job[] = [
     ],
   },
   {
-    role: "Freelance developer", when: "Jun 2025 – Sep 2025",
+    role: "Freelance developer", when: "Jun 2025 - Sep 2025",
     groups: [
       {
         name: "Void", slug: "void", context: "AI shopping assistant for online stores, through Upwork",
@@ -101,7 +101,7 @@ export const JOBS: Job[] = [
     ],
   },
   {
-    role: "Lead full-stack developer", org: "AlmavivA", when: "Sep 2019 – Mar 2022",
+    role: "Lead full-stack developer", org: "AlmavivA", when: "Sep 2019 - Mar 2022",
     lead: [
       "Became one of the development unit's two leads as Visa Services expanded to Egypt and Russia",
       "Introduced to AlmavivA Italia as the developer in charge, and represented the team in calls and meetings on security and technology",
@@ -138,8 +138,8 @@ export const JOBS: Job[] = [
 ];
 
 export const EDU = [
-  { t: "Master's degree in computer science", o: "Tek-Up University", w: "2019 – 2022", d: "Software engineering and information systems" },
-  { t: "Bachelor's degree in computer science applied to business management", o: "Université Libre de Tunis (ULT)", w: "2016 – 2019", d: "" },
+  { t: "Master's degree in computer science", o: "Tek-Up University", w: "2019 - 2022", d: "Software engineering and information systems" },
+  { t: "Bachelor's degree in computer science applied to business management", o: "Université Libre de Tunis (ULT)", w: "2016 - 2019", d: "" },
 ];
 
 export const SKILLS: [string, string[]][] = [
@@ -147,11 +147,11 @@ export const SKILLS: [string, string[]][] = [
   ["Frontend", ["React", "Next.js", "Astro", "Angular", "Redux", "Zustand", "HTML", "CSS", "Tailwind CSS"]],
   ["Extensions", ["WXT", "Plasmo", "Webpack", "Shadow DOM", "DevTools panels"]],
   ["Backend", ["Node.js", "Spring Boot", "JHipster", "Hono", "REST APIs", "Keycloak", "OAuth2"]],
-  ["Desktop and mobile", ["Tauri", "Ionic", "native Android and iOS keyboards"]],
+  ["Desktop and mobile", ["Tauri", "Ionic mobile apps", "native Android and iOS keyboards"]],
   ["Cloud", ["Cloudflare Workers", "Durable Objects", "D1", "R2", "KV", "AWS", "Docker", "Linux servers"]],
-  ["AI", ["AWS Bedrock", "Workers AI", "Vectorize", "PyTorch", "embeddings", "RAG"]],
-  ["Data", ["PostgreSQL", "MySQL", "MongoDB", "Elasticsearch"]],
-  ["Testing and CI/CD", ["Vitest", "Testing Library", "Playwright", "Jest", "Puppeteer", "GitHub Actions"]],
+  ["AI", ["AWS Bedrock", "Workers AI", "Vectorize", "PyTorch", "LLMs", "embeddings", "RAG"]],
+  ["Data", ["PostgreSQL", "MySQL", "MongoDB", "Elasticsearch", "SQL", "NoSQL"]],
+  ["Automated testing and CI/CD", ["Vitest", "Testing Library", "Playwright", "Jest", "Puppeteer", "GitHub Actions"]],
   ["Writing", ["Technical writing and documentation"]],
 ];
 
