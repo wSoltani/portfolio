@@ -1,7 +1,7 @@
 // The Answers panel's behaviour: opening and closing, the chat, the bot check, and the streamed answers.
 // Everything a visitor or the Worker sends is shown as text, never as HTML.
 import { gsap, T, EASE, reduced } from "./motion";
-import { flowPath } from "../lib/flowlines";
+import { edgePath } from "../lib/edgelines";
 
 type Turn = { role: "user" | "assistant"; content: string; sources?: string[] };
 type Link = { label: string; href: string; accent?: string };
@@ -93,29 +93,30 @@ async function readEvents(body: ReadableStream<Uint8Array>, on: (name: string, d
 const pushes = () => matchMedia("(min-width: 1100px)").matches;
 
 /**
- * The edge strip's Flowlines. They settle into place when the panel opens and stir
- * while an answer is being looked up. Without motion they just sit at rest.
+ * The edge lines. They wave into place when the panel opens and flow down the edge
+ * while an answer is being looked up. Without motion they just sit still.
  */
 function stripMotion(svg: SVGSVGElement | null) {
-  const path = svg?.querySelector("path");
-  const { seed, w, h, period } = svg?.dataset ?? {};
-  const REST = 0.7;
-  const state = { s: REST };
-  if (!path || !seed || !w || !h) return { settle() {}, stir() {}, calm() {} };
-  const draw = () => path.setAttribute("d", flowPath({ width: +w, height: +h, seed, period: period ? +period : undefined, swirl: state.s }));
+  const paths = svg ? [...svg.querySelectorAll("path")] : [];
+  const state = { wave: 1, phase: 0 };
+  const draw = () => paths.forEach((p, i) => p.setAttribute("d", edgePath(i, state.wave, state.phase)));
+  let flow: gsap.core.Tween | null = null;
   return {
     settle() {
-      if (reduced()) return;
-      state.s = 0.1;
-      gsap.to(state, { s: REST, duration: T.signature, ease: EASE.enter, onUpdate: draw, overwrite: true });
+      if (reduced() || !paths.length) return;
+      state.wave = 0;
+      gsap.to(state, { wave: 1, duration: T.signature, ease: EASE.enter, onUpdate: draw });
     },
     stir() {
-      if (reduced()) return;
-      gsap.to(state, { s: REST + 0.35, duration: 1.4, ease: "sine.inOut", yoyo: true, repeat: -1, onUpdate: draw, overwrite: true });
+      if (reduced() || !paths.length) return;
+      flow?.kill();
+      flow = gsap.to(state, { phase: `+=${Math.PI * 2}`, duration: 2.4, ease: "none", repeat: -1, onUpdate: draw });
     },
     calm() {
-      if (reduced()) return;
-      gsap.to(state, { s: REST, duration: T.slow, ease: EASE.move, onUpdate: draw, overwrite: true });
+      if (!flow) return;
+      flow.kill();
+      flow = null;
+      gsap.to(state, { phase: `+=${Math.PI / 2}`, duration: T.slow, ease: "power2.out", onUpdate: draw });
     },
   };
 }
