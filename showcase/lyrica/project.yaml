@@ -35,9 +35,6 @@ tile:
   sub: I give it a song and its lyrics. It pulls out the voice, times every word with machine learning, and hands me the result to check by ear.
   platforms:
     - A private app
-map:
-  x: 905
-  y: 245
 resume:
   when: In use since Oct 2026
   fact: A 3:17 song takes about 53 seconds on an RTX 3060 Ti; the app itself runs on Cloudflare.

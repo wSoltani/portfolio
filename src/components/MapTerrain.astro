@@ -1,0 +1,91 @@
+---
+// One drawing of the Map: background waves, area labels, each project's rings, and its
+// dot and name. The Map page draws one for wide screens and one for phones; previews draw
+// one with a project lit. Rings are one shape per project, reused at every size.
+import { peaks, shape, waves, type Layout } from "../lib/terrain";
+
+interface Props {
+  layout: Layout;
+  /** Lights this project, the way the Map shows it when picked. */
+  focus?: string;
+  /** Peaks become links with names, and the page's script can light them. Previews show rings and dots only. */
+  interactive?: boolean;
+  /** Includes the ring shapes. Leave off when another drawing on the page already has them. */
+  defs?: boolean;
+  viewBox?: string;
+  class?: string;
+  label?: string;
+}
+const { layout, focus, interactive = false, defs = true, viewBox, class: cls, label = "Map of projects" } = Astro.props;
+const by = new Map(peaks.map((p) => [p.slug, p]));
+const items = layout.placed.map((pl) => ({ ...pl, p: by.get(pl.slug)! }));
+const n1 = (v: number) => +v.toFixed(1);
+const areas = [{ label: "Projects", box: layout.mine }, ...layout.areas];
+const Peak = interactive ? "a" : "g";
+---
+
+<svg viewBox={viewBox ?? `0 0 ${layout.w} ${layout.h}`} preserveAspectRatio="xMidYMid slice" role="img" aria-label={label} class:list={["terrain", cls]} data-terrain={interactive || undefined}>
+  {defs && (
+    <defs>{peaks.map((p) => <path id={`ring-${p.slug}`} d={shape(p.slug)} vector-effect="non-scaling-stroke" />)}</defs>
+  )}
+  <g class="waves" aria-hidden="true">{waves(layout.w, layout.h).map((d) => <path d={d} />)}</g>
+  {interactive && <g class="areas" aria-hidden="true">
+    {areas.map(({ label, box }) => (
+      <g>
+        <text x={n1(box.x + 4)} y={n1(box.y + 12)}>{label.toUpperCase()}</text>
+        <path d={`M${n1(box.x + 4)} ${n1(box.y + 22)}H${n1(box.x + box.w - 4)}`} />
+      </g>
+    ))}
+  </g>}
+  <g class="rings" aria-hidden="true">
+    {items.map(({ slug, x, y, step, rings, p }) => (
+      <g data-p={slug} class:list={{ on: slug === focus }} style={`--acc:${p.accent}`} transform={`translate(${n1(x)} ${n1(y)})`}>
+        {Array.from({ length: rings - 1 }, (_, i) => (
+          <use href={`#ring-${slug}`} transform={`scale(${n1((i + 1) * step)})`} style={`--o:${Math.max(0.16, 1 - (i + 1) / rings).toFixed(2)}`} />
+        ))}
+      </g>
+    ))}
+  </g>
+  <g class="links" />
+  <g class="peaks">
+    {items.map(({ slug, x, y, p }) => (
+      <Peak
+        href={interactive ? `?p=${slug}` : undefined}
+        class:list={["peak", { big: p.big, on: slug === focus }]}
+        data-slug={slug}
+        style={`--acc:${p.accent}`}
+        aria-label={interactive ? p.name : undefined}
+      >
+        {interactive && <circle cx={n1(x)} cy={n1(y)} r="22" class="hit" />}
+        <circle cx={n1(x)} cy={n1(y)} r="20" class="halo" />
+        <circle cx={n1(x)} cy={n1(y)} r={p.big ? 3.5 : 3} class="dot" />
+        {interactive && <text x={n1(x + 9)} y={n1(y - 7)} class="name">{p.name}</text>}
+      </Peak>
+    ))}
+  </g>
+</svg>
+
+<style>
+  .terrain { display: block; font-family: var(--font); }
+  .waves path { fill: none; stroke: #161616; }
+  .areas text { font-size: 11px; letter-spacing: 0.08em; fill: var(--subtle); }
+  .areas path { stroke: #262626; stroke-dasharray: 2 4; }
+  .rings use { fill: none; stroke: #262626; stroke-width: 1; transition: stroke var(--base) ease; }
+  .rings .on use { stroke: var(--acc); stroke-opacity: var(--o); stroke-width: 1.1; }
+  .hit { fill: transparent; }
+  .halo { fill: var(--acc); fill-opacity: 0; transition: fill-opacity var(--base) ease; }
+  .dot { fill: #4f4f4f; transition: fill var(--fast) ease; }
+  .big .dot { fill: #7a7a7a; }
+  .name { font-size: 12px; fill: #7d7d7d; paint-order: stroke; stroke: var(--ink); stroke-width: 4px; transition: fill var(--fast) ease; }
+  .big .name { font-size: 13px; font-weight: 500; fill: #949494; }
+  .peak { outline: none; }
+  a.peak { cursor: pointer; }
+  a.peak:hover .name, a.peak:focus-visible .name { fill: var(--cream); }
+  a.peak:focus-visible .hit { stroke: var(--cream); stroke-width: 1.5; }
+  .peak.on .halo { fill-opacity: 0.12; }
+  .peak.on .dot { fill: var(--acc); r: 5; }
+  .peak.on .name { font-size: 15px; font-weight: 600; fill: var(--cream); transform: translate(5px, -3px); }
+  /* Lit: shares technology with the picked project, so it takes the picked project's color. */
+  .peak.lit .dot { fill: var(--sel); }
+  .peak.lit .name { fill: #bdb7aa; }
+</style>

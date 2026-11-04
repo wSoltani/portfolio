@@ -38,9 +38,6 @@ tile:
     - Linux
   image: ./dialog.png
   imageAlt: The Syncify dialog open in Spotify, with three saved backups
-map:
-  x: 735
-  y: 470
 resume:
   when: Released May 2026
   fact: 4.9k accounts backed up. Free and open source (MIT).
