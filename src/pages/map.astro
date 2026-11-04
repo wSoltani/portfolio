@@ -110,7 +110,6 @@ const data = mapData();
     for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, String(v));
     return e;
   };
-  const BASIC = new Set(["TypeScript", "JavaScript"]);
   const list = (xs: string[]) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs[xs.length - 1]}`);
 
   const clear = () => {
@@ -204,8 +203,7 @@ const data = mapData();
     const shared = new Map<string, string[]>();
     for (const o of DATA) {
       if (o.slug === slug) continue;
-      // TypeScript runs through almost everything, so it says nothing about how two projects relate.
-      const common = o.tech.filter((t) => p.tech.includes(t) && !BASIC.has(t));
+      const common = o.tech.filter((t) => p.tech.includes(t));
       if (common.length) {
         const line = el("line", { x1: p.x, y1: p.y, x2: o.x, y2: o.y, "data-tech": common.join("|") }) as SVGLineElement;
         links.append(line);
@@ -220,7 +218,7 @@ const data = mapData();
     card.querySelector("[data-name]")!.textContent = p.name;
     card.querySelector("[data-meta]")!.replaceChildren(...[p.kind, p.when, p.tech.join(", ")].filter(Boolean).map((t) => Object.assign(document.createElement("span"), { textContent: t })));
     card.querySelector("[data-shared]")!.textContent = shared.size
-      ? [...shared].slice(0, 3).map(([t, who]) => `${t} is shared with ${list(who)}.`).join(" ")
+      ? [...shared].map(([t, who]) => `${t} is shared with ${list(who)}.`).join(" ")
       : "Nothing here is shared with another project.";
     const open = card.querySelector<HTMLAnchorElement>("[data-open]")!;
     open.href = p.href;
