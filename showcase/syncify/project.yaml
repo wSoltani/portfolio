@@ -49,6 +49,7 @@ tile:
   imageAlt: The Syncify dialog open in Spotify, with three saved backups
 resume:
   when: Released May 2026
+  line: Backs up what you installed from Spicetify Marketplace and restores it in one click after a Spotify update or on a new computer
   facts:
     - "6,100+ people, 77,000+ items backed up"
     - "Open-source extension (MIT)"

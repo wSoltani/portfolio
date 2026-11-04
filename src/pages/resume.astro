@@ -38,6 +38,7 @@ const contact = [
                 <h3 class="name"><a href={`/work/${g.slug}`} class="link">{g.name}</a></h3>
                 <p class="context">{g.context}</p>
                 <ul>{g.items.map((l) => <li>{l}</li>)}</ul>
+                {g.stack && <p class="stack">{g.stack.join(", ")}</p>}
               </div>
             ))}
           </div>
@@ -118,6 +119,7 @@ const contact = [
   ul { margin: 0; padding-left: 18px; font-size: 16px; line-height: 1.6; color: var(--body); }
   li { margin: 0 0 4px; }
   .p { font-size: 16px; line-height: 1.6; color: var(--body); }
+  .stack { padding-left: 18px; font-size: 14px; color: var(--subtle); }
   .facts { --pad: 10px; row-gap: 2px; font-size: 14px; color: var(--subtle); }
   .older { margin-top: 16px; font-size: 15px; color: var(--muted); }
   .link { text-decoration-color: #4a4a4a; text-underline-offset: 3px; }

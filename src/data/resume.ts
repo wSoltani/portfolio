@@ -7,7 +7,7 @@ import { WORK } from "./work";
 export const HEADLINE = "Senior software engineer";
 export const LOCATION = "Ariana, Tunisia, working remotely";
 export const SUMMARY =
-  "Senior software engineer with 7 years of full-stack work, including leading a development team. I've built web apps, backends, browser extensions, desktop apps and AI features, and I take ideas from the first decision to the day people start using them.";
+  "7 years of full-stack work, including leading a development team. I've built web apps, backends, browser extensions, desktop apps and AI features, and I take ideas from the first decision to the day people start using them.";
 
 export interface WorkGroup {
   /** Shown as the group heading. */
@@ -17,6 +17,8 @@ export interface WorkGroup {
   /** One line on what the product is, for readers who don't know it. */
   context: string;
   items: string[];
+  /** The main tools he used on it, from the wiki entry's stack, shown under the items. Left out when the items already name them. */
+  stack?: string[];
 }
 
 export interface Job {
@@ -40,43 +42,47 @@ export const JOBS: Job[] = [
           "Proposed building the extension around Chrome's Side Panel, which became the shape of the product",
           "Chose to move the extension to WXT and rewrote it, including live-streamed feedback",
           "Rebuilt the web app on Next.js",
-          "Built modules end to end on Spring Boot and PostgreSQL, including organisation admin",
-          "Built feedback insertion into Google Docs, Word for the web, IntelliWriter and MyAccess",
+          "Delivered modules end to end on Spring Boot and PostgreSQL, including organisation admin",
+          "Integrated feedback into Google Docs, Word for the web, IntelliWriter and MyAccess",
           "Set up the Keycloak sign-in shared with IntelliWriter, another Vantage writing product",
         ],
+        stack: ["React", "WXT", "Next.js", "TanStack Query", "Tailwind CSS", "Spring Boot", "PostgreSQL", "Keycloak", "Vitest", "Playwright"],
       },
       {
         name: "ZebraPay", slug: "zebrapay-import", context: "An import extension for ZebraPay",
         items: [
           "Designed and built the import system, which automates data entry",
           "Built the extension that pulls data from partner sites, and the DevTools panel where each site is set up",
-          "Built the Node service that runs OCR on images with AWS Bedrock and returns structured data",
+          "Wrote the Node service that runs OCR on images with AWS Bedrock and returns structured data",
         ],
+        stack: ["TypeScript", "React", "Plasmo", "Zustand", "Node.js", "Express", "AWS Bedrock"],
       },
       {
         name: "CorrectEnglish", slug: "correctenglish", context: "Vantage's writing assistant, mostly for job seekers and people writing English as a second language",
         items: [
-          "Built Gmail support first, then Indeed, LinkedIn and other sites",
+          "Shipped Gmail support first, then Indeed, LinkedIn and other sites",
           "Kept suggestion underlines and cards in place on any page, isolated in Shadow DOM",
           "Maintained and fixed the native Android (Kotlin) and iOS (Swift) keyboards",
         ],
+        stack: ["React", "Redux Toolkit", "Tailwind CSS", "Webpack", "Shadow DOM", "Jest", "Puppeteer", "Kotlin", "Swift"],
       },
     ],
   },
   {
-    role: "Founder", org: "Blueblood", when: "2022 – Present",
+    role: "Founder", org: "Blueblood", when: "Apr 2022 – Present",
     intro: "Own company, used for the Vantage Labs contract and its own clients",
-    lead: ["Onboarded and worked with interns on other Blueblood projects"],
+    lead: ["Onboarded and worked with interns on other Blueblood projects: one for 6 months, two for 3"],
     groups: [
       {
         name: "Blueblood Store", slug: "blueblood-store", context: "Online shop and back office for Hachanicom, a phone and electronics retailer in Tunisia",
         items: [
           "Built and ran it solo, in production from 2024 to 2026",
           "Built an SSR Angular storefront and a JHipster back office with promotions, an audit log and restorable backups",
-          "Built semantic search, similar-product recommendations and AI-written product descriptions on Workers AI and Vectorize",
-          "Built a GSM Arena import that fills in phone specs and clean product images, since entering them by hand was too slow for staff",
+          "Added semantic search, similar-product recommendations and AI-written product descriptions on Workers AI and Vectorize",
+          "Automated the entry of phone specs and clean product images with a GSM Arena import, since doing it by hand was too slow for staff",
           "Set up and ran the servers and the shop's own mail server",
         ],
+        stack: ["Angular SSR", "JHipster", "Spring Boot", "PostgreSQL", "Elasticsearch", "Docker", "Traefik", "Cloudflare Workers", "Workers AI", "Vectorize"],
       },
     ],
   },
@@ -90,6 +96,7 @@ export const JOBS: Job[] = [
           "Built the MVP engine, with product ingestion through a vision model, bge-m3 embeddings in Vectorize, semantic search and streaming RAG chat",
           "Built the admin app and specced the API gateway, guiding the junior developer who built it",
         ],
+        stack: ["TypeScript", "Cloudflare Workers", "Hono", "Workers AI", "Vectorize", "D1", "React", "Zustand", "Tailwind CSS"],
       },
     ],
   },
@@ -98,7 +105,7 @@ export const JOBS: Job[] = [
     lead: [
       "Became one of the development unit's two leads as Visa Services expanded to Egypt and Russia",
       "Introduced to AlmavivA Italia as the developer in charge, and represented the team in calls and meetings on security and technology",
-      "Pushed management for more developers and recommended hires",
+      "Pushed management to grow the team, and recommended hires",
       "Onboarded and guided three developers, and helped the data scientists when needed",
       "Deployed and ran the apps on OVH servers",
     ],
@@ -107,11 +114,12 @@ export const JOBS: Job[] = [
         name: "Visa Services", slug: "visa-services", context: "AlmavivA's visa platform, a public website and CRM in one",
         items: [
           "Proposed rebuilding it and got approval with a proof of concept",
-          "Rebuilt it full stack with one other developer on Spring Boot and Angular, with an Ionic app, then took over the frontend as the work split",
-          "Built MasterCard payments for Egypt end to end, and the i18n",
+          "Rebuilt it full stack with one other developer, plus an Ionic app, then took over the frontend as the work split",
+          "Implemented MasterCard payments for Egypt end to end, and the i18n",
           "Rolled out in Tunisia, Egypt and Russia, and adopted as the group's visa tool",
-          "Wrote the documentation",
+          "Wrote the platform's documentation (setup, API, workflows) and the security documents AlmavivA Italia asked for",
         ],
+        stack: ["Spring Boot", "Angular", "Ionic", "REST APIs", "MySQL", "OVH"],
       },
       {
         name: "Qualis Analytics", slug: "qualis-analytics", context: "AI quality scoring of call center recordings, before the LLM boom",
@@ -119,6 +127,7 @@ export const JOBS: Job[] = [
           "Built the analytics frontend and an audio player with a synced, clickable transcript",
           "Wrote Java packages used across the microservices",
         ],
+        stack: ["Angular", "Spring Boot", "Java", "Microservices", "MongoDB"],
       },
       {
         name: "Video archive", slug: "video-archive", context: "Archive and playback for the City of Rome's livestreamed council sessions, built for PerVoice",
@@ -139,7 +148,7 @@ export const SKILLS: [string, string[]][] = [
   ["Extensions", ["WXT", "Plasmo", "Webpack", "Shadow DOM", "DevTools panels"]],
   ["Backend", ["Node.js", "Spring Boot", "JHipster", "Hono", "REST APIs", "Keycloak", "OAuth2"]],
   ["Desktop and mobile", ["Tauri", "Ionic", "native Android and iOS keyboards"]],
-  ["Cloud", ["Cloudflare Workers", "D1", "R2", "KV", "Durable Objects", "AWS", "Docker", "Linux servers"]],
+  ["Cloud", ["Cloudflare Workers", "Durable Objects", "D1", "R2", "KV", "AWS", "Docker", "Linux servers"]],
   ["AI", ["AWS Bedrock", "Workers AI", "Vectorize", "PyTorch", "embeddings", "RAG"]],
   ["Data", ["PostgreSQL", "MySQL", "MongoDB", "Elasticsearch"]],
   ["Testing and CI/CD", ["Vitest", "Testing Library", "Playwright", "Jest", "Puppeteer", "GitHub Actions"]],
@@ -152,8 +161,8 @@ export const LANG: [string, string][] = [["English", "Native or bilingual"], ["A
 const missing = JOBS.flatMap((j) => j.groups).filter((g) => !WORK.some((w) => w.id === g.slug));
 if (missing.length) throw new Error(`Resume links to missing work pages: ${missing.map((g) => g.slug).join(", ")}`);
 
-/** The projects on the Resume, with their Resume line. */
-export const RESUME_PROJECTS = PROJECTS.map((p) => ({
+/** The projects on the Resume (those with a `resume` block), with their Resume line. */
+export const RESUME_PROJECTS = PROJECTS.flatMap((p) => p.resume ? [{
   slug: p.slug, name: p.name, category: p.category, when: p.resume.when, facts: p.resume.facts,
   line: (p.resume.line ?? p.line).replace(/\.$/, ""),
-}));
+}] : []);

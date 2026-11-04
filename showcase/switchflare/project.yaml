@@ -34,7 +34,3 @@ tile:
     href: https://switchflare.wsoltani.com/
   image: ./hero.png
   imageAlt: Switchflare on the Cloudflare dashboard, asking to unlock the vault
-resume:
-  when: Not released yet
-  facts:
-    - "TypeScript, React, Plasmo, WebCrypto"
