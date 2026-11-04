@@ -70,6 +70,8 @@ const ogImage = new URL(image, SITE.url).href;
         document.documentElement.classList.add("motion");
         setTimeout(() => document.documentElement.classList.add("motion-ready"), 2500);
       }
+      // Spell the Answers shortcut the way this keyboard does: ⌘K on Apple devices, Ctrl K elsewhere.
+      if (/Mac|iPhone|iPad/.test(navigator.userAgentData?.platform ?? navigator.platform)) document.documentElement.classList.add("mac");
       // Answers stays open beside the page from page to page: make room before the first paint.
       // With a chat going, its welcome text stays hidden until the chat is drawn back in.
       try {

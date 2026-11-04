@@ -697,8 +697,6 @@ export function mountAsk() {
       close();
     }
   });
-  // Show the shortcut the way this keyboard spells it.
-  if (!/Mac|iPhone|iPad/.test(navigator.platform)) document.querySelectorAll("[data-ask-key]").forEach((k) => (k.textContent = "Ctrl K"));
 
   // Beside the page, the panel stays open from page to page, with its chat drawn in before it shows.
   if (state.open && pushes()) open(false);
