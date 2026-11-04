@@ -14,11 +14,12 @@ tech:
   - Excalidraw
   - SQLite
   - Git
+  - MCP
 releases:
   repo: Netherstone-HQ/Netherstone
 fallback:
-  version: 0.5.0-beta.1
-  date: "2026-10-25"
+  version: 0.6.0-beta.4
+  date: "2026-11-03"
 theme:
   bg: "#141516"
   line: "#2b6a5b"
@@ -71,7 +72,7 @@ tour:
     image: ./Editor.webp
     hl: [ 30, 52, 860, 80 ]
     spots:
-      - { x: 130, y: 66, side: b, text: "Type / or press + for headings, lists, to-dos, tables, callouts, toggles, columns, dates, equations and code in 80+ languages" }
+      - { x: 130, y: 66, side: b, text: "Type / or press + for headings, lists, to-dos, tables, callouts, toggles, columns, dates, equations, code in 80+ languages and Mermaid diagrams" }
       - { x: 94, y: 66, side: b, text: "Add images, video, audio, PDFs and other files" }
       - { x: 188, y: 66, side: b, text: Turn any block into another type }
       - { x: 256, y: 66, side: b, text: Text size }
@@ -194,3 +195,9 @@ timeline:
   - date: Oct 25, 2026
     title: Gallery and history
     body: 0.5 added a Gallery of every attachment in a vault. History now saves a version every ten minutes while you write, shows which device made each one, and can free up the space old attachment versions take. Big files copy in without holding up saves.
+  - date: Oct 27, 2026
+    title: AI apps
+    body: "0.6 added a built-in MCP server, so AI apps can work in a vault. It's off until you turn it on, and you pick which vaults an app can use. Every change an app makes is saved in History first, and apps can't delete anything. Keyboard shortcuts can now be changed in Settings. Beta 2 followed on October 28 and opens files and folders from the terminal or the file manager."
+  - date: Nov 1, 2026
+    title: Diagrams and installers
+    body: 0.6 beta 3 draws Mermaid code blocks as diagrams and shows embeds in the editor. Zip files import like folders. It was also the first release published to Homebrew.
