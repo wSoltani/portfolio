@@ -1,0 +1,170 @@
+---
+// Answers: questions about Wassim's work, answered from his wiki.
+// The header's Ask button opens it. On wide screens it sits beside the page and pushes it
+// left; narrower, it slides over the page; on a phone it fills the screen.
+import Icon from "./Icon.astro";
+import { EDGE, edgePath } from "../lib/edgelines";
+import { ASK, ASK_LINKS } from "../data/ask";
+---
+
+<aside id="ask" class="ask" aria-labelledby="ask-title" hidden data-ask data-endpoint={ASK.endpoint} data-sitekey={ASK.turnstileSiteKey}>
+  {/* The edge strip: thin waving lines that settle when the panel opens, stir while it looks, and take the color of the project an answer is about. */}
+  <svg class="strip" viewBox={`0 0 ${EDGE.width} ${EDGE.height}`} preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+    {Array.from({ length: EDGE.lines }, (_, i) => <path d={edgePath(i)} fill="none" stroke="currentColor" stroke-width="1.2" stroke-opacity={(0.9 - i * 0.15).toFixed(2)} />)}
+  </svg>
+  <div class="ask-body">
+    <div class="top">
+      <h2 id="ask-title">Answers</h2>
+      <div class="acts">
+        <button type="button" class="new" data-new aria-label="New chat" hidden>New</button>
+        <button type="button" class="close" data-close aria-label="Close"><kbd>Esc</kbd><Icon name="close" size={13} stroke={2} /></button>
+      </div>
+    </div>
+
+    <div class="log" data-log>
+      <div class="empty" data-empty>
+        <p class="ask-lead">Answers come from Wassim's notes on his jobs and projects.</p>
+        <p class="sub">Each answer links to the pages it used.</p>
+        <ul class="starters">
+          {ASK.starters.map((q) => <li><button type="button" class="starter" data-starter={q}><span>{q}</span><span aria-hidden="true">→</span></button></li>)}
+        </ul>
+      </div>
+      <div class="turns" data-turns aria-live="polite"></div>
+    </div>
+
+    <div class="bottom">
+      <div class="check" data-check></div>
+      <form class="box" data-form>
+        <label class="sr-only" for="ask-q">Your question</label>
+        <textarea id="ask-q" rows="1" maxlength="800" placeholder="Ask a question" data-input></textarea>
+        <button type="submit" class="send" aria-label="Send" data-send><Icon name="arrowUp" size={18} stroke={2.2} /></button>
+      </form>
+      <p class="ask-note">Answers can miss things. The linked pages have the full story.</p>
+    </div>
+  </div>
+
+  <template data-state="checking">
+    <div class="status"><span class="trail" aria-hidden="true"></span>Checking you're not a bot…</div>
+  </template>
+  <template data-state="thinking">
+    <div class="status"><span class="trail" aria-hidden="true"></span>Looking through his notes…</div>
+  </template>
+  <template data-state="resting">
+    <div class="card">
+      <h3 data-title>No more answers today</h3>
+      <p data-body>There's a limit each day. The Work and Projects sections cover the same ground.</p>
+      <div class="row"><a href="/#work">Work</a><a href="/#projects">Projects</a></div>
+    </div>
+  </template>
+  <template data-state="slow">
+    <div class="card">
+      <h3>One moment</h3>
+      <p>That's a lot of questions in a minute. Try again shortly.</p>
+    </div>
+  </template>
+  <template data-state="failed">
+    <div class="card">
+      <h3>That didn't work</h3>
+      <p>Something went wrong while answering. Your question is still in the box.</p>
+      <div class="row"><button type="button" class="retry" data-retry>Try again</button></div>
+    </div>
+  </template>
+</aside>
+<script type="application/json" id="ask-links" set:html={JSON.stringify(ASK_LINKS)} />
+
+<script>
+  import { mountAsk } from "../scripts/ask";
+  mountAsk();
+</script>
+
+<style>
+  :global(:root) { --ask-w: 460px; }
+  .ask {
+    --tone: #5c5c5c;
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 40; width: var(--ask-w); display: flex;
+    background: #121212; border-left: 1px solid var(--line); color: var(--text);
+  }
+  .ask[hidden] { display: none; }
+  /* Wide screens: the page makes room for the panel instead of sitting under it. */
+  @media (min-width: 1100px) {
+    :global(html.ask-open body) { margin-right: var(--ask-w); }
+    /* Reopened on a new page: shown before its script runs, so the page doesn't jump. */
+    :global(html.ask-open) .ask[hidden] { display: flex; }
+  }
+  @media (max-width: 1099px) {
+    .ask { box-shadow: -24px 0 48px rgba(0, 0, 0, 0.5); }
+  }
+
+  .strip { width: 24px; height: 100%; flex-shrink: 0; border-right: 1px solid #1f1f1f; color: color-mix(in srgb, var(--tone) 70%, #121212); transition: color 0.9s ease; }
+
+  .ask-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .top { height: 72px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 16px 0 28px; border-bottom: 1px solid var(--line); }
+  h2 { font-size: 12px; font-weight: 500; color: var(--subtle); letter-spacing: 0.1em; text-transform: uppercase; }
+  .acts { display: flex; gap: 4px; align-items: center; }
+  .new { height: 40px; padding: 0 12px; background: none; border: 0; border-radius: 6px; color: var(--muted); font-size: 14px; cursor: pointer; }
+  .new:hover { color: var(--text); }
+  .close { height: 36px; display: flex; align-items: center; gap: 8px; padding: 0 10px; background: none; border: 1px solid var(--line); border-radius: 8px; color: var(--muted); font-size: 12px; cursor: pointer; transition: border-color var(--fast) ease, color var(--fast) ease; }
+  .close:hover { border-color: var(--line-strong); color: var(--text); }
+  .close kbd { font: inherit; }
+
+  .log { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 28px 28px 8px; display: flex; flex-direction: column; gap: 28px; }
+  .empty { display: flex; flex-direction: column; gap: 16px; }
+  .empty[hidden] { display: none; }
+  .ask-lead { font-size: 26px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; color: var(--cream); }
+  .sub { font-size: 15px; color: var(--muted); }
+  .starters { list-style: none; margin: 12px 0 0; padding: 0; border-top: 1px solid #262626; }
+  .starters li { border-bottom: 1px solid #262626; }
+  .starter { width: 100%; min-height: 52px; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 0; background: none; border: 0; color: var(--body); font-size: 15px; line-height: 1.4; text-align: left; cursor: pointer; transition: color var(--fast) ease; }
+  .starter span:last-child { color: #6a6a6a; transition: transform var(--fast) ease, color var(--fast) ease; }
+  .starter:hover { color: var(--cream); }
+  .starter:hover span:last-child { color: var(--cream); transform: translateX(3px); }
+
+  .turns { display: flex; flex-direction: column; gap: 28px; }
+  .turns :global(.turn) { display: flex; flex-direction: column; gap: 14px; padding-bottom: 28px; border-bottom: 1px solid #262626; }
+  .turns :global(.turn:last-child) { border-bottom: 0; padding-bottom: 0; }
+  .turns :global(.q) { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; color: var(--cream); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .turns :global(.a) { display: flex; flex-direction: column; gap: 12px; font-size: 15px; color: var(--body); overflow-wrap: anywhere; }
+  .turns :global(.a ul) { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+  .turns :global(.from) { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13px; }
+  .turns :global(.dot) { width: 7px; height: 7px; border-radius: 50%; background: var(--dot, var(--subtle)); }
+  .turns :global(.sep) { color: var(--line-strong); }
+  .turns :global(.src) { text-decoration: none; color: var(--body); border-bottom: 1px solid var(--line-strong); padding: 2px 0; transition: color var(--fast) ease, border-color var(--fast) ease; }
+  .turns :global(.src.lit) { color: var(--dot); border-bottom-color: color-mix(in srgb, var(--dot) 40%, transparent); }
+  .turns :global(.src:hover) { color: var(--cream); border-bottom-color: var(--cream); }
+
+  .turns :global(.status) { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--subtle); }
+  .turns :global(.trail) { width: 40px; height: 2px; background: linear-gradient(90deg, var(--cream), transparent); transform-origin: left; animation: ask-trail 1.4s ease-in-out infinite; }
+  .turns :global(.card) { display: flex; flex-direction: column; gap: 10px; }
+  .turns :global(.card h3) { font-size: 17px; font-weight: 600; color: var(--cream); }
+  .turns :global(.card p) { font-size: 14px; color: var(--muted); }
+  .turns :global(.row) { display: flex; gap: 16px; padding-top: 4px; font-size: 14px; }
+  .turns :global(.row a) { text-decoration: none; border-bottom: 1px solid var(--line-strong); }
+  .turns :global(.row a:hover) { border-bottom-color: var(--cream); }
+  .turns :global(.retry) { height: 40px; padding: 0 16px; background: var(--cream); border: 0; border-radius: 999px; color: #141310; font-size: 14px; font-weight: 500; cursor: pointer; }
+  @keyframes ask-trail { 0%, 100% { transform: scaleX(0.3); opacity: 0.5; } 50% { transform: scaleX(1); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .turns :global(.trail) { animation: none; } }
+
+  .bottom { flex-shrink: 0; padding: 16px 28px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .check:empty { display: none; }
+  .box { display: flex; align-items: flex-end; gap: 12px; border-bottom: 1px solid var(--line-strong); padding-bottom: 10px; transition: border-color var(--fast) ease; }
+  .box:focus-within { border-bottom-color: var(--cream); }
+  textarea { flex: 1; resize: none; background: none; border: 0; outline: none; color: var(--text); font: inherit; font-size: 17px; font-weight: 500; line-height: 1.45; padding: 8px 0; max-height: 160px; field-sizing: content; }
+  textarea::placeholder { color: #6a6a6a; }
+  /* The line under the box shows focus, so the field inside needs no ring of its own. */
+  textarea:focus-visible { box-shadow: none; }
+  .send { width: 40px; height: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0; background: var(--cream); border: 0; border-radius: 50%; color: #141310; cursor: pointer; transition: opacity var(--fast) ease; }
+  .send:disabled { opacity: 0.4; cursor: default; }
+  .ask-note { font-size: 12px; color: var(--subtle); }
+
+  @media (max-width: 639px) {
+    .ask { width: 100vw; border-left: 0; box-shadow: none; }
+    :global(html.ask-open) { overflow: hidden; }
+    .strip { width: 16px; }
+    .top { height: 64px; padding: 0 12px 0 20px; }
+    .log { padding: 20px 20px 8px; }
+    .bottom { padding: 12px 20px calc(16px + env(safe-area-inset-bottom)); }
+    .turns :global(.q) { font-size: 24px; }
+    .turns :global(.a) { font-size: 16px; }
+    textarea { font-size: 16px; }
+  }
+</style>

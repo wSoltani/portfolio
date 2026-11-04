@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import AskPanel from "../components/AskPanel.astro";
 import { SITE } from "../data/site";
 import type { PageId } from "../data/nav";
 import fontUrl from "@fontsource-variable/instrument-sans/files/instrument-sans-latin-wdth-normal.woff2?url";
@@ -69,6 +70,10 @@ const ogImage = new URL(image, SITE.url).href;
         document.documentElement.classList.add("motion");
         setTimeout(() => document.documentElement.classList.add("motion-ready"), 2500);
       }
+      // Answers stays open beside the page from page to page: make room before the first paint.
+      try {
+        if (JSON.parse(sessionStorage.getItem("ask-chat-v1") ?? "{}").open && matchMedia("(min-width: 1100px)").matches) document.documentElement.classList.add("ask-open");
+      } catch {}
     </script>
     <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${SITE.analyticsId}`}></script>
     <script is:inline define:vars={{ id: SITE.analyticsId }}>
@@ -86,6 +91,7 @@ const ogImage = new URL(image, SITE.url).href;
       <slot />
     </main>
     <Footer flush={flushFooter} />
+    <AskPanel />
   </body>
 </html>
 
