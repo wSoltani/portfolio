@@ -80,7 +80,23 @@ export function toBlocks(text: string): Block[] {
  * are already on screen are kept and only their text is updated, so a streamed answer
  * grows in place instead of being rebuilt every time a few words arrive.
  */
-export function renderText(el: HTMLElement, text: string) {
+export function renderText(el: HTMLElement, text: string, onAdd?: (added: HTMLElement) => void) {
+  /** Text that only grew gets just the new words added, in their own span; anything else is replaced. */
+  const setText = (node: HTMLElement, t: string) => {
+    const now = node.textContent ?? "";
+    if (now === t) return;
+    if (onAdd && now && t.startsWith(now)) {
+      const span = document.createElement("span");
+      span.textContent = t.slice(now.length);
+      node.append(span);
+      onAdd(span);
+    } else if (onAdd && !now) {
+      const span = document.createElement("span");
+      span.textContent = t;
+      node.replaceChildren(span);
+      onAdd(span);
+    } else node.textContent = t;
+  };
   const blocks = toBlocks(text);
   blocks.forEach((b, i) => {
     let node = el.children[i] as HTMLElement | undefined;
@@ -90,13 +106,13 @@ export function renderText(el: HTMLElement, text: string) {
       node = fresh;
     }
     if (b.tag === "p") {
-      if (node.textContent !== b.items[0]) node.textContent = b.items[0];
+      setText(node, b.items[0]);
       return;
     }
     b.items.forEach((t, k) => {
       let li = node!.children[k] as HTMLElement | undefined;
       if (!li) node!.append((li = document.createElement("li")));
-      if (li.textContent !== t) li.textContent = t;
+      setText(li, t);
     });
     while (node.children.length > b.items.length) node.lastElementChild!.remove();
   });
@@ -434,14 +450,32 @@ export function mountAsk() {
       let streaming = true;
       let caughtUp: () => void = () => {};
       const settled = new Promise<void>((r) => (caughtUp = r));
+      // Words come in at about 30 a second, faster when more is waiting, and each new
+      // word fades in. Whole words only, so a growing word never jumps to the next line.
+      let budget = 0;
+      const fadeIn = (el: HTMLElement) => gsap.from(el, { opacity: 0, duration: 0.35, ease: "power1.out", clearProps: "opacity" });
       const tick = () => {
         if (!turn.isConnected) return;
-        const target = streaming ? ready(answer.content).length : answer.content.length;
+        const text = answer.content;
+        const target = streaming ? ready(text).length : text.length;
         if (shown < target) {
-          const follow = atBottom();
-          shown = reduced() ? target : Math.min(target, shown + Math.max(2, Math.ceil((target - shown) / 10)));
-          renderText(view!.body, ready(answer.content.slice(0, shown)));
-          if (follow) scrollDown();
+          const waiting = text.slice(shown, target).split(/\s+/).filter(Boolean).length;
+          budget += reduced() ? Infinity : 0.5 + waiting / 24;
+          let next = shown;
+          while (budget >= 1 && next < target) {
+            while (next < target && /\s/.test(text[next])) next++;
+            while (next < target && !/\s/.test(text[next])) next++;
+            budget -= 1;
+          }
+          // A word still arriving (no space after it yet) waits for the next chunk.
+          if (streaming && next >= target && !/\s$/.test(text.slice(0, target))) next = Math.max(shown, text.lastIndexOf(" ", target - 1) + 1, text.lastIndexOf("\n", target - 1) + 1);
+          if (next > shown) {
+            const follow = atBottom();
+            shown = next;
+            renderText(view!.body, ready(text.slice(0, shown)), reduced() ? undefined : fadeIn);
+            if (follow) scrollDown();
+          }
+          if (budget === Infinity) budget = 0;
         }
         if (!streaming && shown >= answer.content.length) caughtUp();
         else requestAnimationFrame(tick);
@@ -463,6 +497,8 @@ export function mountAsk() {
               if (!view) {
                 status.remove();
                 view = addAnswer(turn, { ...answer, content: "" });
+                // The lines only move while the indicator shows; they settle as the answer starts.
+                strip.calm();
                 requestAnimationFrame(tick);
               }
             }
