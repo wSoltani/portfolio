@@ -1,10 +1,12 @@
-// The Ask panel's behaviour: the chat, the bot check, and the streamed answers.
+// The Answers panel's behaviour: opening and closing, the chat, the bot check, and the streamed answers.
 // Everything a visitor or the Worker sends is shown as text, never as HTML.
+import { gsap, T, EASE, reduced } from "./motion";
+import { flowPath } from "../lib/flowlines";
 
 type Turn = { role: "user" | "assistant"; content: string; sources?: string[] };
-type Link = { label: string; href: string };
+type Link = { label: string; href: string; accent?: string };
 type Links = { pages: Record<string, Link>; orgs: Record<string, Link>; sections: Record<string, Link> };
-type Saved = { turns: Turn[]; session?: string };
+type Saved = { turns: Turn[]; session?: string; open?: boolean };
 
 declare global {
   interface Window {
@@ -87,8 +89,39 @@ async function readEvents(body: ReadableStream<Uint8Array>, on: (name: string, d
   }
 }
 
+/** Wide screens push the page aside; below this the panel slides over it. Matches the CSS. */
+const pushes = () => matchMedia("(min-width: 1100px)").matches;
+
+/**
+ * The edge strip's Flowlines. They settle into place when the panel opens and stir
+ * while an answer is being looked up. Without motion they just sit at rest.
+ */
+function stripMotion(svg: SVGSVGElement | null) {
+  const path = svg?.querySelector("path");
+  const { seed, w, h, period } = svg?.dataset ?? {};
+  const REST = 0.7;
+  const state = { s: REST };
+  if (!path || !seed || !w || !h) return { settle() {}, stir() {}, calm() {} };
+  const draw = () => path.setAttribute("d", flowPath({ width: +w, height: +h, seed, period: period ? +period : undefined, swirl: state.s }));
+  return {
+    settle() {
+      if (reduced()) return;
+      state.s = 0.1;
+      gsap.to(state, { s: REST, duration: T.signature, ease: EASE.enter, onUpdate: draw, overwrite: true });
+    },
+    stir() {
+      if (reduced()) return;
+      gsap.to(state, { s: REST + 0.35, duration: 1.4, ease: "sine.inOut", yoyo: true, repeat: -1, onUpdate: draw, overwrite: true });
+    },
+    calm() {
+      if (reduced()) return;
+      gsap.to(state, { s: REST, duration: T.slow, ease: EASE.move, onUpdate: draw, overwrite: true });
+    },
+  };
+}
+
 export function mountAsk() {
-  const found = document.querySelector<HTMLDialogElement>("[data-ask]");
+  const found = document.querySelector<HTMLElement>("[data-ask]");
   if (!found || found.dataset.mounted) return;
   const dlg = found;
   dlg.dataset.mounted = "1";
@@ -106,55 +139,94 @@ export function mountAsk() {
 
   let state = load();
   let busy = false;
+  const strip = stripMotion(dlg.querySelector<SVGSVGElement>(".strip"));
+  const triggers = document.querySelectorAll<HTMLElement>("[data-ask-open]");
+
+  /** The strip and the source dot take the color of the first project an answer used. */
+  function tone(link?: Link | null) {
+    if (link?.accent) dlg.style.setProperty("--tone", link.accent);
+    else dlg.style.removeProperty("--tone");
+  }
 
   const scrollDown = () => (log.scrollTop = log.scrollHeight);
   const fromTemplate = (name: string) =>
     (dlg.querySelector<HTMLTemplateElement>(`template[data-state="${name}"]`)!.content.firstElementChild!.cloneNode(true) as HTMLElement);
 
-  function sourcesEl(paths: string[]) {
+  const linksOf = (paths: string[] = []) => {
     const seen = new Set<string>();
-    const items = paths.map((p) => linkFor(p, links)).filter((l): l is Link => !!l && !seen.has(l.href) && !!seen.add(l.href));
+    return paths.map((p) => linkFor(p, links)).filter((l): l is Link => !!l && !seen.has(l.href) && !!seen.add(l.href));
+  };
+
+  function sourcesEl(items: Link[]) {
     if (!items.length) return null;
-    const row = document.createElement("div");
+    const lit = items.find((l) => l.accent);
+    const row = document.createElement("p");
     row.className = "from";
+    if (lit) row.style.setProperty("--dot", lit.accent!);
     const label = document.createElement("span");
-    label.textContent = "From";
-    row.append(label);
-    for (const l of items.slice(0, 4)) {
+    label.className = "sr-only";
+    label.textContent = "Sources:";
+    const dot = document.createElement("span");
+    dot.className = "dot";
+    dot.setAttribute("aria-hidden", "true");
+    row.append(label, dot);
+    items.slice(0, 4).forEach((l, i) => {
+      if (i) {
+        const sep = document.createElement("span");
+        sep.className = "sep";
+        sep.setAttribute("aria-hidden", "true");
+        sep.textContent = "/";
+        row.append(sep);
+      }
       const a = document.createElement("a");
-      a.className = "src";
+      a.className = l === lit ? "src lit" : "src";
       a.href = l.href;
       a.textContent = l.label;
-      a.addEventListener("click", () => dlg.close());
+      // Beside the page, the panel stays open on the next page too. Over it, it gets out of the way.
+      a.addEventListener("click", () => { if (!pushes()) close(false); });
       row.append(a);
-    }
+    });
     return row;
   }
 
-  function addQuestion(text: string) {
-    const q = document.createElement("div");
+  function addTurn(question: string) {
+    const turn = document.createElement("article");
+    turn.className = "turn";
+    const q = document.createElement("h3");
     q.className = "q";
-    q.textContent = text;
-    turnsEl.append(q);
-    return q;
+    q.textContent = question;
+    turn.append(q);
+    turnsEl.append(turn);
+    return turn;
   }
 
-  function addAnswer(t: Turn) {
+  function addAnswer(turn: HTMLElement, t: Turn) {
     const a = document.createElement("div");
     a.className = "a";
     const body = document.createElement("div");
     body.style.display = "contents";
     renderText(body, t.content);
     a.append(body);
-    const src = t.sources && sourcesEl(t.sources);
-    if (src) a.append(src);
-    turnsEl.append(a);
+    turn.append(a);
     return { a, body };
+  }
+
+  function addSources(view: { a: HTMLElement }, t: Turn) {
+    const items = linksOf(t.sources);
+    const src = sourcesEl(items);
+    if (src) view.a.append(src);
+    return items.find((l) => l.accent);
   }
 
   function paint() {
     turnsEl.replaceChildren();
-    for (const t of state.turns) t.role === "user" ? addQuestion(t.content) : addAnswer(t);
+    let turn: HTMLElement | null = null;
+    let lit: Link | undefined;
+    for (const t of state.turns) {
+      if (t.role === "user") turn = addTurn(t.content);
+      else if (turn) lit = addSources(addAnswer(turn, t), t) ?? lit;
+    }
+    tone(lit);
     empty.hidden = state.turns.length > 0;
     newBtn.hidden = state.turns.length === 0;
   }
@@ -216,11 +288,12 @@ export function mountAsk() {
     state.turns.push({ role: "user", content: question });
     empty.hidden = true;
     newBtn.hidden = false;
-    addQuestion(question);
+    const turn = addTurn(question);
     input.value = "";
 
     let status = fromTemplate(state.session ? "thinking" : "checking");
-    turnsEl.append(status);
+    turn.append(status);
+    strip.stir();
     scrollDown();
     const setStatus = (name: string) => {
       const next = fromTemplate(name);
@@ -230,8 +303,8 @@ export function mountAsk() {
 
     const fail = (kind: "failed" | "slow" | "resting", until?: string) => {
       state.turns.pop();
-      turnsEl.lastElementChild?.remove();
-      turnsEl.lastElementChild?.remove();
+      turn.remove();
+      strip.calm();
       const card = fromTemplate(kind);
       input.value = question;
       if (kind === "failed") {
@@ -244,9 +317,13 @@ export function mountAsk() {
         const when = new Date(until);
         if (when.getTime() - Date.now() > 36 * 3600 * 1000) {
           card.querySelector("[data-title]")!.textContent =
-            `Ask is resting until ${when.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })}`;
+            `No more answers until ${when.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })}`;
+          card.querySelector("[data-body]")!.textContent = "There's a limit each month. The Work and Projects sections cover the same ground.";
         }
       }
+      // A card stands alone: the next question removes it.
+      const card0 = card;
+      form.addEventListener("submit", () => card0.remove(), { once: true });
       turnsEl.append(card);
       scrollDown();
       save(state);
@@ -303,7 +380,7 @@ export function mountAsk() {
               answer.content += delta;
               if (!view) {
                 status.remove();
-                view = addAnswer(answer);
+                view = addAnswer(turn, answer);
               }
               renderText(view.body, answer.content);
               scrollDown();
@@ -311,8 +388,10 @@ export function mountAsk() {
           } catch {}
         }
       });
-      if (!answer.content.trim()) return fail("failed");
+      if (!answer.content.trim() || !view) return fail("failed");
       state.turns.push(answer);
+      tone(addSources(view, answer) ?? null);
+      strip.calm();
       save(state);
       scrollDown();
     } catch {
@@ -333,7 +412,7 @@ export function mountAsk() {
       form.requestSubmit();
     }
   });
-  dlg.querySelectorAll<HTMLButtonElement>("[data-starter]").forEach((b) => b.addEventListener("click", () => ask(b.textContent!.trim())));
+  dlg.querySelectorAll<HTMLButtonElement>("[data-starter]").forEach((b) => b.addEventListener("click", () => ask(b.dataset.starter!)));
   newBtn.addEventListener("click", () => {
     if (busy) return;
     state = { turns: [], session: state.session };
@@ -341,18 +420,65 @@ export function mountAsk() {
     paint();
     input.focus();
   });
-  $("[data-close]").addEventListener("click", () => dlg.close());
-  // A click on the dimmed page around the panel closes it.
-  dlg.addEventListener("click", (e) => {
-    if (e.target === dlg) dlg.close();
-  });
+  $("[data-close]").addEventListener("click", () => close());
 
-  function open() {
+  // --- Opening and closing.
+  const isOpen = () => !dlg.hidden;
+  const html = document.documentElement;
+  let returnTo: HTMLElement | null = null;
+
+  function setOpen(open: boolean) {
+    state.open = open;
+    save(state);
+    triggers.forEach((b) => b.setAttribute("aria-expanded", String(open)));
+  }
+
+  function open(animate = true) {
+    if (isOpen()) return input.focus();
+    returnTo = document.activeElement as HTMLElement | null;
     paint();
-    dlg.showModal();
+    dlg.hidden = false;
+    html.classList.add("ask-open");
+    setOpen(true);
+    if (animate && !reduced()) {
+      gsap.fromTo(dlg, { xPercent: 100 }, { xPercent: 0, duration: T.slow, ease: EASE.enter, clearProps: "transform" });
+      if (pushes()) gsap.from(document.body, { marginRight: 0, duration: T.slow, ease: EASE.enter, clearProps: "marginRight" });
+      strip.settle();
+    }
     scrollDown();
-    input.focus();
+    if (animate) input.focus({ preventScroll: true });
     if (!state.session) loadTurnstile().catch(() => {});
   }
-  document.querySelectorAll<HTMLElement>("[data-ask-open]").forEach((b) => b.addEventListener("click", open));
+
+  function close(restoreFocus = true) {
+    if (!isOpen()) return;
+    setOpen(false);
+    const done = () => {
+      dlg.hidden = true;
+      html.classList.remove("ask-open");
+      gsap.set([dlg, document.body], { clearProps: "transform,marginRight" });
+    };
+    if (reduced()) done();
+    else {
+      gsap.to(dlg, { xPercent: 100, duration: T.base, ease: EASE.move, onComplete: done });
+      if (pushes()) gsap.to(document.body, { marginRight: 0, duration: T.base, ease: EASE.move });
+    }
+    if (restoreFocus && dlg.contains(document.activeElement)) (returnTo ?? triggers[0])?.focus();
+  }
+
+  triggers.forEach((b) => b.addEventListener("click", () => (isOpen() ? close() : open())));
+  document.addEventListener("keydown", (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      if (isOpen() && !dlg.contains(document.activeElement)) input.focus();
+      else isOpen() ? close() : open();
+    } else if (e.key === "Escape" && isOpen() && !document.querySelector(":popover-open")) {
+      close();
+    }
+  });
+  // Show the shortcut the way this keyboard spells it.
+  if (!/Mac|iPhone|iPad/.test(navigator.platform)) document.querySelectorAll("[data-ask-key]").forEach((k) => (k.textContent = "Ctrl K"));
+
+  // Beside the page, the panel stays open from page to page.
+  if (state.open && pushes()) open(false);
 }

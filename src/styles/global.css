@@ -11,6 +11,8 @@
   --muted: #adadad;
   --body: #d4d4d4;
   --text: #f0f0f0;
+  /* Soft off-white for filled buttons and Answers headings, where plain white glares. */
+  --cream: #ebe4d3;
   /* Wine */
   --wine: #1f0f13;
   --wine-raised: #2c171c;

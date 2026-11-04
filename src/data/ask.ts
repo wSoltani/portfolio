@@ -1,4 +1,4 @@
-// Ask: questions about Wassim's work, answered from his wiki by the chat Worker on /api/ask.
+// Answers: questions about Wassim's work, answered from his wiki by the chat Worker on /api/ask.
 import { PROJECTS, ARCHIVE } from "./projects";
 import { WORK } from "./work";
 
@@ -15,7 +15,7 @@ export const ASK = {
   ],
 };
 
-type Link = { label: string; href: string };
+type Link = { label: string; href: string; accent?: string };
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
@@ -26,7 +26,7 @@ const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(
  */
 export const ASK_LINKS: { pages: Record<string, Link>; orgs: Record<string, Link>; sections: Record<string, Link> } = {
   pages: Object.fromEntries([
-    ...PROJECTS.map((p) => [p.slug, { label: p.name, href: `/projects/${p.slug}` }]),
+    ...PROJECTS.map((p) => [p.slug, { label: p.name, href: `/projects/${p.slug}`, accent: p.theme.accent }]),
     ...ARCHIVE.map((p) => [p.slug, { label: p.name, href: "/archive" }]),
     ...WORK.map((w) => [w.id, { label: w.data.name, href: `/work/${w.id}` }]),
   ]),
