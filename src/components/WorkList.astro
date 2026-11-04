@@ -15,7 +15,7 @@ import { WORK_GROUPS } from "../data/work";
       </div>
       <div class="rows">
         {g.items.map((w) => (
-          <Row href={`/work/${w.id}`} seed={w.id} name={w.data.name} line={w.data.line} meta={w.data.tech.join(" · ")} />
+          <Row href={`/work/${w.id}`} seed={w.id} name={w.data.name} line={w.data.line} meta={w.data.tech} />
         ))}
       </div>
     </div>

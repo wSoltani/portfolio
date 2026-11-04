@@ -8,12 +8,14 @@ import { Resvg } from "@resvg/resvg-js";
 import sharp from "sharp";
 import { flowPath } from "../../lib/flowlines";
 import { PROJECTS } from "../../data/projects";
-import { WORK, headerLine } from "../../data/work";
+import { WORK, headerParts } from "../../data/work";
+import { clean } from "../../lib/dots";
 
-export const CARDS: Record<string, { label: string; title: string }> = {
+/** A title is a sentence, or a list of short facts drawn with a dot between them. */
+export const CARDS: Record<string, { label: string; title: string | string[] }> = {
   default: { label: "Wassim Soltani", title: "Software engineer, mostly." },
   ...Object.fromEntries(PROJECTS.map((p) => [p.slug, { label: p.name, title: p.tile.headline }])),
-  ...Object.fromEntries(WORK.map((w) => [`work-${w.id}`, { label: w.data.name, title: headerLine(w.data) }])),
+  ...Object.fromEntries(WORK.map((w) => [`work-${w.id}`, { label: w.data.name, title: clean(headerParts(w.data)) }])),
   map: { label: "Map", title: "Every project on one map." },
   archive: { label: "Archive", title: "Older projects I've stopped working on." },
   resume: { label: "Resume", title: "Experience, education and skills." },
@@ -46,7 +48,17 @@ export const GET: APIRoute = async ({ params }) => {
   const flow = `data:image/svg+xml;base64,${Buffer.from(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${PANEL}" height="${H}" viewBox="0 0 ${PANEL} ${H}"><rect width="100%" height="100%" fill="#0d0d0d"/><path fill="#94288c" fill-rule="evenodd" d="${d}"/></svg>`,
   ).toString("base64")}`;
-  const size = card.title.length > 40 ? 52 : 60;
+  const text = typeof card.title === "string" ? card.title : card.title.join(", ");
+  const size = text.length > 40 ? 52 : 60;
+  const titleStyle = { fontSize: size, fontWeight: 600, letterSpacing: "-0.03em", lineHeight: 1.06 };
+  // Satori has no inline layout, so a list of facts wraps as a row of parts with drawn dots.
+  const title = typeof card.title === "string"
+    ? h("span", { ...titleStyle, textWrap: "balance" }, card.title)
+    : h("div", { ...titleStyle, display: "flex", flexWrap: "wrap", alignItems: "center", rowGap: 6 },
+        card.title.flatMap((p, i) => [
+          ...(i ? [h("div", { width: 9, height: 9, margin: "0 22px", borderRadius: 5, background: "#f0f0f0" })] : []),
+          h("span", {}, p),
+        ]));
 
   const tree = h("div", { width: W, height: H, display: "flex", background: "#0d0d0d", color: "#f0f0f0", fontFamily: "Instrument Sans" }, [
     h("div", { flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "64px 64px 60px" }, [
@@ -56,7 +68,7 @@ export const GET: APIRoute = async ({ params }) => {
       ]),
       h("div", { display: "flex", flexDirection: "column", gap: 18 }, [
         h("span", { fontSize: 26, color: "#adadad" }, card.label),
-        h("span", { fontSize: size, fontWeight: 600, letterSpacing: "-0.03em", lineHeight: 1.06, textWrap: "balance" }, card.title),
+        title,
       ]),
     ]),
     h("img", { width: PANEL, height: H }, undefined, { src: flow, width: PANEL, height: H }),

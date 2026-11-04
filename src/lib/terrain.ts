@@ -4,6 +4,7 @@
 // new project or job only needs its own file.
 import { PROJECTS } from "../data/projects";
 import { WORK, WORK_GROUPS } from "../data/work";
+import { clean } from "./dots";
 
 /** Rings per peak: bigger projects stand taller. */
 const RINGS = { featured: 11, active: 9, work: 6 } as const;
@@ -21,7 +22,7 @@ export interface Peak {
   /** The employer area it sits in; none for my own projects. */
   area?: string;
   accent: string;
-  meta: string;
+  meta: string[];
   tech: string[];
   href: string;
   open: string;
@@ -30,11 +31,11 @@ export interface Peak {
 export const peaks: Peak[] = [
   ...PROJECTS.map((p) => ({
     slug: p.slug, name: p.name, rings: RINGS[p.status], big: p.status === "featured", accent: p.theme.accent,
-    meta: [p.category, p.when].join(" · "), tech: p.tech, href: `/projects/${p.slug}`, open: "Open project",
+    meta: clean([p.category, p.when]), tech: p.tech, href: `/projects/${p.slug}`, open: "Open project",
   })),
   ...WORK.map((w) => ({
     slug: w.id, name: w.data.name, rings: RINGS.work, big: false, area: w.data.org, accent: CREAM,
-    meta: [w.data.org, w.data.when].filter(Boolean).join(" · "), tech: w.data.tech, href: `/work/${w.id}`, open: `Open ${w.data.name}`,
+    meta: clean([w.data.org, w.data.when]), tech: w.data.tech, href: `/work/${w.id}`, open: `Open ${w.data.name}`,
   })),
 ];
 

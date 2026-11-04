@@ -133,6 +133,13 @@ a:hover { color: var(--orchid); }
 .pill { display: inline-flex; align-items: center; border: 1px solid var(--line-strong); border-radius: 999px; padding: 6px 14px; font-size: 14px; text-decoration: none; color: var(--text); }
 a.pill:hover { background: var(--wine); border-color: var(--wine-line); color: var(--text); }
 
+/* The drawn dot between short facts (Dots.astro, lib/dots.ts). The markup is a real comma
+   and space, so copied text and screen readers get "a, b" and lines break after the dot,
+   never before it. The comma is hidden and a dot is drawn in its place. */
+.dot-sep { position: relative; margin: 0 0.05em 0 0.3em; -webkit-text-fill-color: transparent; }
+.dot-sep::selection { color: transparent; -webkit-text-fill-color: transparent; }
+.dot-sep::before { content: ""; position: absolute; left: 50%; top: 50%; width: 0.2em; height: 0.2em; border-radius: 50%; background: currentColor; transform: translate(-50%, -50%); }
+
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 /* Title reveal masks: room above and below the line, so accents and descenders (É, g, y) aren't clipped. */

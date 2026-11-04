@@ -2,6 +2,7 @@
 import Showcase from "../../layouts/Showcase.astro";
 import { Code } from "astro:components";
 import Icon from "../../components/Icon.astro";
+import Dots from "../../components/Dots.astro";
 import Timeline from "../../components/showcase/Timeline.astro";
 import Facts from "../../components/showcase/Facts.astro";
 import { bySlug, live } from "../../data/projects";
@@ -42,7 +43,7 @@ const facts = [
   <section slot="hero" class="sc-hero">
     <div class="sc-hero-card">
       <div class="sc-hero-text">
-        <span class="pkg">@netherstone/nethermark · {L.version} · MIT</span>
+        <span class="pkg"><Dots parts={["@netherstone/nethermark", L.version, "MIT"]} /></span>
         <h1 class="wordmark">Nethermark</h1>
         <p class="sc-hero-title">{p.tile.headline}</p>
         <p class="sc-hero-sub">{p.tile.sub}</p>

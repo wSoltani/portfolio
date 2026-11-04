@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "node scripts/check-copy.mjs && astro build",
+    "check:copy": "node scripts/check-copy.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "resume:pdf": "node scripts/resume-pdf.mjs"
