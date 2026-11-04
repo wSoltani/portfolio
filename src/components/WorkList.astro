@@ -1,7 +1,6 @@
 ---
-// The home page's Work list: grouped by employer, each row a link to its page, with a thin
-// Flowlines strip seeded by its slug.
-import Flow from "./Flow.astro";
+// The home page's Work list: grouped by employer, each row a link to its page.
+import Row from "./Row.astro";
 import { WORK_GROUPS } from "../data/work";
 ---
 
@@ -16,15 +15,7 @@ import { WORK_GROUPS } from "../data/work";
       </div>
       <div class="rows">
         {g.items.map((w) => (
-          <a href={`/work/${w.id}`} class="row">
-            <Flow width={24} height={160} seed={w.id} period={12} class="strip" />
-            <span class="text">
-              <span class="name">{w.data.name}</span>
-              <span class="line">{w.data.line}</span>
-              <span class="tech">{w.data.tech.join(" · ")}</span>
-            </span>
-            <svg class="arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="M13 6l6 6-6 6" /></svg>
-          </a>
+          <Row href={`/work/${w.id}`} seed={w.id} name={w.data.name} line={w.data.line} meta={w.data.tech.join(" · ")} />
         ))}
       </div>
     </div>
@@ -40,26 +31,6 @@ import { WORK_GROUPS } from "../data/work";
   .role { font-size: 14px; color: var(--muted); }
   .when { font-size: 14px; color: var(--subtle); }
   .rows { display: flex; flex-direction: column; gap: 10px; }
-  .row {
-    display: grid; grid-template-columns: 24px minmax(0, 1fr) 24px; gap: 20px; align-items: center; padding-right: 18px;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; text-decoration: none; color: var(--text);
-    transition: background var(--fast) ease, border-color var(--fast) ease;
-  }
-  .row:hover { background: var(--wine); border-color: var(--wine-line); color: var(--text); }
-  .row :global(.strip) { display: block; width: 24px; height: 100%; min-height: 72px; align-self: stretch; contain: size; }
-  .text { display: flex; flex-direction: column; gap: 4px; padding: 14px 0; }
-  .name { font-size: 17px; font-weight: 600; }
-  .line { font-size: 14px; line-height: 1.5; color: #c9c9c9; }
-  /* Lines are written to fit three lines on a wide screen; the clamp only guards against a
-     longer one there. Narrower screens show the whole line. */
-  @media (min-width: 1024px) { .line { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; } }
-  .tech { font-size: 13px; color: var(--subtle); }
-  .arrow { color: var(--subtle); transition: transform var(--fast) ease, color var(--fast) ease; }
-  .row:hover .arrow { color: var(--text); transform: translateX(3px); }
   @media (max-width: 1023px) { .group { grid-template-columns: 1fr; gap: 16px; } }
-  @media (max-width: 767px) {
-    .work { padding-top: 72px; }
-    .row { grid-template-columns: 16px minmax(0, 1fr) 20px; gap: 14px; padding-right: 12px; }
-    .row :global(.strip) { width: 16px; }
-  }
+  @media (max-width: 767px) { .work { padding-top: 72px; } }
 </style>
