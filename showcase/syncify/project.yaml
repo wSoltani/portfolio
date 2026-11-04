@@ -5,20 +5,26 @@ order: 2
 category: Spicetify extension
 when: First release May 2026
 line: Backs up your Marketplace extensions, themes and snippets, and restores them when Spotify breaks.
-llms: A Spicetify extension. Backs up your Marketplace extensions, themes and snippets, and restores them when Spotify breaks.
+llms: A Spicetify extension that backs up your Marketplace extensions, themes and snippets, and restores them when Spotify breaks. Its website, syncify.wsoltani.com, adds accounts, share codes and Discover.
 tech:
   - TypeScript
   - React
   - Spicetify
-  - Cloudflare Workers
-  - Cloudflare KV
   - esbuild
+  - Vite
+  - React Router
+  - Tailwind CSS
+  - BetterAuth
+  - Cloudflare Workers
+  - D1
+  - R2
+  - Workers AI
   - GitHub Actions
 releases:
   repo: wSoltani/syncify
 fallback:
-  version: 1.1.2
-  date: "2026-10-07"
+  version: 1.16.0
+  date: "2026-11-03"
 theme:
   bg: "#121212"
   line: "#1f5c3a"
@@ -36,6 +42,9 @@ tile:
     - Windows
     - macOS
     - Linux
+  site:
+    label: syncify.wsoltani.com ↗
+    href: https://syncify.wsoltani.com
   image: ./dialog.png
   imageAlt: The Syncify dialog open in Spotify, with three saved backups
 map:
@@ -43,11 +52,11 @@ map:
   y: 470
 resume:
   when: Released May 2026
-  fact: 4.9k accounts backed up. Free and open source (MIT).
+  fact: 6,100+ people backed up their setup. Free, with an open-source extension (MIT).
 timeline:
   - date: May 28, 2026
     title: Planned, built, released
-    body: "Syncify was planned and built on May 28, and v1.0.1 went out that night. The plan already set the rules it still follows: no account to create, your backup found through your Spotify account, and a full backup never replaced by an empty one. Automatic backups were switched off by default the same day."
+    body: "Syncify was planned and built on May 28, and v1.0.1 went out that night. The plan already set the rules it still follows: no account needed, your backup found through your Spotify account, and a full backup never replaced by an empty one. Automatic backups were switched off by default the same day."
   - date: June 2
     title: Version history
     body: v1.1.0 started keeping your last three backups instead of one, so a broken or accidental backup, or one made automatically, can't replace the only good copy. The dialog also started showing which version of Syncify you're running.
@@ -57,3 +66,15 @@ timeline:
   - date: Oct 7, 2026
     title: Spotify's new top bar
     body: A Spotify update made extension buttons vanish from the top bar for some people, Syncify's included. v1.1.2 puts the button back whenever Spotify redraws the bar, adds Syncify to the profile menu, and opens it from anywhere with Ctrl+Alt+S (⌘⌥S on a Mac).
+  - date: Oct 24, 2026
+    title: See before you restore
+    body: A day of releases moved Syncify to a loader that updates it whenever Spotify starts, with a beta channel. Backups began keeping a safety copy and your Spicetify config, and a restore now shows what it will change first.
+  - date: Oct 25, 2026
+    title: Accounts
+    body: 1.8 added an optional account, with sign-in by email code. 1.9 let you secure a backup to it, so only your signed-in devices can restore it, and link more than one Spotify account.
+  - date: Oct 30, 2026
+    title: Share codes
+    body: 1.13 added share codes. Share this setup gives you a code anyone can load, and your handle shows on what you share.
+  - date: Nov 1, 2026
+    title: Discover
+    body: 1.15 opened Discover on the website, where people share setups and heart the ones they like. The Syncify Discord followed the next day.
