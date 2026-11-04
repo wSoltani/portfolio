@@ -2,11 +2,11 @@
 // area, and work sits in one area per employer, so team work never reads as solo work.
 // Nothing is placed by hand: each layout places its peaks with room between them, so a
 // new project or job only needs its own file.
-import { PROJECTS, ARCHIVE } from "../data/projects";
+import { PROJECTS } from "../data/projects";
 import { WORK, WORK_GROUPS } from "../data/work";
 
 /** Rings per peak: bigger projects stand taller. */
-const RINGS = { featured: 11, active: 9, archived: 7, work: 6 } as const;
+const RINGS = { featured: 11, active: 9, work: 6 } as const;
 /** Ring shapes wobble by up to this much, so spacing allows for it. */
 const WOBBLE = 1.18;
 /** Rings are a little flatter than circles, like a map seen at an angle. */
@@ -31,10 +31,6 @@ export const peaks: Peak[] = [
   ...PROJECTS.map((p) => ({
     slug: p.slug, name: p.name, rings: RINGS[p.status], big: p.status === "featured", accent: p.theme.accent,
     meta: [p.category, p.when].join(" · "), tech: p.tech, href: `/projects/${p.slug}`, open: "Open project",
-  })),
-  ...ARCHIVE.map((a) => ({
-    slug: a.slug, name: a.name, rings: RINGS.archived, big: false, accent: CREAM,
-    meta: [a.category, a.when].join(" · "), tech: a.tech, href: "/archive", open: "Open the Archive",
   })),
   ...WORK.map((w) => ({
     slug: w.id, name: w.data.name, rings: RINGS.work, big: false, area: w.data.org, accent: CREAM,
