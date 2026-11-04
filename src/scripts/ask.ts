@@ -43,27 +43,74 @@ export function linkFor(path: string, links: Links): Link | null {
   return null;
 }
 
-/** Plain text in, paragraphs and lists out, built as DOM nodes. Light markdown marks are dropped. */
-export function renderText(el: HTMLElement, text: string) {
-  el.replaceChildren();
-  const clean = (s: string) => s.replace(/\*\*|__|`/g, "").replace(/^#+\s*/, "");
-  for (const block of text.trim().split(/\n{2,}/)) {
-    const lines = block.split("\n").filter((l) => l.trim());
-    if (!lines.length) continue;
-    if (lines.every((l) => /^\s*([-*•]|\d+[.)])\s+/.test(l))) {
-      const ul = document.createElement("ul");
-      for (const l of lines) {
-        const li = document.createElement("li");
-        li.textContent = clean(l.replace(/^\s*([-*•]|\d+[.)])\s+/, ""));
-        ul.append(li);
-      }
-      el.append(ul);
-    } else {
-      const p = document.createElement("p");
-      p.textContent = clean(lines.join(" "));
-      el.append(p);
+type Block = { tag: "p" | "ul" | "ol"; items: string[] };
+
+const ITEM = /^\s*([-*•]|\d+[.)])\s+/;
+
+/** Splits text into paragraphs and lists. Each line that starts like a list item is one; the rest join into paragraphs. */
+export function toBlocks(text: string): Block[] {
+  const clean = (s: string) => s.replace(/\*\*|__|`/g, "").replace(/^#+\s*/, "").trim();
+  const blocks: Block[] = [];
+  let para: string[] = [];
+  const endPara = () => {
+    if (para.length) blocks.push({ tag: "p", items: [clean(para.join(" "))] });
+    para = [];
+  };
+  for (const line of text.split("\n")) {
+    if (!line.trim()) {
+      endPara();
+      continue;
     }
+    const m = line.match(ITEM);
+    if (m) {
+      endPara();
+      const tag = /\d/.test(m[1]) ? "ol" : "ul";
+      const last = blocks[blocks.length - 1];
+      const item = clean(line.slice(m[0].length));
+      if (last && last.tag === tag) last.items.push(item);
+      else blocks.push({ tag, items: [item] });
+    } else para.push(line.trim());
   }
+  endPara();
+  return blocks.filter((b) => b.items.some((t) => t));
+}
+
+/**
+ * Renders text as paragraphs and lists, built as DOM nodes. Blocks and list items that
+ * are already on screen are kept and only their text is updated, so a streamed answer
+ * grows in place instead of being rebuilt every time a few words arrive.
+ */
+export function renderText(el: HTMLElement, text: string) {
+  const blocks = toBlocks(text);
+  blocks.forEach((b, i) => {
+    let node = el.children[i] as HTMLElement | undefined;
+    if (!node || node.tagName.toLowerCase() !== b.tag) {
+      const fresh = document.createElement(b.tag);
+      node ? node.replaceWith(fresh) : el.append(fresh);
+      node = fresh;
+    }
+    if (b.tag === "p") {
+      if (node.textContent !== b.items[0]) node.textContent = b.items[0];
+      return;
+    }
+    b.items.forEach((t, k) => {
+      let li = node!.children[k] as HTMLElement | undefined;
+      if (!li) node!.append((li = document.createElement("li")));
+      if (li.textContent !== t) li.textContent = t;
+    });
+    while (node.children.length > b.items.length) node.lastElementChild!.remove();
+  });
+  while (el.children.length > blocks.length) el.lastElementChild!.remove();
+}
+
+/**
+ * The part of a streamed answer that's ready to show: a last line that is only the
+ * start of a list marker ("-" or "2") waits for its text, so a line never flips
+ * from a paragraph to a list item while it streams.
+ */
+export function ready(text: string) {
+  const cut = text.lastIndexOf("\n") + 1;
+  return /^\s*([-*•]|\d+[.)]?)?\s*$/.test(text.slice(cut)) ? text.slice(0, cut) : text;
 }
 
 /** Reads a server-sent event stream and calls back per event. */
@@ -164,6 +211,8 @@ export function mountAsk() {
   }
 
   const scrollDown = () => (log.scrollTop = log.scrollHeight);
+  /** Follows a growing answer only while the reader is at the bottom, so scrolling up to reread isn't fought. */
+  const atBottom = () => log.scrollHeight - log.scrollTop - log.clientHeight < 64;
   const fromTemplate = (name: string) =>
     (dlg.querySelector<HTMLTemplateElement>(`template[data-state="${name}"]`)!.content.firstElementChild!.cloneNode(true) as HTMLElement);
 
@@ -379,6 +428,24 @@ export function mountAsk() {
       if (status.isConnected) setStatus("thinking");
       const answer: Turn = { role: "assistant", content: "", sources: [] };
       let view: { a: HTMLElement; body: HTMLElement } | null = null;
+      // The model sends text in uneven bursts. It's shown at a steady pace instead: a few
+      // characters a frame, faster when more is waiting, so it reads smoothly.
+      let shown = 0;
+      let streaming = true;
+      let caughtUp: () => void = () => {};
+      const settled = new Promise<void>((r) => (caughtUp = r));
+      const tick = () => {
+        if (!turn.isConnected) return;
+        const target = streaming ? ready(answer.content).length : answer.content.length;
+        if (shown < target) {
+          const follow = atBottom();
+          shown = reduced() ? target : Math.min(target, shown + Math.max(2, Math.ceil((target - shown) / 10)));
+          renderText(view!.body, ready(answer.content.slice(0, shown)));
+          if (follow) scrollDown();
+        }
+        if (!streaming && shown >= answer.content.length) caughtUp();
+        else requestAnimationFrame(tick);
+      };
       await readEvents(res.body, (name, data) => {
         if (name === "session") {
           try {
@@ -395,15 +462,16 @@ export function mountAsk() {
               answer.content += delta;
               if (!view) {
                 status.remove();
-                view = addAnswer(turn, answer);
+                view = addAnswer(turn, { ...answer, content: "" });
+                requestAnimationFrame(tick);
               }
-              renderText(view.body, answer.content);
-              scrollDown();
             }
           } catch {}
         }
       });
+      streaming = false;
       if (!answer.content.trim() || !view) return fail("failed");
+      await settled;
       state.turns.push(answer);
       tone(addSources(view, answer) ?? null);
       strip.calm();
