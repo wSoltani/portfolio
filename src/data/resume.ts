@@ -7,7 +7,7 @@ import { WORK } from "./work";
 export const HEADLINE = "Senior software engineer";
 export const LOCATION = "Tunisia, working remotely";
 export const SUMMARY =
-  "Senior software engineer with seven years of full-stack work, mostly browser extensions and web apps, and lately Cloudflare and AI. I take ideas from the first decision to the day people start using them.";
+  "Senior software engineer with seven years of full-stack work, including leading a development team. I've built web apps, backends, browser extensions, desktop apps and AI features, and I take ideas from the first decision to the day people start using them.";
 
 export interface WorkGroup {
   /** Shown as the group heading. */
