@@ -1,0 +1,62 @@
+name: Nethermark
+status: featured
+kind: personal
+order: 5
+category: npm packages
+when: First release Oct 2026
+line: A small Markdown source editor for the web, built on CodeMirror 6 and published on npm.
+llms: Two npm packages, @netherstone/nethermark and @netherstone/nethermark-react. A small Markdown source editor built on CodeMirror 6, for plain JavaScript, HTML and React.
+tech:
+  - TypeScript
+  - CodeMirror
+  - Lezer
+  - React
+  - Web Components
+  - Vitest
+  - Playwright
+  - Changesets
+releases:
+  repo: Netherstone-HQ/nethermark
+  tagPrefix: "@netherstone/nethermark@"
+fallback:
+  version: 0.3.2
+  date: "2026-11-02"
+theme:
+  bg: "#141516"
+  line: "#2b6a5b"
+  accent: "#8fd1be"
+  soft: "#c4ebdf"
+  sel: "#141516"
+  sep: "#23302c"
+  chip: "#333b38"
+  ink: "#141516"
+  dim: "#0d0d0dcc"
+tile:
+  headline: A small Markdown editor for your web app.
+  sub: Nethermark is a small Markdown source editor built on CodeMirror 6. Use it from JavaScript, as a web component, or in React. Versions are 0.x, so the API can still change.
+  platforms:
+    - JavaScript
+    - Web component
+    - React
+  site:
+    label: Demo and docs ↗
+    href: https://netherstone.app/nethermark
+map:
+  x: 470
+  y: 470
+resume:
+  when: Released Oct 2026
+  fact: Two packages on npm, free and open source (MIT).
+timeline:
+  - date: Oct 30, 2026
+    title: Started
+    body: The repo was set up under the same GitHub organization as Netherstone.
+  - date: Oct 31, 2026
+    title: On npm
+    body: 0.1.0 went to npm with the editor, its toolbar and shortcuts, and support for adding your own Markdown syntax.
+  - date: Nov 1, 2026
+    title: Web component and React
+    body: 0.2 added the <nether-mark> web component, the preview, touch screen support and the React package. Every label and icon can now be replaced. 0.3 followed the same day with the Netherstone app's Light and Dark colors, and 0.3.1 added multiple cursors.
+  - date: Nov 2, 2026
+    title: Fixed heights
+    body: 0.3.2 made a height set on the editor hold, so the text scrolls inside it instead of being cut off.

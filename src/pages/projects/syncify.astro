@@ -11,21 +11,29 @@ import { bySlug, live } from "../../data/projects";
 const p = bySlug("syncify");
 const L = await live(p);
 const repo = `https://github.com/${p.releases!.repo}`;
+const site = p.tile.site!;
 const file = L.assets.find((a) => a.name === "syncify.js")?.url ?? `${repo}/releases/latest`;
 
 const steps = [
   { icon: "cloudUp", t: "Back up", b: "Open Syncify from the top bar, your profile menu or Ctrl+Alt+S, and back up in one click." },
-  { icon: "layers", t: "Kept online", b: "Your backup is saved online along with the two before it." },
-  { icon: "cloudDown", t: "Restore", b: "After a reinstall, a broken update or on another computer, pick a backup and restore it." },
+  { icon: "layers", t: "Kept online", b: "Your 3 latest backups are kept online, plus a weekly safety copy." },
+  { icon: "cloudDown", t: "Restore", b: "After a reinstall, a broken update or on another computer, pick a backup, see what it will change, and restore it." },
   { icon: "checkCircle", t: "Back as it was", b: "Spotify reloads, and Marketplace puts your extensions, themes and snippets back." },
+];
+
+const sharing = [
+  { icon: "tag", t: "Share codes", b: "Share this setup gives you a code anyone can paste into Syncify to load your extensions and themes. Your Spicetify config and extension settings stay out of it." },
+  { icon: "globe", t: "Discover", b: "People post their setups on the website with a description and up to 3 images, and others heart the ones they like." },
+  { icon: "user", t: "Profiles", b: "The handle you pick, like @mellow-beat427, shows on the codes you share. Its page lists your codes and the socials you add." },
+  { icon: "key", t: "Your account", b: "Sign in on the website with a 6-digit email code to name your backups, manage your codes and devices, or delete everything." },
 ];
 
 const edges = `<g stroke="#4a4a4a" stroke-width="1.5" fill="none"><path d="M230 106 H 282"/><path d="M520 106 H 672"/><path d="M910 106 H 962"/><path d="M1085 172 V 232 H 115 V 180"/></g><g fill="#4a4a4a"><path d="M282 101 L 290 106 L 282 111 Z"/><path d="M672 101 L 680 106 L 672 111 Z"/><path d="M962 101 L 970 106 L 962 111 Z"/><path d="M110 180 L 115 172 L 120 180 Z"/></g>`;
 const nodes = [
   { k: "mkt", x: 0, y: 40, w: 230, h: 132, title: "Your setup", sub: "Marketplace's list of the extensions, themes and snippets you installed", icon: "list" },
-  { k: "ext", x: 290, y: 40, w: 230, h: 132, title: "Syncify", sub: "Packs that list up with a fingerprint of your Spotify username", icon: "syncify" },
-  { k: "srv", x: 680, y: 40, w: 230, h: 132, title: "Syncify server", sub: "Checks it's Marketplace data and files it under the fingerprint", icon: "server" },
-  { k: "kv", x: 970, y: 40, w: 230, h: 132, title: "Your backups", sub: "The latest one, plus the two before it", icon: "db" },
+  { k: "ext", x: 290, y: 40, w: 230, h: 132, title: "Syncify", sub: "Packs your setup up with a fingerprint of your Spotify username", icon: "syncify" },
+  { k: "srv", x: 680, y: 40, w: 230, h: 132, title: "Syncify server", sub: "Checks the backup and files it under the fingerprint", icon: "server" },
+  { k: "kv", x: 970, y: 40, w: 230, h: 132, title: "Your backups", sub: "Your 3 latest, plus a weekly safety copy", icon: "db" },
 ];
 const labels = [
   { x: 0, y: 0, text: "On your computer, inside Spotify" },
@@ -34,13 +42,13 @@ const labels = [
   { x: 0, y: 222, band: true, text: "Restore: the list comes back, Spotify reloads, and Marketplace reinstalls everything" },
 ];
 const explain = [
-  { k: "mkt", title: "Marketplace does the reinstalling.", body: "Syncify saves Marketplace's own record of what you installed and how it's set up, not the extensions themselves. After a restore, Spotify reloads and Marketplace downloads everything again. That keeps backups small, and Syncify never needs access to the files on your computer." },
+  { k: "mkt", title: "Marketplace does the reinstalling.", body: "Syncify saves Marketplace's own record of what you installed and how it's set up, not the extensions themselves. After a restore, Spotify reloads and Marketplace downloads everything again. That keeps backups small." },
   { k: "ext", title: "A good backup never gets replaced by an empty one.", body: "Syncify won't upload a backup with nothing in it. Automatic backups stay off unless you turn them on, and even then, if this computer has less than half of what's in your online backup, Syncify stops and asks you to restore first. That's the usual sign of a fresh install, not of a setup you changed on purpose." },
-  { k: "srv", title: "No account to create, and nothing to leak.", body: "Your backup is filed under your Spotify account, so it follows you to any computer where you use Spotify. Syncify only sends a fingerprint of your username, a fixed string of letters and numbers that can't be turned back into the name, so the server finds your backup without knowing whose it is. It accepts nothing but Marketplace data under 512 KB, and has no logins or passwords to protect." },
-  { k: "kv", title: "Three restore points.", body: "Each backup keeps the two before it, so a broken or accidental backup never leaves you without a good copy. If the three ever grow too large to store together, the oldest goes first and the latest is always kept." },
+  { k: "srv", title: "An account is optional.", body: "Without one, your backup is filed under your Spotify account, so it follows you to any computer where you use Spotify. Syncify only sends a fingerprint of your username, a fixed string of letters and numbers that can't be turned back into the name. With an account, you sign in with a 6-digit email code, never a password, and can secure your backup so only your signed-in devices can restore it." },
+  { k: "kv", title: "Three restore points and a safety copy.", body: "Syncify keeps your 3 latest backups and a weekly safety copy, so a broken or accidental backup never leaves you without a good one." },
 ];
 const facts = [
-  { value: "4.9k", label: "Accounts backed up" },
+  { value: "6.1k", label: "People backed up" },
   { value: String(L.stars ?? 29), label: "GitHub stars" },
   { value: String(L.releases ?? 4), label: "Releases" },
   { value: "MIT", label: "Open source" },
@@ -57,9 +65,10 @@ const facts = [
         <div class="sc-actions">
           <a class="sc-btn" href="https://github.com/spicetify/marketplace">Get it in Marketplace</a>
           <a class="sc-btn outline" href={file}><Icon name="download" />syncify.js</a>
+          <a class="sc-btn outline" href={site.href}>{site.label}</a>
           <a class="sc-round" href={repo} aria-label="Source code on GitHub"><Icon name="github" size={20} /></a>
         </div>
-        <p class="sc-facts parts"><span>{L.versionLabel}</span><span>{L.dateLabel}</span><span>Free and open source (MIT)</span></p>
+        <p class="sc-facts parts"><span>{L.versionLabel}</span><span>{L.dateLabel}</span><span>Free, with an open-source extension (MIT)</span></p>
       </div>
       <Image src={p.tile.image!} alt={p.tile.imageAlt!} widths={[490, 882]} sizes="490px" class="sc-shot dialog" priority />
     </div>
@@ -77,9 +86,22 @@ const facts = [
       ))}
     </ol>
     <div class="saves">
-      <div class="chips" style="align-items: center"><span class="small" style="color: var(--subtle); margin-right: 6px">What it saves</span>{["Extensions", "Themes", "Snippets", "Marketplace settings"].map((c) => <span class="chip">{c}</span>)}</div>
+      <div class="chips" style="align-items: center"><span class="small" style="color: var(--subtle); margin-right: 6px">What it saves</span>{["Extensions", "Themes", "Snippets", "Apps", "Marketplace settings"].map((c) => <span class="chip">{c}</span>)}</div>
       <span class="small">Can also back up when Spotify starts, if you turn it on</span>
     </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">Sharing</h2>
+    <ul class="how">
+      {sharing.map((s) => (
+        <li class="how-card">
+          <span class="how-top"><Icon name={s.icon} size={22} /></span>
+          <span class="how-t">{s.t}</span>
+          <span class="how-b">{s.b}</span>
+        </li>
+      ))}
+    </ul>
   </section>
 
   <section class="sc-sec" data-reveal>
@@ -97,6 +119,7 @@ const facts = [
   <section class="sc-sec" data-reveal>
     <h2 class="h2">How it's built</h2>
     <Diagram height={256} nodes={nodes} edges={edges} labels={labels} explain={explain} initial="srv" stackNote="Restore: the list comes back, Spotify reloads, and Marketplace reinstalls everything." />
+    <p class="prose">The website and the backup API are two Cloudflare Workers, with D1 and R2 for storage, on Cloudflare's Free plan. The extension is open source and the backend is private.</p>
     <div class="built-foot">
       <div class="chips">{p.tech.map((t) => <a class="pill" href={`/map?t=${encodeURIComponent(t)}`}>{t}</a>)}</div>
       <div class="doc-links"><a href={repo}>Source ↗</a></div>
@@ -124,27 +147,28 @@ const facts = [
       </div>
       <div class="tabpanel" data-tab="Pricing" hidden>
         <div class="panel tab-card">
-          <div class="price"><b>$0</b><span>no accounts, no limits</span></div>
+          <div class="price"><b>$0</b><span>for every feature</span></div>
           <div class="kv"><span>MIT</span><span>Open source</span></div>
           <div class="kv"><span>Ko-fi</span><span>Optional tips</span></div>
         </div>
-        <p class="prose">Syncify is free and open source. A Ko-fi link in the dialog lets people chip in if it saved their setup.</p>
+        <p class="prose">Syncify is free, and the extension is open source. A Ko-fi link lets people chip in if it saved their setup.</p>
       </div>
       <div class="tabpanel" data-tab="Launch" hidden>
         <div class="panel tab-card">
           <span class="label" style="color: var(--subtle)">Released May 28, 2026</span>
           <div class="kv2"><span>Spicetify Marketplace</span><span>Install inside Spotify</span></div>
           <div class="kv2"><span>GitHub releases</span><span>syncify.js, for manual installs</span></div>
+          <div class="kv2"><span>syncify.wsoltani.com</span><span>Accounts, sharing and Discover</span></div>
         </div>
-        <p class="prose">Syncify is listed in the Spicetify Marketplace, so most people install it from inside Spotify. Every release also goes up on GitHub with the file attached, for people who add extensions by hand.</p>
+        <p class="prose">Syncify is listed in the Spicetify Marketplace, so most people install it from inside Spotify. Every release also goes up on GitHub with the file attached, for people who add extensions by hand. Since October it also has its own website.</p>
       </div>
       <div class="tabpanel" data-tab="Support" hidden>
         <div class="panel tab-card">
           <span class="label" style="color: var(--subtle)">On GitHub</span>
-          <div class="kv"><span>7</span><span>Issues and pull requests, all closed</span></div>
+          <div class="kv"><span>Discord</span><span>The Syncify server</span></div>
           <div class="kv"><span>1</span><span>Fix sent in by a user</span></div>
         </div>
-        <p class="prose">Questions and bug reports go through GitHub issues, and each one gets an answer with steps to narrow the problem down. When Marketplace changed where it keeps its data, a user traced the cause and sent the fix.</p>
+        <p class="prose">Questions and bug reports go through GitHub issues or the Syncify Discord, and each one gets an answer with steps to narrow the problem down. When Marketplace changed where it keeps its data, a user traced the cause and sent the fix.</p>
       </div>
     </Tabs>
   </section>

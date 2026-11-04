@@ -39,7 +39,7 @@ const tabs = ["Name", "Identity", "Audience", "Pricing", "Launch"];
 const facts = [
   { value: String(L.releases ?? 8), label: "Releases" },
   { value: "3", label: "Platforms" },
-  { value: (L.version ?? "0.5").split(".").slice(0, 2).join("."), label: "Latest version, beta" },
+  { value: L.version!.split(".").slice(0, 2).join("."), label: "Latest version, beta" },
   { value: "GPL-3.0", label: "Open source" },
 ];
 ---
@@ -153,6 +153,7 @@ const facts = [
           <span class="label" style="color: var(--subtle)">Public beta since Oct 4, 2026</span>
           <div class="kv2"><span>Windows</span><span>Tested most</span></div>
           <div class="kv2"><span>macOS and Linux</span><span>Same release as Windows</span></div>
+          <div class="kv2"><span>Homebrew</span><span>On macOS</span></div>
         </div>
         <p class="prose">Netherstone launched as a public beta on Oct 4, 2026. On its website, people vote on the roadmap to decide what comes next. The changelog updates itself with every release, and an occasional newsletter covers what's new.</p>
       </div>

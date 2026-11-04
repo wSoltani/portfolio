@@ -1,0 +1,27 @@
+---
+// The home page's Other projects: every project with a page but no tile, as rows, then
+// the way to the Archive.
+import Row from "./Row.astro";
+import { OTHER, live } from "../data/projects";
+
+const rows = await Promise.all(
+  OTHER.map(async (p) => ({ p, meta: [p.category, p.note ?? (await live(p)).versionLabel].filter(Boolean).join(" · ") })),
+);
+---
+
+<section class="wrap other" aria-labelledby="other-label" data-reveal>
+  <h2 id="other-label" class="sec-label">Other projects</h2>
+  <div class="rows">
+    {rows.map(({ p, meta }) => <Row href={`/projects/${p.slug}`} seed={p.slug} name={p.name} line={p.line} meta={meta} />)}
+  </div>
+  <p class="older">Older projects are in the <a href="/archive" class="link">Archive</a>.</p>
+</section>
+
+<style>
+  .other { padding-top: 72px; display: flex; flex-direction: column; gap: 20px; }
+  .sec-label { font-size: 18px; font-weight: 600; color: var(--muted); margin: 0; }
+  .rows { display: flex; flex-direction: column; gap: 10px; }
+  .older { font-size: 16px; color: var(--muted); padding-top: 4px; }
+  .older .link { color: var(--muted); text-decoration-color: var(--subtle); text-underline-offset: 3px; }
+  @media (max-width: 767px) { .other { padding-top: 56px; } }
+</style>

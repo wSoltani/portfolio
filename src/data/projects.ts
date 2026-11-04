@@ -1,4 +1,4 @@
-// Every project, read from its own folder in showcase/. Home tiles, showcase pages,
+// Every project, read from its own folder in showcase/. Home tiles and rows, showcase pages,
 // the Archive, the Map, the Resume and llms.txt all read from here.
 import { getCollection, type CollectionEntry } from "astro:content";
 import { repoFacts, shortDate, versionLabel } from "../lib/github";
@@ -16,6 +16,8 @@ const all = (await getCollection("showcase"))
 export const PROJECTS = all.filter((p): p is Project => p.status !== "archived").sort((a, b) => Number(b.status === "featured") - Number(a.status === "featured"));
 /** The ones with a tile on the home page. */
 export const FEATURED = PROJECTS.filter((p) => p.status === "featured");
+/** The ones listed under Other projects on the home page. */
+export const OTHER = PROJECTS.filter((p) => p.status === "active");
 /** Older projects, newest first. */
 export const ARCHIVE = all.filter((p): p is Archived => p.status === "archived");
 
