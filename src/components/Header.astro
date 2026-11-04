@@ -22,7 +22,7 @@ const here = (id: string) => (current === id ? "page" : undefined);
           <a href={i.href} class:list={["item", { on: current === i.id }]} aria-current={here(i.id)}>{i.label}</a>
         ))}
       </nav>
-      <button type="button" class="ask-btn" data-ask-open aria-controls="ask" aria-expanded="false"><span>Ask</span><kbd data-ask-key aria-hidden="true">⌘K</kbd></button>
+      <button type="button" class="ask-btn" data-ask-open aria-controls="ask" aria-expanded="false"><span>Ask</span><kbd aria-hidden="true"><span class="key-mac">⌘K</span><span class="key-pc">Ctrl K</span></kbd></button>
       <ResumeLinks current={current === "resume"} />
       <button type="button" class="square menu-btn" popovertarget="menu" aria-label="Menu"><Icon name="menu" size={18} stroke={2} /></button>
     </div>
@@ -63,6 +63,8 @@ const here = (id: string) => (current === id ? "page" : undefined);
 
   .ask-btn { height: 40px; min-width: 132px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 8px 0 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; color: var(--muted); font-size: 15px; cursor: pointer; transition: border-color var(--fast) ease, color var(--fast) ease; }
   .ask-btn kbd { font: inherit; font-size: 12px; line-height: 20px; padding: 0 6px; color: var(--muted); border: 1px solid var(--line-strong); border-radius: 4px; }
+  /* The head script marks Apple devices before the first paint, so the right shortcut shows from the start. */
+  :global(html.mac) .ask-btn .key-pc, :global(html:not(.mac)) .ask-btn .key-mac { display: none; }
   .ask-btn:hover { border-color: var(--line-strong); color: var(--text); }
   .ask-btn[aria-expanded="true"] { border-color: var(--cream); color: var(--cream); }
 
