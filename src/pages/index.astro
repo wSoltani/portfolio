@@ -7,6 +7,8 @@ import { FEATURED, live } from "../data/projects";
 import avatar from "../assets/brand/avatar.webp";
 import MapPreview from "../components/MapPreview.astro";
 import WorkList from "../components/WorkList.astro";
+import OtherProjects from "../components/OtherProjects.astro";
+import "@fontsource/geist/700.css";
 
 const L = Object.fromEntries(await Promise.all(FEATURED.map(async (p) => [p.slug, await live(p)] as const)));
 const facts = (slug: string) => {
@@ -15,7 +17,7 @@ const facts = (slug: string) => {
   return { parts: [p.category, p.note ?? l.versionLabel].filter(Boolean) as string[], live: p.note ? undefined : l };
 };
 // Projects with a mark of their own below. Any other project shows its name.
-const marked = new Set(["netherstone", "syncify", "yapora", "lyrica", "switchflare"]);
+const marked = new Set(["netherstone", "syncify", "yapora", "lyrica", "switchflare", "nethermark"]);
 const themeVars = (slug: string) => {
   const t = FEATURED.find((x) => x.slug === slug)!.theme;
   return `--p-bg:${t.bg};--p-line:${t.line};--p-accent:${t.accent};--p-soft:${t.soft};--p-sel:${t.sel}`;
@@ -54,6 +56,7 @@ const themeVars = (slug: string) => {
                     {p.slug === "syncify" && <span class="art-mark caps"><Icon name="syncify" size={34} stroke={2.25} />SYNCIFY</span>}
                     {p.slug === "yapora" && <span class="art-mark"><YaporaMark size={40} />Yapora</span>}
                     {p.slug === "switchflare" && <span class="art-mark"><span style="display:flex;color:var(--p-accent)"><Icon name="switch" size={32} stroke={2} /></span>Switchflare</span>}
+                    {p.slug === "nethermark" && <span class="art-mark art-word"><span class="word-pkg">@netherstone/nethermark · {L[p.slug].version} · MIT</span>Nethermark</span>}
                     {p.slug === "lyrica" && <span class="art-lyrica"><span>Every word, right when it's</span> <b>sung.</b></span>}
                     {!marked.has(p.slug) && <span class="art-mark">{p.name}</span>}
                   </span>
@@ -73,6 +76,7 @@ const themeVars = (slug: string) => {
                   {p.slug === "yapora" && <span class="open-mark"><YaporaMark size={40} />Yapora</span>}
                   {p.slug === "lyrica" && <span class="open-mark" style="color: var(--p-accent); font-size: 22px">Lyrica</span>}
                   {p.slug === "switchflare" && <span class="open-mark"><span style="display:flex;color:var(--p-accent)"><Icon name="switch" size={34} stroke={2} /></span>Switchflare</span>}
+                  {p.slug === "nethermark" && <span class="open-mark open-word">Nethermark</span>}
                   {!o.logo && !marked.has(p.slug) && <span class="open-mark">{p.name}</span>}
                   <span class="open-title">{o.headline}</span>
                   <span class="open-sub">{o.sub}</span>
@@ -86,7 +90,9 @@ const themeVars = (slug: string) => {
                   </span>
                 </div>
                 <div class="open-art">
-                  {o.image ? <Image src={o.image} alt={o.imageAlt!} widths={[640, 1280]} sizes="640px" class:list={["open-img", { tall: p.slug === "syncify" }]} /> : <span class="open-lyrica" aria-hidden="true"><span>Every word, right when it's</span> <b>sung.</b></span>}
+                  {o.image ? <Image src={o.image} alt={o.imageAlt!} widths={[640, 1280]} sizes="640px" class:list={["open-img", { tall: p.slug === "syncify" }]} />
+                    : p.slug === "lyrica" ? <span class="open-lyrica" aria-hidden="true"><span>Every word, right when it's</span> <b>sung.</b></span>
+                    : <span class:list={["open-name", { "open-word": p.slug === "nethermark" }]} aria-hidden="true">{p.name}</span>}
                 </div>
               </div>
               <button type="button" class="open-close" aria-label={`Close ${p.name}`}>×</button>
@@ -95,8 +101,9 @@ const themeVars = (slug: string) => {
         );
       })}
     </div>
-    <p class="older">Older projects are in the <a href="/archive" class="link">Archive</a>.</p>
   </section>
+
+  <OtherProjects />
 
   <WorkList />
 
@@ -136,6 +143,9 @@ const themeVars = (slug: string) => {
   .art-mark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); transition: transform var(--base) var(--ease-out); }
   .art-mark.caps { font-size: 22px; font-weight: 700; letter-spacing: 0.04em; }
   .tile-link:hover .art-mark { transform: translateY(-4px); }
+  /* Nethermark's name set the way its page on netherstone.app sets it. */
+  .art-word { flex-direction: column; gap: 6px; font-family: "Geist", var(--font); font-size: 34px; font-weight: 700; letter-spacing: -0.045em; color: #eeebe5; }
+  .word-pkg { font-family: var(--mono); font-size: 12px; font-weight: 400; letter-spacing: 0; color: var(--muted); }
   .art-lyrica { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 24px; font-size: 26px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; color: rgba(242, 238, 244, 0.85); flex-wrap: wrap; align-content: center; gap: 0 0.25em; }
   .art-lyrica b { font-weight: 600; color: var(--p-accent); text-shadow: 0 0 24px #8e2b8b; }
   .tile-body { padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
@@ -155,6 +165,9 @@ const themeVars = (slug: string) => {
   .open-text { display: flex; flex-direction: column; gap: 22px; }
   .open-logo { height: 44px; width: auto; align-self: flex-start; }
   .open-mark { display: flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+  .open-word { font-family: "Geist", var(--font); font-size: 32px; font-weight: 700; letter-spacing: -0.045em; color: #eeebe5; }
+  .open-name { font-size: 64px; font-weight: 600; letter-spacing: -0.04em; color: var(--text); }
+  .open-name.open-word { font-size: 72px; }
   .open-mark.caps { font-size: 24px; font-weight: 700; letter-spacing: 0.04em; }
   .open-title { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
   .open-sub { font-size: 16px; line-height: 1.6; color: var(--p-soft); }
@@ -177,8 +190,6 @@ const themeVars = (slug: string) => {
   .grid.has-open .tile:not(.is-open) { opacity: 0.4; }
   .grid.has-open .tile:not(.is-open):hover { opacity: 1; }
 
-  .older { font-size: 16px; color: var(--muted); padding-top: 12px; }
-  .older .link { color: var(--muted); text-decoration-color: var(--subtle); text-underline-offset: 3px; }
 
   .maps { padding-top: 96px; display: flex; flex-direction: column; gap: 20px; }
   .maps-head { display: flex; justify-content: space-between; align-items: baseline; }
@@ -240,7 +251,7 @@ const themeVars = (slug: string) => {
   const grid = document.querySelector<HTMLElement>("[data-featured]")!;
   // Everything that moves when a tile opens or closes: the tiles, and what sits below them,
   // so the sections underneath travel with the grid instead of jumping ahead of it.
-  const moving = () => [...grid.querySelectorAll<HTMLElement>(".tile"), ...document.querySelectorAll<HTMLElement>(".older, .work, .maps, footer")];
+  const moving = () => [...grid.querySelectorAll<HTMLElement>(".tile"), ...document.querySelectorAll<HTMLElement>(".other, .work, .maps, footer")];
   const flip = (change: () => void, opened?: HTMLElement, closing?: HTMLElement) => {
     if (reduced()) return change();
     const state = Flip.getState(moving(), { props: "opacity" });

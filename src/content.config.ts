@@ -28,7 +28,7 @@ const common = {
 const listed = ({ image }: SchemaContext) =>
   z.object({
     ...common,
-    /** featured: a tile on the home page. active: its own page, but no tile. */
+    /** featured: a tile on the home page. active: a row under Other projects on the home page. Both get their own page. */
     status: z.enum(["featured", "active"]),
     /** Its line in llms.txt. */
     llms: z.string(),
