@@ -1,5 +1,6 @@
 ---
 import Showcase from "../../layouts/Showcase.astro";
+import { Code } from "astro:components";
 import Icon from "../../components/Icon.astro";
 import Timeline from "../../components/showcase/Timeline.astro";
 import Facts from "../../components/showcase/Facts.astro";
@@ -53,8 +54,14 @@ const facts = [
         <p class="sc-facts parts"><span>{L.versionLabel}</span><span>{L.dateLabel}</span><span>Free and open source (MIT)</span></p>
       </div>
       <div class="code" aria-label="Quick start">
-        <pre class="install"><span class="dim">$</span> {install}</pre>
-        <pre class="start">{start}</pre>
+        <div class="block">
+          <Code code={install} lang="sh" theme="vitesse-dark" class="install" />
+          <button type="button" class="copy" data-copy={install} aria-label="Copy the install command"><span class="idle"><Icon name="copy" size={16} /></span><span class="done"><Icon name="check" size={16} /></span></button>
+        </div>
+        <div class="block">
+          <Code code={start} lang="ts" theme="vitesse-dark" class="start" />
+          <button type="button" class="copy" data-copy={start} aria-label="Copy the quick start code"><span class="idle"><Icon name="copy" size={16} /></span><span class="done"><Icon name="check" size={16} /></span></button>
+        </div>
       </div>
     </div>
   </section>
@@ -72,7 +79,7 @@ const facts = [
     <h2 class="h2">Concept</h2>
     <Timeline miles={p.timeline!} />
     <div class="prose concept">
-      <p>The Markdown converter on netherstone.app needed a source editor next to a live preview, and Netherstone's own editor is a rich editor, so it couldn't be used there. I wrote a small editor on CodeMirror 6 whose commands read the Markdown syntax tree, so formatting toggles cleanly and leaves code alone. I published it on its own under MIT so anyone can use it. The converter was its first user, and the demo page the second.</p>
+      <p>The <a href="https://netherstone.app/convert" class="link">Markdown converter on netherstone.app</a> needed a source editor next to a live preview, and Netherstone's own editor is a rich editor, so it couldn't be used there. I wrote a small editor on CodeMirror 6 whose commands read the Markdown syntax tree, so formatting toggles cleanly and leaves code alone. I published it on its own under MIT so anyone can use it. The converter was its first user, and the <a href={site} class="link">demo page</a> the second.</p>
     </div>
   </section>
 
@@ -88,12 +95,32 @@ const facts = [
   <Facts slot="after" items={facts} />
 </Showcase>
 
+<script>
+  for (const b of document.querySelectorAll<HTMLButtonElement>("button[data-copy]")) {
+    b.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(b.dataset.copy!);
+        b.classList.add("copied");
+        setTimeout(() => b.classList.remove("copied"), 1600);
+      } catch {}
+    });
+  }
+</script>
+
 <style>
   .pkg { font-family: var(--mono); font-size: 14px; color: var(--muted); }
   .wordmark { margin: -12px 0 0; font-family: "Geist", var(--font); font-size: 56px; font-weight: 700; letter-spacing: -0.045em; line-height: 1; color: #eeebe5; }
   .code { display: flex; flex-direction: column; gap: 12px; min-width: 0; align-self: center; }
-  .code pre { margin: 0; font-family: var(--mono); font-size: 14px; line-height: 1.7; color: #eeebe5; background: #0f1011; border: 1px solid var(--p-line); border-radius: 10px; padding: 18px 20px; overflow-x: auto; }
-  .code .dim { color: var(--subtle); }
+  .block { position: relative; }
+  /* Shiki sets the theme's background inline, so the page's own code background needs !important. */
+  .code :global(pre) { margin: 0; font-family: var(--mono); font-size: 14px; line-height: 1.7; background: #0f1011 !important; border: 1px solid var(--p-line); border-radius: 10px; padding: 18px 64px 18px 20px; overflow-x: auto; }
+  .copy { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: 1px solid var(--p-line); background: var(--p-sel); color: var(--muted); cursor: pointer; transition: color var(--fast) ease, border-color var(--fast) ease; }
+  .copy:hover, .copy:focus-visible { color: var(--text); border-color: var(--p-accent); }
+  .copy .idle { display: flex; }
+  .copy .done { display: none; }
+  .copy.copied { color: var(--p-accent); }
+  .copy.copied .idle { display: none; }
+  .copy.copied .done { display: flex; }
   .does { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
   .does li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
   .does .t { font-size: 17px; font-weight: 600; }
