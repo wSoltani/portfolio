@@ -103,16 +103,21 @@ function stripMotion(svg: SVGSVGElement | null) {
   let flow: gsap.core.Tween | null = null;
   return {
     settle() {
+      svg?.closest(".ask")?.classList.add("glow");
+      setTimeout(() => svg?.closest(".ask")?.classList.remove("glow"), 1400);
       if (reduced() || !paths.length) return;
       state.wave = 0;
-      gsap.to(state, { wave: 1, duration: T.signature, ease: EASE.enter, onUpdate: draw });
+      gsap.to(state, { wave: 1, duration: 1.6, ease: "power3.out", onUpdate: draw });
+      gsap.to(state, { phase: `+=${Math.PI * 2}`, duration: 1.6, ease: "power3.out" });
     },
     stir() {
+      svg?.closest(".ask")?.classList.add("searching");
       if (reduced() || !paths.length) return;
       flow?.kill();
-      flow = gsap.to(state, { phase: `+=${Math.PI * 2}`, duration: 2.4, ease: "none", repeat: -1, onUpdate: draw });
+      flow = gsap.to(state, { phase: `+=${Math.PI * 2}`, duration: 1.6, ease: "none", repeat: -1, onUpdate: draw });
     },
     calm() {
+      svg?.closest(".ask")?.classList.remove("searching");
       if (!flow) return;
       flow.kill();
       flow = null;
@@ -434,20 +439,36 @@ export function mountAsk() {
     triggers.forEach((b) => b.setAttribute("aria-expanded", String(open)));
   }
 
+  /** Runs a change as a view transition where the browser has them, so the page's new width eases in. */
+  function transition(change: () => void, fallback: () => void) {
+    if (reduced()) return change();
+    if ("startViewTransition" in document) document.startViewTransition(change);
+    else {
+      change();
+      fallback();
+    }
+  }
+
   function open(animate = true) {
     if (isOpen()) return input.focus();
     returnTo = document.activeElement as HTMLElement | null;
-    paint();
-    dlg.hidden = false;
-    html.classList.add("ask-open");
+    const show = () => {
+      paint();
+      dlg.hidden = false;
+      html.classList.add("ask-open");
+      scrollDown();
+    };
     setOpen(true);
-    if (animate && !reduced()) {
-      gsap.fromTo(dlg, { xPercent: 100 }, { xPercent: 0, duration: T.slow, ease: EASE.enter, clearProps: "transform" });
-      if (pushes()) gsap.from(document.body, { marginRight: 0, duration: T.slow, ease: EASE.enter, clearProps: "marginRight" });
+    if (animate) {
+      transition(show, () => gsap.fromTo(dlg, { xPercent: 100 }, { xPercent: 0, duration: T.slow, ease: EASE.enter, clearProps: "transform" }));
       strip.settle();
+      input.focus({ preventScroll: true });
+    } else {
+      // Reopened on a new page: no slide, no color fade, just as it was.
+      dlg.classList.add("instant");
+      show();
+      requestAnimationFrame(() => requestAnimationFrame(() => dlg.classList.remove("instant")));
     }
-    scrollDown();
-    if (animate) input.focus({ preventScroll: true });
     if (!state.session) loadTurnstile().catch(() => {});
   }
 
@@ -457,13 +478,9 @@ export function mountAsk() {
     const done = () => {
       dlg.hidden = true;
       html.classList.remove("ask-open");
-      gsap.set([dlg, document.body], { clearProps: "transform,marginRight" });
     };
-    if (reduced()) done();
-    else {
-      gsap.to(dlg, { xPercent: 100, duration: T.base, ease: EASE.move, onComplete: done });
-      if (pushes()) gsap.to(document.body, { marginRight: 0, duration: T.base, ease: EASE.move });
-    }
+    if (reduced() || "startViewTransition" in document) transition(done, () => {});
+    else gsap.to(dlg, { xPercent: 100, duration: T.base, ease: EASE.move, onComplete: () => { done(); gsap.set(dlg, { clearProps: "transform" }); } });
     if (restoreFocus && dlg.contains(document.activeElement)) (returnTo ?? triggers[0])?.focus();
   }
 

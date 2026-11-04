@@ -9,8 +9,8 @@ import { ASK, ASK_LINKS } from "../data/ask";
 
 <aside id="ask" class="ask" aria-labelledby="ask-title" hidden data-ask data-endpoint={ASK.endpoint} data-sitekey={ASK.turnstileSiteKey}>
   {/* The edge strip: thin waving lines that settle when the panel opens, stir while it looks, and take the color of the project an answer is about. */}
-  <svg class="strip" viewBox={`0 0 ${EDGE.width} ${EDGE.height}`} preserveAspectRatio="xMidYMin slice" aria-hidden="true">
-    {Array.from({ length: EDGE.lines }, (_, i) => <path d={edgePath(i)} fill="none" stroke="currentColor" stroke-width="1.2" stroke-opacity={(0.9 - i * 0.15).toFixed(2)} />)}
+  <svg class="strip" viewBox={`0 0 ${EDGE.width} ${EDGE.height}`} preserveAspectRatio="none" aria-hidden="true">
+    {Array.from({ length: EDGE.lines }, (_, i) => <path d={edgePath(i)} fill="none" stroke="currentColor" stroke-width="1.25" vector-effect="non-scaling-stroke" shape-rendering="geometricPrecision" stroke-opacity={(0.9 - i * 0.15).toFixed(2)} />)}
   </svg>
   <div class="ask-body">
     <div class="top">
@@ -47,7 +47,7 @@ import { ASK, ASK_LINKS } from "../data/ask";
     <div class="status"><span class="trail" aria-hidden="true"></span>Checking you're not a bot…</div>
   </template>
   <template data-state="thinking">
-    <div class="status"><span class="trail" aria-hidden="true"></span>Looking through his notes…</div>
+    <div class="status" role="status"><span class="trail" aria-hidden="true"></span>Getting answers…</div>
   </template>
   <template data-state="resting">
     <div class="card">
@@ -80,7 +80,7 @@ import { ASK, ASK_LINKS } from "../data/ask";
 <style>
   :global(:root) { --ask-w: 460px; }
   .ask {
-    --tone: #5c5c5c;
+    --tone: #8a8a8a;
     position: fixed; top: 0; right: 0; bottom: 0; z-index: 40; width: var(--ask-w); display: flex;
     background: #121212; border-left: 1px solid var(--line); color: var(--text);
   }
@@ -95,7 +95,25 @@ import { ASK, ASK_LINKS } from "../data/ask";
     .ask { box-shadow: -24px 0 48px rgba(0, 0, 0, 0.5); }
   }
 
-  .strip { width: 24px; height: 100%; flex-shrink: 0; border-right: 1px solid #1f1f1f; color: color-mix(in srgb, var(--tone) 70%, #121212); transition: color 0.9s ease; }
+  .strip { width: 24px; height: 100%; flex-shrink: 0; border-right: 1px solid #1f1f1f; color: color-mix(in srgb, var(--tone) 55%, #121212); transition: color 0.9s ease; }
+  /* The lines glow as the panel opens and pulse while it searches. */
+  .strip path { transition: filter 0.6s ease; }
+  .ask.glow .strip { color: var(--tone); }
+  .ask.glow .strip path { filter: drop-shadow(0 0 3px var(--tone)); }
+  .ask.searching .strip { color: var(--tone); animation: ask-glow 1.6s ease-in-out infinite; }
+  @keyframes ask-glow { 0%, 100% { filter: drop-shadow(0 0 1px var(--tone)); } 50% { filter: drop-shadow(0 0 5px var(--tone)); } }
+  @media (prefers-reduced-motion: reduce) { .ask.searching .strip { animation: none; } }
+  /* Reopened on a new page: it shows as it was, with no color fade. */
+  .ask.instant .strip { transition: none; }
+
+  /* Opening and closing run as one view transition: the page eases into its new width
+     while the panel slides in, instead of reflowing frame by frame. */
+  .ask { view-transition-name: answers; }
+  :global(::view-transition-old(root)), :global(::view-transition-new(root)) { animation-duration: 0.32s; animation-timing-function: var(--ease-out); }
+  :global(::view-transition-new(answers):only-child) { animation: ask-in 0.5s var(--ease-out); }
+  :global(::view-transition-old(answers):only-child) { animation: ask-out 0.28s var(--ease-inout) forwards; }
+  @keyframes ask-in { from { transform: translateX(100%); } }
+  @keyframes ask-out { to { transform: translateX(100%); } }
 
   .ask-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   .top { height: 72px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 16px 0 28px; border-bottom: 1px solid var(--line); }
@@ -133,7 +151,7 @@ import { ASK, ASK_LINKS } from "../data/ask";
   .turns :global(.src:hover) { color: var(--cream); border-bottom-color: var(--cream); }
 
   .turns :global(.status) { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--subtle); }
-  .turns :global(.trail) { width: 40px; height: 2px; background: linear-gradient(90deg, var(--cream), transparent); transform-origin: left; animation: ask-trail 1.4s ease-in-out infinite; }
+  .turns :global(.trail) { width: 72px; height: 2px; background: linear-gradient(90deg, var(--cream), transparent); transform-origin: left; animation: ask-trail 1.4s ease-in-out infinite; }
   .turns :global(.card) { display: flex; flex-direction: column; gap: 10px; }
   .turns :global(.card h3) { font-size: 17px; font-weight: 600; color: var(--cream); }
   .turns :global(.card p) { font-size: 14px; color: var(--muted); }
