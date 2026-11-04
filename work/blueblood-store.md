@@ -4,7 +4,7 @@ org: Blueblood
 order: 1
 role: Founder
 when: 2024 to 2026
-line: "E-commerce platform for Hachanicom, built and run solo from 2024 to 2026: an SSR Angular storefront, a JHipster back office with promotions, an audit log and restorable backups, self-hosted mail, and semantic search on Workers AI and Vectorize."
+line: "E-commerce platform for Hachanicom, built and run solo from 2024 to 2026: an SSR Angular storefront, a JHipster back office, self-hosted mail, and semantic search, recommendations and AI product descriptions on Workers AI and Vectorize."
 tech: [Angular, Spring Boot, PostgreSQL, Workers AI]
 ---
 
@@ -26,7 +26,7 @@ The back office was a JHipster 8 app on Spring Boot 3, with an Angular admin in 
 
 The shop's email ran on a mail server I set up with docker-mailserver, with DKIM and DMARC signing.
 
-In the back office, staff could search the catalogue by meaning. This ran on Cloudflare Workers: products were embedded with bge-m3 into Vectorize, and a scheduled job synced new and changed products in batches and retried failures. Similar-product recommendations and AI-written product descriptions were built as services too.
+The AI side ran on four Cloudflare Workers sharing one Vectorize index. Products were embedded with bge-m3, and a scheduled job synced new and changed products in batches and retried failures. On top of that I built semantic search, which staff used in the back office to search the catalogue by meaning, similar-product recommendations, and AI-written product descriptions and answers to product questions with Llama 3.3 70B.
 
 The apps ran in Docker behind Traefik with Let's Encrypt, with Prometheus metrics.
 
