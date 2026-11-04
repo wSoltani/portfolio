@@ -126,6 +126,8 @@ import { ASK, ASK_LINKS } from "../data/ask";
   .log { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 28px 28px 8px; display: flex; flex-direction: column; gap: 28px; }
   .empty { display: flex; flex-direction: column; gap: 16px; }
   .empty[hidden] { display: none; }
+  /* A chat being restored on a new page: no welcome text in the moment before it's drawn. */
+  :global(html.ask-chat) .empty { display: none; }
   .ask-lead { font-size: 26px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; color: var(--cream); }
   .sub { font-size: 15px; color: var(--muted); }
   .starters { list-style: none; margin: 12px 0 0; padding: 0; border-top: 1px solid #262626; }

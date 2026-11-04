@@ -71,8 +71,11 @@ const ogImage = new URL(image, SITE.url).href;
         setTimeout(() => document.documentElement.classList.add("motion-ready"), 2500);
       }
       // Answers stays open beside the page from page to page: make room before the first paint.
+      // With a chat going, its welcome text stays hidden until the chat is drawn back in.
       try {
-        if (JSON.parse(sessionStorage.getItem("ask-chat-v1") ?? "{}").open && matchMedia("(min-width: 1100px)").matches) document.documentElement.classList.add("ask-open");
+        const saved = JSON.parse(sessionStorage.getItem("ask-chat-v1") ?? "{}");
+        if (saved.open && matchMedia("(min-width: 1100px)").matches) document.documentElement.classList.add("ask-open");
+        if (saved.turns?.length) document.documentElement.classList.add("ask-chat");
       } catch {}
     </script>
     <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${SITE.analyticsId}`}></script>
