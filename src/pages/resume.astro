@@ -20,9 +20,9 @@ const contact = [
         <p class="split sub"><span>Wassim Soltani</span><span>{HEADLINE}</span><span>{LOCATION}</span></p>
         <p class="split contact">{contact.map((c) => <span><a href={c.href} class="link">{c.label}</a></span>)}</p>
       </div>
-      <a href={RESUME.pdf} class="btn btn-outline pdf" download>Download PDF</a>
     </header>
     <p class="summary">{SUMMARY}</p>
+    <a href={RESUME.pdf} class="btn btn-outline pdf" download>Download PDF</a>
 
     <section class="sec" data-reveal>
       <h2 class="h3">Experience</h2>
@@ -86,7 +86,7 @@ const contact = [
 </Base>
 
 <style>
-  .top { padding-top: 96px; display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
+  .top { padding-top: 96px; }
   .who { display: flex; flex-direction: column; gap: 12px; }
   /* Items split by a thin rule, never a typed separator. Every item has the rule in front; the row is
      shifted left by one rule and that strip is clipped off, so a wrapped line never starts with one. */
@@ -94,9 +94,10 @@ const contact = [
   .split > span { border-left: 1px solid var(--line-strong); padding: 0 var(--pad); }
   .sub { font-size: 18px; color: var(--body); }
   .contact { font-size: 15px; color: var(--muted); }
-  .summary { margin-top: 32px; max-width: 720px; font-size: 18px; line-height: 1.6; color: var(--body); }
+  .summary { margin-top: 32px; max-width: 960px; font-size: 18px; line-height: 1.6; color: var(--body); }
   .sec { padding-top: 64px; display: flex; flex-direction: column; }
-  .summary + .sec { padding-top: 40px; }
+  .pdf { margin-top: 24px; }
+  .pdf + .sec { padding-top: 48px; }
   .sec .h3 { margin-bottom: 8px; }
   .row { display: grid; grid-template-columns: 200px 1fr; gap: 32px; padding: 24px 0; border-top: 1px solid #262626; }
   .row.kv { padding: 16px 0; }
@@ -117,7 +118,6 @@ const contact = [
   .older { margin-top: 16px; font-size: 15px; color: var(--muted); }
   .link { text-decoration-color: #4a4a4a; text-underline-offset: 3px; }
   @media (max-width: 767px) {
-    .pdf { order: 1; }
     .row { grid-template-columns: 1fr; gap: 6px; }
     .row.kv { grid-template-columns: 110px 1fr; gap: 16px; }
   }

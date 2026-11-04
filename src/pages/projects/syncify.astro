@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import Showcase from "../../layouts/Showcase.astro";
 import Icon from "../../components/Icon.astro";
+import SyncifyLogo from "../../components/SyncifyLogo.astro";
 import Timeline from "../../components/showcase/Timeline.astro";
 import Diagram from "../../components/showcase/Diagram.astro";
 import Tabs from "../../components/showcase/Tabs.astro";
@@ -55,11 +56,11 @@ const facts = [
 ];
 ---
 
-<Showcase slug="syncify" title="Syncify" description="A Spicetify extension that backs up your Marketplace extensions, themes and snippets, and restores them when Spotify breaks.">
+<Showcase slug="syncify" title="Syncify" description="A Spicetify extension that backs up what you installed from Spicetify Marketplace and restores it in one click after a Spotify update or on a new computer.">
   <section slot="hero" class="sc-hero">
     <div class="sc-hero-card">
       <div class="sc-hero-text">
-        <h1 class="wordmark"><Icon name="syncify" size={48} stroke={2.25} /><span>SYNCIFY</span></h1>
+        <h1 class="wordmark"><SyncifyLogo size={48} /><span>SYNCIFY</span></h1>
         <p class="sc-hero-title">{p.tile.headline}</p>
         <p class="sc-hero-sub">{p.tile.sub}</p>
         <div class="sc-actions">
@@ -131,7 +132,7 @@ const facts = [
     <Tabs names={["Name", "Audience", "Pricing", "Launch", "Support"]} initial="Name" label="How Syncify is shaped">
       <div class="tabpanel" data-tab="Name">
         <div class="panel tab-card">
-          <span class="mark"><Icon name="syncify" size={36} stroke={2.25} /><span>Syncify</span></span>
+          <span class="mark"><SyncifyLogo size={36} /><span>Syncify</span></span>
           <div class="kv"><span>Spotify</span><span>The music app</span></div>
           <div class="kv"><span>Spicetify</span><span>Adds some spice to it</span></div>
           <div class="kv"><span>Syncify</span><span>Syncs Spicetify</span></div>

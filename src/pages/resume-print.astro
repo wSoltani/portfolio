@@ -23,7 +23,7 @@ const contact = [
     <title>Wassim Soltani – Resume</title>
   </head>
   <body>
-    <Flow width={1200} height={40} seed="Wassim Soltani" class="band" style="background:#94288c;color:#0d0d0d" />
+    <Flow width={1600} height={20} seed="Wassim Soltani" class="band" style="background:#94288c;color:#0d0d0d" />
         <header>
           <h1>Wassim Soltani</h1>
           <p class="split role"><span>{HEADLINE}</span><span>{LOCATION}</span></p>
@@ -73,14 +73,18 @@ const contact = [
 </html>
 
 <style is:global>
-  @page { size: A4; margin: 12mm 13mm; background: #faf8f3; }
+  /* Side margins come from the body padding, so the band on page 1 can run edge to edge. */
+  @page { size: A4; margin: 12mm 0; background: #faf8f3; }
+  @page :first { margin-top: 0; }
   * { box-sizing: border-box; }
   html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { margin: 0; font-family: "Instrument Sans Variable", "Instrument Sans", sans-serif; font-size: 12px; line-height: 1.35; color: #1a1a1a; background: #faf8f3; }
   a { color: inherit; text-decoration: none; }
   p, ul, h1, h2, h3, dl { margin: 0; }
-  .band { display: block; width: 100%; height: 7mm; border-radius: 1.5mm; }
-  header { margin-top: 12px; display: flex; flex-direction: column; gap: 4px; }
+  /* A thin strip on the top edge of page 1, bleeding past the side margins. */
+  .band { display: block; width: calc(100% + 26mm); height: 2.5mm; margin: 0 -13mm; }
+  @media print { body { padding: 0 13mm; } }
+  header { margin-top: 12mm; display: flex; flex-direction: column; gap: 4px; }
   h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; color: #0d0d0d; }
   /* Items split by a thin rule, never a typed separator. Every item has the rule in front; the row is
      shifted left by one rule and that strip is clipped off, so a wrapped line never starts with one. */
@@ -109,5 +113,5 @@ const contact = [
   dl { margin-top: 6px; display: grid; grid-template-columns: 120px 1fr; gap: 2px 16px; color: #333; }
   dt { color: #666; }
   dd { margin: 0; }
-  @media screen { body { max-width: 210mm; margin: 0 auto; padding: 13mm; } }
+  @media screen { body { max-width: 210mm; margin: 0 auto; padding: 0 13mm 13mm; } }
 </style>
