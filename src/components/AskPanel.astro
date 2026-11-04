@@ -1,0 +1,148 @@
+---
+// The Ask side panel: questions about Wassim's work, answered from his wiki.
+// It opens from the header's Ask button and covers the page from the right (full screen on a phone).
+import Icon from "./Icon.astro";
+import { ASK, ASK_LINKS } from "../data/ask";
+---
+
+<dialog class="ask" aria-labelledby="ask-title" data-ask data-endpoint={ASK.endpoint} data-sitekey={ASK.turnstileSiteKey}>
+  <div class="panel">
+    <div class="top">
+      <h2 id="ask-title">Ask about Wassim's work</h2>
+      <div class="acts">
+        <button type="button" class="new" data-new hidden>New chat</button>
+        <button type="button" class="square" data-close aria-label="Close"><Icon name="close" size={18} stroke={2} /></button>
+      </div>
+    </div>
+
+    <div class="log" data-log>
+      <div class="empty" data-empty>
+        <p class="intro">Answers come from Wassim's notes on his jobs and projects, with links to the pages they used.</p>
+        <span class="label">Try one</span>
+        <div class="starters">
+          {ASK.starters.map((q) => <button type="button" class="starter" data-starter>{q}</button>)}
+        </div>
+      </div>
+      <div class="turns" data-turns aria-live="polite"></div>
+    </div>
+
+    <div class="bottom">
+      <div class="check" data-check></div>
+      <form class="box" data-form>
+        <label class="sr-only" for="ask-q">Your question</label>
+        <textarea id="ask-q" rows="1" maxlength="800" placeholder="Ask a question…" data-input></textarea>
+        <button type="submit" class="send" aria-label="Send" data-send><Icon name="arrowUp" size={18} stroke={2} /></button>
+      </form>
+      <p class="note">Answers can miss things. The linked pages have the full story.</p>
+    </div>
+  </div>
+
+  <template data-state="checking">
+    <div class="status"><span class="spin" aria-hidden="true"></span>Checking you're not a bot…</div>
+  </template>
+  <template data-state="thinking">
+    <div class="status"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>Looking through his notes…</div>
+  </template>
+  <template data-state="resting">
+    <div class="card">
+      <h3 data-title>Ask is resting until tomorrow</h3>
+      <p>It answers a set number of questions each day. The Work and Projects sections cover the same ground.</p>
+      <div class="row"><a href="/#work" class="chip-btn">Work</a><a href="/#projects" class="chip-btn">Projects</a></div>
+    </div>
+  </template>
+  <template data-state="slow">
+    <div class="card">
+      <h3>One moment</h3>
+      <p>That's a lot of questions in a minute. Try again shortly.</p>
+    </div>
+  </template>
+  <template data-state="failed">
+    <div class="card">
+      <h3>That didn't work</h3>
+      <p>Something went wrong while answering. Your question is still in the box.</p>
+      <div class="row"><button type="button" class="retry" data-retry>Try again</button></div>
+    </div>
+  </template>
+</dialog>
+<script type="application/json" id="ask-links" set:html={JSON.stringify(ASK_LINKS)} />
+
+<script>
+  import { mountAsk } from "../scripts/ask";
+  mountAsk();
+</script>
+
+<style>
+  .ask {
+    position: fixed; inset: 0 0 0 auto; width: min(460px, 100vw); height: 100dvh; max-width: none; max-height: none;
+    margin: 0; padding: 0; border: 0; border-left: 1px solid var(--line); background: var(--surface); color: var(--text);
+    transition: transform var(--base) var(--ease-out), overlay var(--base) allow-discrete, display var(--base) allow-discrete;
+    transform: translateX(100%);
+  }
+  .ask[open] { transform: none; }
+  @starting-style { .ask[open] { transform: translateX(100%); } }
+  .ask::backdrop { background: rgba(0, 0, 0, 0.55); transition: opacity var(--base) ease, overlay var(--base) allow-discrete, display var(--base) allow-discrete; opacity: 0; }
+  .ask[open]::backdrop { opacity: 1; }
+  @starting-style { .ask[open]::backdrop { opacity: 0; } }
+
+  .panel { height: 100%; display: flex; flex-direction: column; }
+  .top { height: 72px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 16px 0 24px; border-bottom: 1px solid var(--line); }
+  h2 { font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .acts { display: flex; gap: 4px; align-items: center; }
+  .new { height: 40px; padding: 0 12px; background: none; border: 0; border-radius: 6px; color: var(--muted); font-size: 14px; cursor: pointer; }
+  .new:hover { color: var(--text); }
+  .square { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; padding: 0; background: none; border: 1px solid var(--line-strong); border-radius: 6px; color: var(--text); cursor: pointer; }
+  .square:hover { background: var(--raised); }
+
+  .log { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+  .empty { display: flex; flex-direction: column; gap: 8px; }
+  .empty[hidden] { display: none; }
+  .intro { font-size: 15px; color: var(--muted); margin-bottom: 16px; }
+  .label { font-size: 13px; color: var(--subtle); }
+  .starters { display: flex; flex-direction: column; gap: 8px; }
+  .starter { text-align: left; min-height: 48px; padding: 12px 14px; background: var(--raised); border: 1px solid var(--line); border-radius: 10px; color: var(--body); font-size: 14px; line-height: 1.4; cursor: pointer; transition: border-color var(--fast) ease, color var(--fast) ease; }
+  .starter:hover { border-color: var(--wine-line); color: var(--text); }
+
+  .turns { display: flex; flex-direction: column; gap: 20px; }
+  .turns :global(.q) { align-self: flex-end; max-width: 80%; background: var(--wine-raised); border: 1px solid var(--wine-line); border-radius: 12px 12px 4px 12px; padding: 10px 14px; font-size: 15px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .turns :global(.a) { display: flex; flex-direction: column; gap: 12px; font-size: 15px; color: var(--body); overflow-wrap: anywhere; }
+  .turns :global(.a ul) { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+  .turns :global(.from) { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; }
+  .turns :global(.from > span:first-child) { color: var(--subtle); }
+  .turns :global(.src) { text-decoration: none; padding: 4px 10px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--body); }
+  .turns :global(a.src:hover) { border-color: var(--wine-line); color: var(--text); }
+
+  .turns :global(.status) { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--subtle); }
+  .turns :global(.spin) { width: 14px; height: 14px; border: 2px solid var(--line-strong); border-top-color: var(--orchid); border-radius: 50%; animation: ask-spin 0.8s linear infinite; }
+  .turns :global(.dots) { display: flex; gap: 4px; }
+  .turns :global(.dots i) { width: 6px; height: 6px; border-radius: 50%; background: var(--orchid); animation: ask-pulse 1.2s ease-in-out infinite; }
+  .turns :global(.dots i:nth-child(2)) { animation-delay: 0.15s; }
+  .turns :global(.dots i:nth-child(3)) { animation-delay: 0.3s; }
+  .turns :global(.card) { background: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .turns :global(.card h3) { font-size: 16px; font-weight: 600; }
+  .turns :global(.card p) { font-size: 14px; color: var(--muted); }
+  .turns :global(.row) { display: flex; gap: 8px; padding-top: 4px; }
+  .turns :global(.chip-btn) { text-decoration: none; font-size: 14px; padding: 8px 14px; border: 1px solid var(--line-strong); border-radius: 6px; }
+  .turns :global(.retry) { height: 44px; padding: 0 16px; background: var(--magenta); border: 0; border-radius: 6px; color: var(--text); font-size: 14px; cursor: pointer; }
+  @keyframes ask-spin { to { transform: rotate(360deg); } }
+  @keyframes ask-pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+  .bottom { flex-shrink: 0; padding: 16px 24px 20px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+  .check:empty { display: none; }
+  .box { display: flex; align-items: flex-end; gap: 8px; background: var(--ink); border: 1px solid var(--line-strong); border-radius: 10px; padding: 6px 6px 6px 14px; }
+  .box:focus-within { border-color: var(--wine-line); }
+  textarea { flex: 1; resize: none; background: none; border: 0; outline: none; color: var(--text); font: inherit; font-size: 15px; line-height: 1.5; padding: 10px 0; max-height: 160px; field-sizing: content; }
+  textarea::placeholder { color: var(--subtle); }
+  /* The box shows focus with its border, so the field inside needs no ring of its own. */
+  textarea:focus-visible { box-shadow: none; }
+  .send { width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 0; background: var(--magenta); border: 0; border-radius: 8px; color: var(--text); cursor: pointer; transition: opacity var(--fast) ease; }
+  .send:disabled { opacity: 0.4; cursor: default; }
+  .note { font-size: 12px; color: var(--subtle); }
+
+  @media (max-width: 639px) {
+    .ask { width: 100vw; border-left: 0; }
+    .top { height: 64px; padding: 0 16px; }
+    .log { padding: 20px 16px; }
+    .bottom { padding: 12px 16px calc(16px + env(safe-area-inset-bottom)); }
+    textarea { font-size: 16px; }
+  }
+</style>
