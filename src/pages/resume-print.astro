@@ -1,11 +1,19 @@
 ---
-// The Resume as a printed document, A4. scripts/resume-pdf.mjs prints this page to
-// public/wassim-soltani-resume.pdf. Not linked or indexed; the PDF is what people get.
+// The Resume as a printed document: two A4 sheets, experience on the first and the rest on the second.
+// scripts/resume-pdf.mjs prints this page to public/wassim-soltani-resume.pdf. Each sheet is a fixed A4 page,
+// so after changing the content, open /resume-print and check that nothing runs past the bottom of either sheet.
+// Not linked or indexed; the PDF is what people get.
 import "@fontsource-variable/instrument-sans/wdth.css";
 import Flow from "../components/Flow.astro";
-import { JOBS, EDU, SKILLS, LANG } from "../data/resume";
-import { PROJECTS } from "../data/projects";
+import { HEADLINE, LOCATION, SUMMARY, JOBS, EDU, SKILLS, LANG, RESUME_PROJECTS } from "../data/resume";
 import { SITE } from "../data/site";
+
+const contact = [
+  { label: SITE.email, href: `mailto:${SITE.email}` },
+  { label: "wsoltani.com", href: SITE.url },
+  { label: "linkedin.com/in/wsoltani", href: SITE.linkedin },
+  { label: "github.com/wSoltani", href: SITE.github },
+];
 ---
 
 <!doctype html>
@@ -16,104 +24,106 @@ import { SITE } from "../data/site";
     <title>Wassim Soltani – Resume</title>
   </head>
   <body>
-    <Flow width={1200} height={40} seed="Wassim Soltani" class="band" />
-    <header>
-      <div>
-        <h1>Wassim Soltani</h1>
-        <p class="role"><span>Software engineer</span> <span>Tunisia, working remotely</span></p>
+    <div class="sheet" data-sheet>
+      <Flow width={794} height={24} seed="Wassim Soltani" class="band" style="background:#faf8f3;color:#e4ddd2" />
+      <div class="inner first">
+        <header>
+          <div class="who">
+            <h1>Wassim Soltani</h1>
+            <p class="split role"><span>{HEADLINE}</span><span>{LOCATION}</span></p>
+          </div>
+          <ul class="contact">{contact.map((c) => <li><a href={c.href}>{c.label}</a></li>)}</ul>
+        </header>
+        <p class="summary">{SUMMARY}</p>
+
+        <h2>Experience</h2>
+        {JOBS.map((j) => (
+          <article class="job">
+            <div class="head"><h3>{j.role}{j.org && <span>, {j.org}</span>}</h3><span class="when">{j.when}</span></div>
+            {j.intro && <p class="intro">{j.intro}</p>}
+            {j.lead && <ul class="lead">{j.lead.map((l) => <li>{l}</li>)}</ul>}
+            {j.groups.map((g) => (
+              <>
+                <p class="group"><a href={`${SITE.url}/work/${g.slug}`} class="name">{g.name}</a> <span class="context">{g.context}</span></p>
+                <ul>{g.items.map((l) => <li>{l}</li>)}</ul>
+              </>
+            ))}
+          </article>
+        ))}
       </div>
-      <ul class="contact">
-        <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
-        <li><a href={SITE.url}>wsoltani.com</a></li>
-        <li><a href={SITE.linkedin}>linkedin.com/in/wsoltani</a></li>
-        <li><a href={SITE.github}>github.com/wSoltani</a></li>
-      </ul>
-    </header>
+    </div>
 
-    <p class="summary">{SITE.description}</p>
+    <div class="sheet" data-sheet>
+      <div class="inner">
+        <h2 class="lead-h">Projects</h2>
+        {RESUME_PROJECTS.map((p) => (
+          <article class="project">
+            <div class="head"><h3><a href={`${SITE.url}/projects/${p.slug}`} class="name">{p.name}</a> <span>{p.category}</span></h3><span class="when">{p.when}</span></div>
+            <p class="line">{p.line}</p>
+            <p class="split facts">{p.facts.map((f) => <span>{f}</span>)}</p>
+          </article>
+        ))}
+        <p class="older">Older projects at <a href={`${SITE.url}/archive`} class="name">wsoltani.com/archive</a></p>
 
-    <section>
-      <h2>Experience</h2>
-      {JOBS.map((j) => (
-        <article class="item">
-          <div class="head"><h3>{j.role}<span>{" "}{j.org}</span></h3><span class="when">{j.when}</span></div>
-          <ul>{j.lines.map((l) => <li>{l}</li>)}</ul>
-        </article>
-      ))}
-    </section>
+        <h2>Education</h2>
+        {EDU.map((e) => (
+          <article class="edu">
+            <div><h3>{e.t} <span>{e.o}</span></h3>{e.d && <p class="line">{e.d}</p>}</div>
+            <span class="when">{e.w}</span>
+          </article>
+        ))}
 
-    <section>
-      <h2>Projects</h2>
-      <p class="note">My own products, which I build and run myself.</p>
-      {PROJECTS.map((p) => (
-        <article class="item project">
-          <div class="head"><h3>{p.name}<span>{" "}{p.category}</span></h3><span class="when">{p.resume.when}</span></div>
-          <p>{p.line} {p.resume.fact}</p>
-          {p.tech.length > 0 && <p class="tech">{p.tech.join(", ")}</p>}
-          <p class="url"><a href={`${SITE.url}/projects/${p.slug}`}>wsoltani.com/projects/{p.slug}</a></p>
-        </article>
-      ))}
-      <p class="note">Older projects: <a href={`${SITE.url}/archive`}>wsoltani.com/archive</a></p>
-    </section>
-
-    <section>
-      <h2>Education</h2>
-      {EDU.map((e) => (
-        <article class="item">
-          <div class="head"><h3>{e.t}<span>{" "}{e.o}</span></h3><span class="when">{e.w}</span></div>
-          {e.d && <p>{e.d}</p>}
-        </article>
-      ))}
-    </section>
-
-    <section class="two">
-      <div>
         <h2>Skills</h2>
         <dl>{SKILLS.map(([a, b]) => <><dt>{a}</dt><dd>{b}</dd></>)}</dl>
-      </div>
-      <div>
+
         <h2>Languages</h2>
         <dl>{LANG.map(([a, b]) => <><dt>{a}</dt><dd>{b}</dd></>)}</dl>
       </div>
-    </section>
+    </div>
   </body>
 </html>
 
 <style is:global>
-  @page { size: A4; margin: 14mm 15mm 14mm; }
-  :root { --magenta: #94288c; --ink: #0d0d0d; }
+  @page { size: A4; margin: 0; }
   * { box-sizing: border-box; }
   html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  body { margin: 0; font-family: "Instrument Sans Variable", "Instrument Sans", sans-serif; font-size: 9.6pt; line-height: 1.45; color: #1a1a1a; background: #fff; }
+  body { margin: 0; font-family: "Instrument Sans Variable", "Instrument Sans", sans-serif; font-size: 12px; line-height: 1.38; color: #1a1a1a; background: #faf8f3; }
   a { color: inherit; text-decoration: none; }
-  .band { display: block; width: 100%; height: 7mm; border-radius: 1.5mm; background: #94288c; color: #0d0d0d; }
-  header { display: flex; justify-content: space-between; align-items: flex-end; gap: 8mm; margin-top: 6mm; }
-  h1 { margin: 0; font-size: 24pt; font-weight: 600; letter-spacing: -0.02em; word-spacing: 0.05em; line-height: 1; color: #0d0d0d; }
-  .role { margin: 2mm 0 0; font-size: 11pt; color: #444; }
-  .contact { list-style: none; margin: 0; padding: 0; text-align: right; font-size: 9pt; color: #333; line-height: 1.55; }
-  .summary { margin: 5mm 0 0; font-size: 10.5pt; line-height: 1.5; color: #222; max-width: 150mm; }
-  section { margin-top: 6mm; }
-  h2 { margin: 0 0 2.5mm; padding-bottom: 1.5mm; border-bottom: 0.3mm solid #d8d8d8; font-size: 11pt; font-weight: 600; letter-spacing: -0.01em; color: #0d0d0d; }
-  .item { margin-top: 3.2mm; break-inside: avoid; }
-  .head { display: flex; justify-content: space-between; align-items: baseline; gap: 6mm; }
-  h3 { margin: 0; font-size: 10.5pt; font-weight: 600; color: #0d0d0d; }
-  h3 span { font-weight: 400; color: #555; white-space: pre-wrap; }
-  /* The same drawn dot as the site; the real space before it keeps the text readable for parsers. */
-  h3 span::before, .role span + span::before { content: ""; display: inline-block; width: 0.8mm; height: 0.8mm; border-radius: 50%; background: currentColor; opacity: 0.5; vertical-align: 0.6mm; }
-  /* In headings the space comes after the dot, so the dot carries the space in front. */
-  h3 span::before { margin: 0 0.8mm 0 2mm; }
-  .role span + span::before { margin: 0 1.8mm 0 0.6mm; }
-  .when { flex-shrink: 0; font-size: 9pt; color: #666; }
-  ul { margin: 1.5mm 0 0; padding-left: 4.5mm; }
-  li { margin: 0 0 1mm; }
-  .item p { margin: 1.2mm 0 0; }
-  .tech { color: #555; font-size: 9pt; }
-  .url { font-size: 8.8pt; color: #7a2a74; }
-  .note { margin: 0; color: #555; font-size: 9pt; }
-  section .note:last-child { margin-top: 3.2mm; }
-  .two { display: grid; grid-template-columns: 1fr 62mm; gap: 8mm; break-inside: avoid; }
-  dl { margin: 0; display: grid; grid-template-columns: 20mm 1fr; gap: 1.2mm 4mm; }
+  p, ul, h1, h2, h3, dl { margin: 0; }
+  .sheet { width: 210mm; height: 297mm; overflow: hidden; background: #faf8f3; break-after: page; }
+  .sheet:last-child { break-after: auto; }
+  .band { display: block; width: 100%; height: 24px; }
+  .inner { padding: 40px 48px 0; }
+  .inner.first { padding-top: 20px; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
+  .who { display: flex; flex-direction: column; gap: 3px; }
+  h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; color: #0d0d0d; }
+  /* Items split by a thin rule, never a typed separator. */
+  .split { display: flex; flex-wrap: wrap; row-gap: 2px; margin-left: -11px; clip-path: inset(-4px -4px -4px 11px); }
+  .split > span { border-left: 1px solid #cfc6b8; padding: 0 10px; }
+  .role { font-size: 13px; color: #555; }
+  .contact { list-style: none; padding: 0; text-align: right; font-size: 11.5px; color: #444; line-height: 1.55; }
+  .summary { margin-top: 12px; color: #333; }
+  h2 { margin-top: 18px; padding-bottom: 5px; border-bottom: 1px solid #d8d0c4; font-size: 14px; font-weight: 600; color: #0d0d0d; }
+  h2.lead-h { margin-top: 0; }
+  h3 { font-size: 13px; font-weight: 600; color: #0d0d0d; }
+  h3 span { color: #666; font-weight: 400; }
+  .head { display: flex; justify-content: space-between; gap: 16px; }
+  .when { flex-shrink: 0; font-size: 11.5px; color: #666; white-space: nowrap; }
+  .job { margin-top: 10px; }
+  .intro { margin-top: 1px; color: #555; }
+  .lead { margin-top: 3px; }
+  .group { margin-top: 5px; }
+  .name { font-weight: 600; text-decoration: underline; text-decoration-color: #cfc6b8; text-underline-offset: 2px; }
+  .context { color: #666; margin-left: 4px; }
+  ul { margin-top: 1px; padding-left: 15px; color: #333; }
+  .project { margin-top: 7px; }
+  .line { margin-top: 1px; color: #333; }
+  .facts { margin-top: 1px; font-size: 11.5px; color: #666; }
+  .older { margin-top: 6px; font-size: 11.5px; color: #666; }
+  .edu { margin-top: 7px; display: flex; justify-content: space-between; gap: 16px; }
+  dl { margin-top: 7px; display: grid; grid-template-columns: 120px 1fr; gap: 3px 16px; color: #333; }
   dt { color: #666; }
   dd { margin: 0; }
-  @media screen { body { max-width: 210mm; margin: 0 auto; padding: 14mm 15mm; } }
+  @media screen { body { background: #e9e5dc; } .sheet { margin: 16px auto; box-shadow: 0 1px 3px rgb(0 0 0 / 0.15); } }
 </style>

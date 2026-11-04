@@ -4,7 +4,7 @@ org: Vantage Labs
 order: 1
 role: Senior Software Engineer
 when: 2024 to now
-line: Joined WriteAhead at its start and proposed the Side Panel design its extension is built around. Later rewrote the extension on WXT and took on the web app's rebuild on Next.js. Built several modules end to end, organisation admin among them.
+line: Joined WriteAhead at its start and proposed the Side Panel design its extension is built around. Later rewrote the extension on WXT and rebuilt the web app on Next.js. Built several modules end to end, organisation admin among them.
 tech: [WXT, React, Next.js, Spring Boot, PostgreSQL]
 ---
 
@@ -16,7 +16,7 @@ WriteAhead gives AI feedback on students' essays. The feedback appears in a brow
 
 I've been building WriteAhead with the team since it started. I proposed designing the extension around Chrome's Side Panel and built a demo. The team adopted it, and it became the shape of the product.
 
-Later I rewrote the extension on WXT and React 19 for Chrome and Firefox, including the Side Panel and streamed feedback, and took on the web app's rebuild on Next.js 16.
+Later I rewrote the extension on WXT and React 19 for Chrome and Firefox, including the Side Panel and streamed feedback, and rebuilt the web app on Next.js 16.
 
 I've built several modules end to end, from Spring Boot and PostgreSQL to the UI. One is organisation admin, where an institution's admins manage its rubrics, including the defaults every teacher there starts from. I also built feedback insertion for every site the extension supports, so it lands at the right place in each site's editor. Sign-in between WriteAhead and IntelliWriter, another Vantage writing product, runs on the OIDC setup I built in Keycloak.
 

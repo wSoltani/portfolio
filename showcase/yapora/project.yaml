@@ -38,7 +38,8 @@ tile:
   imageAlt: "Yapora: an avatar on the stage, with its settings beside it"
 resume:
   when: Public beta since Sep 2026
-  fact: Exports render frame by frame, so they never drop a frame or drift out of sync.
+  facts:
+    - "Rust, Tauri, TypeScript, React, Zustand, Mediabunny"
 tour:
   - name: Avatar
     line: Upload any image, crop it, and pick the shape of its frame.

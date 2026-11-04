@@ -43,7 +43,9 @@ tile:
     href: https://netherstone.app/nethermark
 resume:
   when: Released Oct 2026
-  fact: Two packages on npm, free and open source (MIT).
+  facts:
+    - "MIT"
+    - "TypeScript, CodeMirror 6, React"
 timeline:
   - date: Oct 30, 2026
     title: Started

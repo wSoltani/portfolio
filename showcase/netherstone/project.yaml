@@ -52,7 +52,11 @@ tile:
   imageAlt: Netherstone editor with a shard open
 resume:
   when: Public beta since Oct 2026
-  fact: Free and open source (GPL-3.0), on Windows, macOS and Linux.
+  line: "Keeps your documents, drawings and files in a folder on your computer, working offline and synced across your devices"
+  facts:
+    - "Free and open source (GPL-3.0)"
+    - "Windows, macOS, Linux"
+    - "Tauri, Rust, React, SQLite, Git"
 tour:
   - name: Vault
     line: A vault is a folder on your computer. Each shard in it is a Markdown file any app can open.
