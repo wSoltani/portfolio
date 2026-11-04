@@ -103,6 +103,17 @@ const themeVars = (slug: string) => {
         );
       })}
     </div>
+    <script is:inline>
+      // Relative dates on the tiles ("4 days ago"), worked out in the browser so they stay true after the build.
+      // Inline and right after the tiles, so the text is set before the first paint instead of swapping after it.
+      {
+        const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+        for (const el of document.querySelectorAll(".tile-facts [data-date]")) {
+          const days = Math.round((Date.now() - new Date(el.dataset.date).getTime()) / 86400000);
+          if (days >= 0 && days < 30) el.textContent = rtf.format(-days, "day");
+        }
+      }
+    </script>
   </section>
 
   <OtherProjects />
@@ -237,13 +248,6 @@ const themeVars = (slug: string) => {
   import { gsap, T, EASE, reduced } from "../scripts/motion";
   import { Flip } from "gsap/Flip";
   gsap.registerPlugin(Flip);
-
-  // Relative dates on the tiles ("4 days ago"), worked out in the browser so they stay true after the build.
-  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-  for (const el of document.querySelectorAll<HTMLElement>(".tile-facts [data-date]")) {
-    const days = Math.round((Date.now() - new Date(el.dataset.date!).getTime()) / 86400000);
-    if (days >= 0 && days < 30) el.textContent = rtf.format(-days, "day");
-  }
 
   // Depth 2: open a tile across the row instead of leaving the page. Ctrl/⌘-click still opens the showcase.
   // The page's signature: the tile grows into the row with Flip and the rest of the grid
