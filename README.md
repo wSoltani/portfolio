@@ -1,46 +1,54 @@
+<a href="https://wsoltani.com"><img src="https://wsoltani.com/og/default.png" alt="Wassim Soltani, software engineer, mostly" width="100%"></a>
+
 # wsoltani.com
 
-My personal site, where I keep the things I've made and a map of how they connect. My Resume is there too.
+My personal site, with the projects I've made, the products I've worked on at my jobs, and my Resume.
 
-It's a static site built with Astro. The animations use GSAP, and Cloudflare serves it.
+## What's on it
 
-## Running it locally
+| Page | What it shows |
+| --- | --- |
+| [Home](https://wsoltani.com) | Featured projects as tiles that open in place, other projects, the products I've worked on grouped by employer, and a preview of the Map |
+| [Projects](https://wsoltani.com/#projects) | A page for each current project, in that project's colors |
+| [Work](https://wsoltani.com/#work) | A page for each product I've worked on at a job |
+| [Map](https://wsoltani.com/map) | My projects and work products as peaks on a contour map, linked by the technology they share |
+| [Resume](https://wsoltani.com/resume) | Experience, projects, education, skills and languages, with a PDF to download |
+| [Archive](https://wsoltani.com/archive) | Older projects I've stopped working on |
+| [About this site](https://wsoltani.com/about-this-site) | Where the avatar and the stripe pattern come from, and a generator for making your own pattern |
+| [Contact](https://wsoltani.com/contact) | A form to write to me, plus LinkedIn and GitHub |
 
-You'll need Node 22.12 or newer and pnpm.
+## Built with
 
-```bash
-pnpm install
-pnpm dev
-```
+| Part | Tool |
+| --- | --- |
+| Pages | [Astro](https://astro.build), fully static, with pages loading in the background when you point at a link |
+| Motion | [GSAP](https://gsap.com), with Flip for the home tiles |
+| Type | Instrument Sans |
+| Share images | Satori and resvg, drawn during the build |
+| Release data | GitHub API, read during the build |
+| Ask | Workers AI and AI Search, in a separate Cloudflare Worker |
+| Hosting | Cloudflare Workers, as static files |
 
-It opens at http://localhost:4321. `pnpm build` writes the finished site to `dist`.
+## Flowlines
 
-Some project pages show the latest version and release date from GitHub. They're read once during the build, and if GitHub can't be reached, the pages use the `fallback` values in each project's `project.yaml`. Setting `GITHUB_TOKEN` gives the build a higher GitHub rate limit, but it isn't required.
+Flowlines is the stripe pattern behind the whole site, taken from the stripes in my avatar. The stripes are magenta and ink, and they bend into U-turns but never cross. Each one starts as a straight band, then three swirls bend it: a big one, a smaller one and a wide, gentle bend. A swirl turns everything around its center, less the further out it goes, which lets the stripes bend a long way without crossing.
 
-## The Resume PDF
+Every project and work entry gets its own pattern. It's the thin strip next to it in the lists on the home page, the cover on its "Next project" card, and the stripes in its share image. The generator on [About this site](https://wsoltani.com/about-this-site) turns any text into a pattern and saves it as a PNG at desktop, phone, square or banner size.
 
-The PDF is the `/resume-print` page printed by Chrome. After changing `src/data/resume.ts`, keep `pnpm dev` running and run:
+## Map
 
-```bash
-pnpm resume:pdf
-```
+[The Map](https://wsoltani.com/map) shows my projects and the products I've worked on as peaks with contour rings. Featured projects stand tallest. My own projects share one area, and work gets one area per employer, so team work never reads as solo work.
 
-It replaces `public/wassim-soltani-resume.pdf`. If Chrome isn't in its usual place, point `CHROME` at it.
+Clicking a peak lights its rings from the top down, like a ripple. A line runs to every project that shares a technology with it, and a card lists what it's built with. Point at a technology in the card to see only the projects that use it.
 
-## Where things are
+No peak is placed by hand. The build spreads them out so no rings or names overlap, with a separate layout for phones.
 
-Each project has its own folder in `showcase`, named after its address: `showcase/netherstone` is `/projects/netherstone`. The folder holds a `project.yaml` with the project's words and the images it uses. The fields are described in `src/content.config.ts`, and the build stops if one is missing or wrong. `status` decides where a project shows up: `featured` gets a tile on the home page, `active` gets its own page without a tile, and `archived` goes to the Archive. Versions are read from the GitHub releases of `releases.repo`, and `releases.tagPrefix` covers tags like `@netherstone/nethermark@0.3.2`.
+## Ask
 
-Each featured or active project also has its own page layout in `src/pages/projects`. The Resume's words are in `src/data/resume.ts`.
+The Ask button in the header (Ctrl K, or ⌘K on a Mac) opens a panel that answers questions about my work from my own notes, and links each answer to the pages it used. On a wide screen it sits beside the page and stays open as you move between pages. On smaller screens it slides over the page.
 
-A branch named `chore/showcase-<slug>` that only changes `showcase/<slug>` is merged into `main` by `.github/workflows/showcase-merge.yml` once the site builds with it. Anything else waits for a pull request.
+The thin lines along its edge wave into place when it opens, flow while it looks for an answer, and take the color of the project the answer is about. You can export a chat as Markdown or PDF.
 
-The striped pattern is Flowlines, in `src/lib/flowlines.ts`. Every project gets its own version, and the same code draws the share images in `src/pages/og` and the generator on the About page. The map's terrain comes from `src/lib/terrain.ts`.
+## Resume
 
-## Writing copy
-
-Never type a middle dot (U+00B7) anywhere on the site. To separate short facts, like a role, an employer and dates, pass them as a list to `src/components/Dots.astro`, or to `dotted()` in `src/lib/dots.ts` for text set in the browser. It draws the dot, and the text still copies as "Senior software engineer, Vantage Labs". `pnpm build` stops if a typed one slips in, and `pnpm check:copy` runs that check on its own.
-
-## Deploying
-
-Cloudflare builds and deploys every push to `main`. Its settings are in `wrangler.jsonc`, and old addresses are redirected in `public/_redirects`.
+[The Resume](https://wsoltani.com/resume) is a page on the site. The PDF is printed from the same Resume data, laid out for A4.
