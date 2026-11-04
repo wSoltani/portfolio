@@ -70,7 +70,8 @@ const Peak = interactive ? "a" : "g";
   .waves path { fill: none; stroke: #161616; }
   .areas text { font-size: 11px; letter-spacing: 0.08em; fill: var(--subtle); }
   .areas path { stroke: #262626; stroke-dasharray: 2 4; }
-  .rings use { fill: none; stroke: #262626; stroke-width: 1; transition: stroke var(--base) ease; }
+  /* Color, opacity and width fade together, so a peak that goes out never shows its color at full strength. */
+  .rings use { fill: none; stroke: #262626; stroke-opacity: 1; stroke-width: 1; transition: stroke var(--base) ease, stroke-opacity var(--base) ease, stroke-width var(--base) ease; }
   .rings .on use { stroke: var(--acc); stroke-opacity: var(--o); stroke-width: 1.1; }
   .hit { fill: transparent; }
   .halo { fill: var(--acc); fill-opacity: 0; transition: fill-opacity var(--base) ease; }

@@ -125,7 +125,8 @@ const data = mapData();
   const pending: gsap.core.Tween[] = [];
 
   const clear = () => {
-    pending.splice(0).forEach((t) => t.kill());
+    // A ripple cut short would leave its outer rings hidden, so stopping one also gives them back.
+    pending.splice(0).forEach((t) => { t.kill(); gsap.set(t.targets(), { clearProps: "opacity" }); });
     for (const svg of svgs) {
       svg.querySelector(".links")!.replaceChildren();
       svg.querySelectorAll(".on, .lit, .hot").forEach((n) => n.classList.remove("on", "lit", "hot"));
