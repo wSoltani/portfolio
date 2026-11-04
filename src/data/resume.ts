@@ -7,7 +7,7 @@ import { WORK } from "./work";
 export const HEADLINE = "Senior software engineer";
 export const LOCATION = "Ariana, Tunisia, working remotely";
 export const SUMMARY =
-  "7 years of full-stack work, including leading a development team. I've built web apps, backends, browser extensions, desktop apps and AI features, and I take ideas from the first decision to the day people start using them.";
+  "7 years of full-stack work across web apps, backends, browser extensions, desktop apps and AI features, including leading a development team. Takes ideas from the first decision to the day people start using them.";
 
 export interface WorkGroup {
   /** Shown as the group heading. */
@@ -44,7 +44,7 @@ export const JOBS: Job[] = [
           "Rebuilt the web app on Next.js",
           "Delivered modules end to end on Spring Boot and PostgreSQL, including organisation admin",
           "Integrated feedback into Google Docs, Word for the web, IntelliWriter and MyAccess",
-          "Set up the Keycloak sign-in shared with IntelliWriter, another Vantage writing product",
+          "Implemented the Keycloak sign-in shared with IntelliWriter, another Vantage writing product",
         ],
         stack: ["React", "WXT", "Next.js", "TanStack Query", "Tailwind CSS", "Spring Boot", "PostgreSQL", "Keycloak", "Vitest", "Playwright"],
       },
@@ -76,11 +76,11 @@ export const JOBS: Job[] = [
       {
         name: "Blueblood Store", slug: "blueblood-store", context: "Online shop and back office for Hachanicom, a phone and electronics retailer in Tunisia",
         items: [
-          "Built and ran it solo, in production from 2024 to 2026",
+          "Developed and maintained it solo, in production from 2024 to 2026",
           "Built an SSR Angular storefront and a JHipster back office with promotions, an audit log and restorable backups",
           "Added semantic search, similar-product recommendations and AI-written product descriptions on Workers AI and Vectorize",
           "Automated the entry of phone specs and clean product images with a GSM Arena import, since doing it by hand was too slow for staff",
-          "Set up and ran the servers and the shop's own mail server",
+          "Configured and ran the servers and the shop's own mail server",
         ],
         stack: ["Angular SSR", "JHipster", "Spring Boot", "PostgreSQL", "Elasticsearch", "Docker", "Traefik", "Cloudflare Workers", "Workers AI", "Vectorize"],
       },
@@ -93,8 +93,8 @@ export const JOBS: Job[] = [
         name: "Void", slug: "void", context: "AI shopping assistant for online stores, through Upwork",
         items: [
           "Proposed moving it from its planned AWS stack to Cloudflare, and the proposal was accepted",
-          "Built the MVP engine, with product ingestion through a vision model, bge-m3 embeddings in Vectorize, semantic search and streaming RAG chat",
-          "Built the admin app and specced the API gateway, guiding the junior developer who built it",
+          "Engineered the MVP engine, with product ingestion through a vision model, bge-m3 embeddings in Vectorize, semantic search and streaming RAG chat",
+          "Built the admin app and specced the API gateway, guiding the junior developer who implemented it",
         ],
         stack: ["TypeScript", "Cloudflare Workers", "Hono", "Workers AI", "Vectorize", "D1", "React", "Zustand", "Tailwind CSS"],
       },
@@ -113,7 +113,7 @@ export const JOBS: Job[] = [
       {
         name: "Visa Services", slug: "visa-services", context: "AlmavivA's visa platform, a public website and CRM in one",
         items: [
-          "Proposed rebuilding it and got approval with a proof of concept",
+          "Pitched rebuilding it and won approval with a proof of concept",
           "Rebuilt it full stack with one other developer, plus an Ionic app, then took over the frontend as the work split",
           "Implemented MasterCard payments for Egypt end to end, and the i18n",
           "Rolled out in Tunisia, Egypt and Russia, and adopted as the group's visa tool",
@@ -124,7 +124,7 @@ export const JOBS: Job[] = [
       {
         name: "Qualis Analytics", slug: "qualis-analytics", context: "AI quality scoring of call center recordings, before the LLM boom",
         items: [
-          "Built the analytics frontend and an audio player with a synced, clickable transcript",
+          "Developed the analytics frontend and an audio player with a synced, clickable transcript",
           "Wrote Java packages used across the microservices",
         ],
         stack: ["Angular", "Spring Boot", "Java", "Microservices", "MongoDB"],
