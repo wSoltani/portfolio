@@ -98,9 +98,11 @@ const pushes = () => matchMedia("(min-width: 1100px)").matches;
  */
 function stripMotion(svg: SVGSVGElement | null) {
   const paths = svg ? [...svg.querySelectorAll("path")] : [];
-  const state = { wave: 1, phase: 0 };
+  const state = { wave: 1, phase: 0, glow: 0 };
   const draw = () => paths.forEach((p, i) => p.setAttribute("d", edgePath(i, state.wave, state.phase)));
+  const shine = () => svg && (svg.style.filter = state.glow > 0.05 ? `drop-shadow(0 0 ${state.glow.toFixed(2)}px currentColor)` : "");
   let flow: gsap.core.Tween | null = null;
+  let pulse: gsap.core.Tween | null = null;
   return {
     settle() {
       svg?.closest(".ask")?.classList.add("glow");
@@ -114,10 +116,17 @@ function stripMotion(svg: SVGSVGElement | null) {
       svg?.closest(".ask")?.classList.add("searching");
       if (reduced() || !paths.length) return;
       flow?.kill();
+      pulse?.kill();
+      // One full turn of the waves per loop, so each loop starts exactly where the last one ended.
       flow = gsap.to(state, { phase: `+=${Math.PI * 2}`, duration: 1.6, ease: "none", repeat: -1, onUpdate: draw });
+      state.glow = 0;
+      pulse = gsap.to(state, { glow: 5, duration: 0.8, ease: "sine.inOut", yoyo: true, repeat: -1, onUpdate: shine });
     },
     calm() {
       svg?.closest(".ask")?.classList.remove("searching");
+      pulse?.kill();
+      pulse = null;
+      gsap.to(state, { glow: 0, duration: T.slow, ease: "power2.out", onUpdate: shine });
       if (!flow) return;
       flow.kill();
       flow = null;

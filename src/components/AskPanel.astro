@@ -100,9 +100,7 @@ import { ASK, ASK_LINKS } from "../data/ask";
   .strip path { transition: filter 0.6s ease; }
   .ask.glow .strip { color: var(--tone); }
   .ask.glow .strip path { filter: drop-shadow(0 0 3px var(--tone)); }
-  .ask.searching .strip { color: var(--tone); animation: ask-glow 1.6s ease-in-out infinite; }
-  @keyframes ask-glow { 0%, 100% { filter: drop-shadow(0 0 1px var(--tone)); } 50% { filter: drop-shadow(0 0 5px var(--tone)); } }
-  @media (prefers-reduced-motion: reduce) { .ask.searching .strip { animation: none; } }
+  .ask.searching .strip { color: var(--tone); }
   /* Reopened on a new page: it shows as it was, with no color fade. */
   .ask.instant .strip { transition: none; }
 
@@ -151,7 +149,7 @@ import { ASK, ASK_LINKS } from "../data/ask";
   .turns :global(.src:hover) { color: var(--cream); border-bottom-color: var(--cream); }
 
   .turns :global(.status) { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--subtle); }
-  .turns :global(.trail) { width: 72px; height: 2px; background: linear-gradient(90deg, var(--cream), transparent); transform-origin: left; animation: ask-trail 1.4s ease-in-out infinite; }
+  .turns :global(.trail) { width: 36px; height: 2px; background: linear-gradient(90deg, var(--cream), transparent); transform-origin: left; animation: ask-trail 1.4s ease-in-out infinite; }
   .turns :global(.card) { display: flex; flex-direction: column; gap: 10px; }
   .turns :global(.card h3) { font-size: 17px; font-weight: 600; color: var(--cream); }
   .turns :global(.card p) { font-size: 14px; color: var(--muted); }
