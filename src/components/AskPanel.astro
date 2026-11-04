@@ -70,6 +70,7 @@ import { ASK, ASK_LINKS } from "../data/ask";
     </div>
   </template>
 </aside>
+<div class="gap" aria-hidden="true"></div>
 <script type="application/json" id="ask-links" set:html={JSON.stringify(ASK_LINKS)} />
 
 <script>
@@ -87,7 +88,6 @@ import { ASK, ASK_LINKS } from "../data/ask";
   .ask[hidden] { display: none; }
   /* Wide screens: the page makes room for the panel instead of sitting under it. */
   @media (min-width: 1100px) {
-    :global(html.ask-open body) { margin-right: var(--ask-w); }
     /* Reopened on a new page: shown before its script runs, so the page doesn't jump. */
     :global(html.ask-open) .ask[hidden] { display: flex; }
   }
@@ -100,20 +100,18 @@ import { ASK, ASK_LINKS } from "../data/ask";
   .strip path { transition: filter 0.6s ease; }
   .ask.glow .strip { color: var(--tone); }
   .ask.glow .strip path { filter: drop-shadow(0 0 3px var(--tone)); }
-  .ask.searching .strip { color: var(--tone); animation: ask-glow 1.6s ease-in-out infinite; }
-  @keyframes ask-glow { 0%, 100% { filter: drop-shadow(0 0 1px var(--tone)); } 50% { filter: drop-shadow(0 0 5px var(--tone)); } }
-  @media (prefers-reduced-motion: reduce) { .ask.searching .strip { animation: none; } }
+  .ask.searching .strip { color: var(--tone); }
   /* Reopened on a new page: it shows as it was, with no color fade. */
   .ask.instant .strip { transition: none; }
 
-  /* Opening and closing run as one view transition: the page eases into its new width
-     while the panel slides in, instead of reflowing frame by frame. */
-  .ask { view-transition-name: answers; }
-  :global(::view-transition-old(root)), :global(::view-transition-new(root)) { animation-duration: 0.32s; animation-timing-function: var(--ease-out); }
-  :global(::view-transition-new(answers):only-child) { animation: ask-in 0.5s var(--ease-out); }
-  :global(::view-transition-old(answers):only-child) { animation: ask-out 0.28s var(--ease-inout) forwards; }
-  @keyframes ask-in { from { transform: translateX(100%); } }
-  @keyframes ask-out { to { transform: translateX(100%); } }
+  /* Opening and closing: the panel slides in while an empty gap beside the page grows to
+     the panel's width, so the page resizes alongside it. Both are plain CSS transitions. */
+  .ask { transform: translateX(100%); transition: transform 0.4s var(--ease-out); }
+  :global(html.ask-open) .ask { transform: none; }
+  .gap { width: 0; flex-shrink: 0; transition: width 0.4s var(--ease-out); }
+  @media (min-width: 1100px) { :global(html.ask-open) .gap { width: var(--ask-w); } }
+  :global(html.ask-still) .ask, :global(html.ask-still) .gap { transition: none; }
+  @media (prefers-reduced-motion: reduce) { .ask, .gap { transition: none; } }
 
   .ask-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   .top { height: 72px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 16px 0 28px; border-bottom: 1px solid var(--line); }
@@ -151,7 +149,7 @@ import { ASK, ASK_LINKS } from "../data/ask";
   .turns :global(.src:hover) { color: var(--cream); border-bottom-color: var(--cream); }
 
   .turns :global(.status) { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--subtle); }
-  .turns :global(.trail) { width: 72px; height: 2px; background: linear-gradient(90deg, var(--cream), transparent); transform-origin: left; animation: ask-trail 1.4s ease-in-out infinite; }
+  .turns :global(.trail) { width: 36px; height: 2px; background: linear-gradient(90deg, var(--cream), transparent); transform-origin: left; animation: ask-trail 1.4s ease-in-out infinite; }
   .turns :global(.card) { display: flex; flex-direction: column; gap: 10px; }
   .turns :global(.card h3) { font-size: 17px; font-weight: 600; color: var(--cream); }
   .turns :global(.card p) { font-size: 14px; color: var(--muted); }

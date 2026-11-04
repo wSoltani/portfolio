@@ -84,13 +84,16 @@ const ogImage = new URL(image, SITE.url).href;
     </script>
     <slot name="head" />
   </head>
-  <body>
-    <a class="skip sr-only" href="#main">Skip to content</a>
-    <Header current={nav} avatar={!flushFooter} />
-    <main id="main">
-      <slot />
-    </main>
-    <Footer flush={flushFooter} />
+  <body class="shell">
+    {/* The page and the Answers panel sit side by side: when the panel opens, the page takes the remaining width. */}
+    <div class="page">
+      <a class="skip sr-only" href="#main">Skip to content</a>
+      <Header current={nav} avatar={!flushFooter} />
+      <main id="main">
+        <slot />
+      </main>
+      <Footer flush={flushFooter} />
+    </div>
     <AskPanel />
   </body>
 </html>
@@ -100,5 +103,7 @@ const ogImage = new URL(image, SITE.url).href;
 </script>
 
 <style>
+  .shell { flex-direction: row; }
+  .page { flex: 1; min-width: 0; min-height: 100vh; display: flex; flex-direction: column; }
   .skip:focus { position: fixed; left: 16px; top: 12px; width: auto; height: auto; clip: auto; margin: 0; padding: 8px 12px; background: var(--raised); color: var(--text); z-index: 100; border-radius: 6px; }
 </style>
