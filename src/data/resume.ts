@@ -5,9 +5,9 @@ import { PROJECTS } from "./projects";
 import { WORK } from "./work";
 
 export const HEADLINE = "Senior software engineer";
-export const LOCATION = "Tunisia, working remotely";
+export const LOCATION = "Ariana, Tunisia, working remotely";
 export const SUMMARY =
-  "Senior software engineer with seven years of full-stack work, including leading a development team. I've built web apps, backends, browser extensions, desktop apps and AI features, and I take ideas from the first decision to the day people start using them.";
+  "Senior software engineer with 7 years of full-stack work, including leading a development team. I've built web apps, backends, browser extensions, desktop apps and AI features, and I take ideas from the first decision to the day people start using them.";
 
 export interface WorkGroup {
   /** Shown as the group heading. */
@@ -81,7 +81,7 @@ export const JOBS: Job[] = [
     ],
   },
   {
-    role: "Freelance developer", when: "Jun – Sep 2025",
+    role: "Freelance developer", when: "Jun 2025 – Sep 2025",
     groups: [
       {
         name: "Void", slug: "void", context: "AI shopping assistant for online stores, through Upwork",
@@ -133,17 +133,17 @@ export const EDU = [
   { t: "Bachelor's degree in computer science applied to business management", o: "Université Libre de Tunis (ULT)", w: "2016 – 2019", d: "" },
 ];
 
-export const SKILLS: [string, string][] = [
-  ["Programming", "TypeScript, JavaScript, Java, Python, Rust, Kotlin, Swift"],
-  ["Frontend", "React, Next.js, Astro, Angular, Tailwind CSS"],
-  ["Extensions", "WXT, Plasmo, Webpack, Shadow DOM, DevTools panels"],
-  ["Backend", "Node.js, Spring Boot, JHipster, Hono, REST APIs, Keycloak, OAuth2"],
-  ["Desktop and mobile", "Tauri, Ionic, native Android and iOS keyboards"],
-  ["Cloud", "Cloudflare Workers, D1, R2, KV, Durable Objects, AWS, Docker, Linux servers"],
-  ["AI", "AWS Bedrock, Workers AI, Vectorize, PyTorch, embeddings, RAG"],
-  ["Data", "PostgreSQL, MySQL, MongoDB, Elasticsearch"],
-  ["Testing and CI", "Vitest, Testing Library, Playwright, Jest, Puppeteer, GitHub Actions"],
-  ["Writing", "Technical writing and documentation"],
+export const SKILLS: [string, string[]][] = [
+  ["Programming", ["TypeScript", "JavaScript", "Java", "Python", "Rust", "Kotlin", "Swift"]],
+  ["Frontend", ["React", "Next.js", "Astro", "Angular", "Redux", "Zustand", "HTML", "CSS", "Tailwind CSS"]],
+  ["Extensions", ["WXT", "Plasmo", "Webpack", "Shadow DOM", "DevTools panels"]],
+  ["Backend", ["Node.js", "Spring Boot", "JHipster", "Hono", "REST APIs", "Keycloak", "OAuth2"]],
+  ["Desktop and mobile", ["Tauri", "Ionic", "native Android and iOS keyboards"]],
+  ["Cloud", ["Cloudflare Workers", "D1", "R2", "KV", "Durable Objects", "AWS", "Docker", "Linux servers"]],
+  ["AI", ["AWS Bedrock", "Workers AI", "Vectorize", "PyTorch", "embeddings", "RAG"]],
+  ["Data", ["PostgreSQL", "MySQL", "MongoDB", "Elasticsearch"]],
+  ["Testing and CI/CD", ["Vitest", "Testing Library", "Playwright", "Jest", "Puppeteer", "GitHub Actions"]],
+  ["Writing", ["Technical writing and documentation"]],
 ];
 
 export const LANG: [string, string][] = [["English", "Native or bilingual"], ["Arabic", "Native or bilingual"], ["French", "Fluent (DELF B2)"]];
