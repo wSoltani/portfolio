@@ -2,7 +2,8 @@
 // The Resume as a printed A4 document. The browser paginates it inside the @page margins, keeping each
 // product's bullets together. scripts/resume-pdf.mjs prints it to public/wassim-soltani-resume.pdf.
 // Not linked or indexed; the PDF is what people get.
-import "@fontsource-variable/instrument-sans/wdth.css";
+import "@fontsource/instrument-sans/400.css";
+import "@fontsource/instrument-sans/600.css";
 import Flow from "../components/Flow.astro";
 import { HEADLINE, LOCATION, SUMMARY, JOBS, EDU, SKILLS, LANG, RESUME_PROJECTS } from "../data/resume";
 import { SITE } from "../data/site";
@@ -65,7 +66,7 @@ const contact = [
         ))}
 
         <h2>Skills</h2>
-        <div class="skills">{SKILLS.map(([a, b]) => <div class="skill"><h3>{a}</h3><p class="tags">{b.split(", ").map((t) => <span>{t}</span>)}</p></div>)}</div>
+        <div class="skills">{SKILLS.map(([a, b]) => <div class="skill"><h3>{a}</h3><p class="tags">{b.map((t, i) => <>{i > 0 && ", "}<span>{t}</span></>)}</p></div>)}</div>
 
         <h2>Languages</h2>
         <p class="split langs">{LANG.map(([a, b]) => <span><strong>{a}</strong> {b}</span>)}</p>
@@ -78,7 +79,7 @@ const contact = [
   @page :first { margin-top: 0; }
   * { box-sizing: border-box; }
   html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  body { margin: 0; font-family: "Instrument Sans Variable", "Instrument Sans", sans-serif; font-size: 12px; line-height: 1.35; color: #1a1a1a; background: #faf8f3; }
+  body { margin: 0; font-family: "Instrument Sans", sans-serif; font-size: 12px; line-height: 1.35; color: #1a1a1a; background: #faf8f3; }
   a { color: inherit; text-decoration: none; }
   p, ul, h1, h2, h3, dl { margin: 0; }
   /* A thin strip on the top edge of page 1, bleeding past the side margins. */
@@ -86,10 +87,13 @@ const contact = [
   @media print { body { padding: 0 13mm; } }
   header { margin-top: 12mm; display: flex; flex-direction: column; gap: 4px; }
   h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; color: #0d0d0d; }
-  /* Items split by a thin rule, never a typed separator. Every item has the rule in front; the row is
-     shifted left by one rule and that strip is clipped off, so a wrapped line never starts with one. */
-  .split { display: flex; flex-wrap: wrap; row-gap: 2px; margin-left: -11px; clip-path: inset(-4px -4px -4px 11px); }
-  .split > span { border-left: 1px solid #cfc6b8; padding: 0 10px; }
+  /* Items split by a thin rule, never a visible typed separator. Every item has the rule in front and is
+     shifted left by one rule, and the row clips that strip off, so a wrapped line never starts with one.
+     Clipped with overflow, not clip-path, which Chrome paints last and so moves to the end of the PDF's
+     text. The invisible " | " gives text readers a separator. */
+  .split { display: flex; flex-wrap: wrap; row-gap: 2px; overflow-x: clip; }
+  .split > span { margin: 0 11px 0 -11px; border-left: 1px solid #cfc6b8; padding-right: 10px; }
+  .split > span::before { content: " | "; display: inline-block; width: 10px; white-space: pre; color: transparent; }
   .role { font-size: 13px; color: #555; }
   .contact { font-size: 11.5px; color: #444; }
   .summary { margin-top: 10px; color: #333; }
@@ -116,6 +120,7 @@ const contact = [
   .langs strong { font-weight: 600; color: #0d0d0d; margin-right: 4px; }
   /* Groups in three columns, each a bold label over a comma list. */
   .skills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 24px; }
-  .tags span:not(:last-child)::after { content: ", "; }
+  /* A term never breaks across lines, so a reader going across the columns can't split it. */
+  .tags span { white-space: nowrap; }
   @media screen { body { max-width: 210mm; margin: 0 auto; padding: 0 13mm 13mm; } }
 </style>
