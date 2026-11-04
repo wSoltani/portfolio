@@ -54,7 +54,8 @@ const listed = ({ image }: SchemaContext) =>
       image: image().optional(),
       imageAlt: z.string().optional(),
     }).refine((t) => !t.image || t.imageAlt, { message: "imageAlt is required with image", path: ["imageAlt"] }),
-    resume: z.object({ when: z.string(), fact: z.string() }),
+    /** The Resume's entry: `line` replaces the project's line there, and each fact is shown side by side under it, the stack last. No trailing periods. */
+    resume: z.object({ when: z.string(), line: z.string().optional(), facts: z.array(z.string()).min(1) }),
     tour: z
       .array(
         z.object({

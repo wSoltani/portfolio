@@ -36,4 +36,5 @@ tile:
   imageAlt: Switchflare on the Cloudflare dashboard, asking to unlock the vault
 resume:
   when: Not released yet
-  fact: Logins stay encrypted on your computer.
+  facts:
+    - "TypeScript, React, Plasmo, WebCrypto"

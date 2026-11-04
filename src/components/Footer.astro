@@ -10,10 +10,6 @@ const { flush = false } = Astro.props;
 <footer class:list={["foot", { flush }]}>
   <Flow width={1440} height={48} seed="wsoltani.com" period={28} settle class="band" />
   <div class="wrap cta">
-    <div class="pitch">
-      <p class="say">The short version is one page.</p>
-      <p class="sub">Experience, education and skills, as a PDF.</p>
-    </div>
     <div class="actions">
       <a href={RESUME.pdf} class="btn" download><Icon name="download" size={16} stroke={2} />Download resume</a>
       <a href="/contact" class="btn btn-outline touch">Get in touch</a>
@@ -35,10 +31,7 @@ const { flush = false } = Astro.props;
   .foot { position: relative; z-index: 1; margin-top: 96px; background: var(--wine); }
   .foot.flush { margin-top: 0; }
   .band { display: block; width: 100%; height: 48px; }
-  .cta { display: flex; justify-content: space-between; align-items: center; gap: 24px 32px; flex-wrap: wrap; padding-top: 48px; }
-  .pitch { display: flex; flex-direction: column; gap: 6px; }
-  .say { font-size: clamp(24px, 3vw, 30px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
-  .sub { font-size: 16px; color: var(--muted); }
+  .cta { display: flex; align-items: center; gap: 24px 32px; flex-wrap: wrap; padding-top: 48px; }
   .actions { display: flex; gap: 12px; flex-wrap: wrap; }
   .touch { border-color: var(--wine-line); font-weight: 600; }
   .touch:hover { background: var(--wine-raised); }
