@@ -6,6 +6,7 @@ import YaporaMark from "../components/showcase/YaporaMark.astro";
 import { FEATURED, live } from "../data/projects";
 import avatar from "../assets/brand/avatar.webp";
 import MapPreview from "../components/MapPreview.astro";
+import WorkList from "../components/WorkList.astro";
 
 const L = Object.fromEntries(await Promise.all(FEATURED.map(async (p) => [p.slug, await live(p)] as const)));
 const facts = (slug: string) => {
@@ -96,6 +97,8 @@ const themeVars = (slug: string) => {
     </div>
     <p class="older">Older projects are in the <a href="/archive" class="link">Archive</a>.</p>
   </section>
+
+  <WorkList />
 
   <section class="wrap maps" data-reveal>
     <a href="/map" class="map-teaser"><MapPreview aspect={1200 / 320} class="map-svg" /><span class="map-chip">Open the map</span></a>
@@ -237,7 +240,7 @@ const themeVars = (slug: string) => {
   const grid = document.querySelector<HTMLElement>("[data-featured]")!;
   // Everything that moves when a tile opens or closes: the tiles, and what sits below them,
   // so the sections underneath travel with the grid instead of jumping ahead of it.
-  const moving = () => [...grid.querySelectorAll<HTMLElement>(".tile"), ...document.querySelectorAll<HTMLElement>(".older, .maps, footer")];
+  const moving = () => [...grid.querySelectorAll<HTMLElement>(".tile"), ...document.querySelectorAll<HTMLElement>(".older, .work, .maps, footer")];
   const flip = (change: () => void, opened?: HTMLElement, closing?: HTMLElement) => {
     if (reduced()) return change();
     const state = Flip.getState(moving(), { props: "opacity" });

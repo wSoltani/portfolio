@@ -82,4 +82,23 @@ const showcase = defineCollection({
   schema: (ctx) => z.discriminatedUnion("status", [listed(ctx), archived]),
 });
 
-export const collections = { showcase };
+// Work for employers and clients, one file per entry in work/<slug>.md: the list line in
+// its frontmatter, and the detail page as its markdown body. The file name is the slug and its URL.
+const work = defineCollection({
+  loader: glob({ pattern: "*.md", base: "./work" }),
+  schema: z.object({
+    name: z.string(),
+    /** The group it's listed under on the home page. One of the groups in src/data/work.ts. */
+    org: z.enum(["Vantage Labs", "Blueblood", "AlmavivA", "Freelance"]),
+    /** Position within its group, lowest first. */
+    order: z.number().int(),
+    /** My title on it, for the detail page's header line. */
+    role: z.string(),
+    when: z.string().optional(),
+    /** Its line in the home page list. */
+    line: z.string(),
+    tech: z.array(z.string()),
+  }).strict(),
+});
+
+export const collections = { showcase, work };

@@ -6,6 +6,7 @@ export const RESUME = { page: "/resume", pdf: "/wassim-soltani-resume.pdf" };
 
 const PAGES = {
   projects: { label: "Projects", href: "/#projects" },
+  work: { label: "Work", href: "/#work" },
   contact: { label: "Contact", href: "/contact" },
   map: { label: "Map", href: "/map" },
   archive: { label: "Archive", href: "/archive" },
@@ -17,11 +18,11 @@ export type PageId = keyof typeof PAGES | "resume";
 const pick = (...ids: (keyof typeof PAGES)[]) => ids.map((id) => ({ id, ...PAGES[id] }));
 
 /** Header, next to the Resume control. */
-export const NAV_MAIN = pick("projects", "contact");
+export const NAV_MAIN = pick("projects", "work", "contact");
 /** Phone menu. */
-export const NAV_MENU = pick("projects", "contact", "map", "archive");
+export const NAV_MENU = pick("projects", "work", "contact", "map", "archive");
 /** Footer link row. */
-export const NAV_FOOTER = pick("projects", "archive", "map", "about");
+export const NAV_FOOTER = pick("projects", "work", "archive", "map", "about");
 
 export const ELSEWHERE = [
   { label: "GitHub", href: SITE.github },
