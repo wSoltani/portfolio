@@ -8,10 +8,12 @@ import { Resvg } from "@resvg/resvg-js";
 import sharp from "sharp";
 import { flowPath } from "../../lib/flowlines";
 import { PROJECTS } from "../../data/projects";
+import { WORK, headerLine } from "../../data/work";
 
 export const CARDS: Record<string, { label: string; title: string }> = {
   default: { label: "Wassim Soltani", title: "Software engineer, mostly." },
   ...Object.fromEntries(PROJECTS.map((p) => [p.slug, { label: p.name, title: p.tile.headline }])),
+  ...Object.fromEntries(WORK.map((w) => [`work-${w.id}`, { label: w.data.name, title: headerLine(w.data) }])),
   map: { label: "Map", title: "Every project on one map." },
   archive: { label: "Archive", title: "Older projects I've stopped working on." },
   resume: { label: "Resume", title: "Experience, education and skills." },
