@@ -1,0 +1,9 @@
+---
+// Short facts with a drawn dot between them. See src/lib/dots.ts.
+import { clean, type Parts } from "../lib/dots";
+
+interface Props { parts: Parts; }
+const items = clean(Astro.props.parts);
+---
+
+{items.map((p, i) => <>{i > 0 && <><span class="dot-sep">,</span>{" "}</>}{p}</>)}

@@ -5,7 +5,7 @@ import Row from "./Row.astro";
 import { OTHER, live } from "../data/projects";
 
 const rows = await Promise.all(
-  OTHER.map(async (p) => ({ p, meta: [p.category, p.note ?? (await live(p)).versionLabel].filter(Boolean).join(" · ") })),
+  OTHER.map(async (p) => ({ p, meta: [p.category, p.note ?? (await live(p)).versionLabel] })),
 );
 ---
 

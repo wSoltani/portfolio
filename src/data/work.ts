@@ -18,5 +18,5 @@ export const WORK = (await getCollection("work")).sort(
 
 export const WORK_GROUPS = GROUPS.map((g) => ({ ...g, items: WORK.filter((w) => w.data.org === g.org) }));
 
-/** "Software Engineer · Vantage Labs · 2024 to now". The org is left out when it repeats the role. */
-export const headerLine = ({ role, org, when }: WorkEntry["data"]) => [role, org !== role && org, when].filter(Boolean).join(" · ");
+/** Role, org and dates, shown with a drawn dot between them. The org is left out when it repeats the role. */
+export const headerParts = ({ role, org, when }: WorkEntry["data"]) => [role, org !== role && org, when];

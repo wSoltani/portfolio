@@ -5,7 +5,8 @@ import type { GetStaticPaths } from "astro";
 import { render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import Flow from "../../components/Flow.astro";
-import { WORK, headerLine, type WorkEntry } from "../../data/work";
+import Dots from "../../components/Dots.astro";
+import { WORK, headerParts, type WorkEntry } from "../../data/work";
 
 export const getStaticPaths = (() => WORK.map((entry) => ({ params: { slug: entry.id }, props: { entry } }))) satisfies GetStaticPaths;
 
@@ -19,7 +20,7 @@ const w = entry.data;
     <a href="/#work" class="back">← Work</a>
     <header class="head">
       <h1 class="h1" data-title>{w.name}</h1>
-      <p class="meta">{headerLine(w)}</p>
+      <p class="meta"><Dots parts={headerParts(w)} /></p>
     </header>
     <Flow width={1200} height={120} seed={entry.id} settle class="band" />
     <div class="body" data-reveal><Content /></div>

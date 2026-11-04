@@ -2,8 +2,10 @@
 // One row of a home page list: a link with a thin Flowlines strip seeded by its slug,
 // a name, a line and a small line of facts. The Work list and Other projects share it.
 import Flow from "./Flow.astro";
+import Dots from "./Dots.astro";
+import type { Parts } from "../lib/dots";
 
-interface Props { href: string; seed: string; name: string; line: string; meta: string; }
+interface Props { href: string; seed: string; name: string; line: string; meta: Parts; }
 const { href, seed, name, line, meta } = Astro.props;
 ---
 
@@ -12,7 +14,7 @@ const { href, seed, name, line, meta } = Astro.props;
   <span class="text">
     <span class="name">{name}</span>
     <span class="line">{line}</span>
-    <span class="meta">{meta}</span>
+    <span class="meta"><Dots parts={meta} /></span>
   </span>
   <svg class="arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="M13 6l6 6-6 6" /></svg>
 </a>

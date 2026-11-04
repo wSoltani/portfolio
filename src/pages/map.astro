@@ -112,8 +112,9 @@ const data = mapData();
 
 <script>
   import { gsap, T, EASE, reduced } from "../scripts/motion";
+  import { dotted } from "../lib/dots";
 
-  interface P { slug: string; name: string; accent: string; meta: string; tech: string[]; href: string; open: string; work: boolean }
+  interface P { slug: string; name: string; accent: string; meta: string[]; tech: string[]; href: string; open: string; work: boolean }
   const DATA: P[] = JSON.parse(document.getElementById("map-data")!.textContent!);
   const row = document.querySelector<HTMLElement>("[data-map]")!;
   const svgs = [...row.querySelectorAll<SVGSVGElement>("svg[data-terrain]")];
@@ -183,11 +184,11 @@ const data = mapData();
   const span = (cls: string, text: string) => Object.assign(document.createElement("span"), { className: cls, textContent: text });
   card.addEventListener("mouseleave", () => hot(null));
 
-  const show = (accent: string, name: string, meta: string, href: string, open: string) => {
+  const show = (accent: string, name: string, meta: string[], href: string, open: string) => {
     for (const el of [row, ...svgs]) el.style.setProperty("--sel", accent);
     card.style.setProperty("--acc", accent);
     $("[data-name]").textContent = name;
-    $("[data-meta]").textContent = meta;
+    $("[data-meta]").replaceChildren(...dotted(meta));
     card.querySelectorAll<HTMLAnchorElement>("[data-open]").forEach((a) => { a.href = href; a.textContent = open; });
     const was = card.hidden;
     card.hidden = false;
@@ -250,7 +251,7 @@ const data = mapData();
       ripple(u.slug);
     }
     for (const svg of svgs) users.slice(1).forEach((u) => link(svg, users[0].slug, u.slug, [tech]));
-    show(users[0].accent, tech, `Used in ${list(users.map((u) => u.name))}.`, users[0].href, `Open ${users[0].name}`);
+    show(users[0].accent, tech, [`Used in ${list(users.map((u) => u.name))}.`], users[0].href, `Open ${users[0].name}`);
     $("[data-built]").hidden = true;
     $("[data-shared-group]").hidden = true;
     $("[data-summary]").textContent = "";

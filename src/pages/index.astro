@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import Icon from "../components/Icon.astro";
+import Dots from "../components/Dots.astro";
 import SyncifyLogo from "../components/SyncifyLogo.astro";
 import YaporaMark from "../components/showcase/YaporaMark.astro";
 import { FEATURED, live } from "../data/projects";
@@ -57,7 +58,7 @@ const themeVars = (slug: string) => {
                     {p.slug === "syncify" && <span class="art-mark"><SyncifyLogo size={72} /></span>}
                     {p.slug === "yapora" && <span class="art-mark"><YaporaMark size={40} />Yapora</span>}
                     {p.slug === "switchflare" && <span class="art-mark"><span style="display:flex;color:var(--p-accent)"><Icon name="switch" size={32} stroke={2} /></span>Switchflare</span>}
-                    {p.slug === "nethermark" && <span class="art-mark art-word"><span class="word-pkg">@netherstone/nethermark · {L[p.slug].version} · MIT</span>Nethermark</span>}
+                    {p.slug === "nethermark" && <span class="art-mark art-word"><span class="word-pkg"><Dots parts={["@netherstone/nethermark", L[p.slug].version, "MIT"]} /></span>Nethermark</span>}
                     {p.slug === "lyrica" && <span class="art-lyrica"><span>Every word, right when it's</span> <b>sung.</b></span>}
                     {!marked.has(p.slug) && <span class="art-mark">{p.name}</span>}
                   </span>

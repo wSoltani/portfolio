@@ -37,6 +37,10 @@ A branch named `chore/showcase-<slug>` that only changes `showcase/<slug>` is me
 
 The striped pattern is Flowlines, in `src/lib/flowlines.ts`. Every project gets its own version, and the same code draws the share images in `src/pages/og` and the generator on the About page. The map's terrain comes from `src/lib/terrain.ts`.
 
+## Writing copy
+
+Never type a middle dot (U+00B7) anywhere on the site. To separate short facts, like a role, an employer and dates, pass them as a list to `src/components/Dots.astro`, or to `dotted()` in `src/lib/dots.ts` for text set in the browser. It draws the dot, and the text still copies as "Senior software engineer, Vantage Labs". `pnpm build` stops if a typed one slips in, and `pnpm check:copy` runs that check on its own.
+
 ## Deploying
 
 Cloudflare builds and deploys every push to `main`. Its settings are in `wrangler.jsonc`, and old addresses are redirected in `public/_redirects`.
