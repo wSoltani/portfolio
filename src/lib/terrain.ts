@@ -82,17 +82,27 @@ const LABEL = 26, GAP = 10;
 /** Letter width for a label's room, in px per character at the label's size. */
 const CHAR = 6.6;
 
+interface Rect { l: number; r: number; t: number; b: number }
+const hits = (a: Rect, b: Rect) => a.l < b.r + 4 && b.l < a.r + 4 && a.t < b.b + 2 && b.t < a.b + 2;
+/** A peak's dot and its name, at the size the name has when picked, so names never cover each other or a dot. */
+const marks = (p: Peak, x: number, y: number): Rect[] => [
+  { l: x - 6, r: x + 6, t: y - 6, b: y + 6 },
+  { l: x + 8, r: x + 14 + p.name.length * CHAR * 1.3, t: y - 25, b: y - 4 },
+];
+
 /**
  * Best-candidate placement: biggest peaks first, each where it's furthest from every peak
  * already placed, featured ones pulled toward the middle. Returns null if something would
- * overlap, so the caller can give the area more room.
+ * overlap, so the caller can give the area more room. `avoid` holds marks already on the map
+ * from a neighbouring area.
  */
-function place(list: Peak[], box: Box, step: number, edge: number): Placed[] | null {
+function place(list: Peak[], box: Box, step: number, edge: number, avoid: Rect[]): Placed[] | null {
   const out: (Placed & { R: number })[] = [];
+  const taken = [...avoid];
   const sorted = [...list].sort((a, b) => b.rings - a.rings || a.slug.localeCompare(b.slug));
   for (const p of sorted) {
     const R = (p.rings - 1) * step * WOBBLE;
-    const label = 10 + p.name.length * CHAR;
+    const label = 14 + p.name.length * CHAR * 1.3;
     // Names may run past a small area into the gap beside it, but never off the map.
     const x0 = box.x + R, x1 = Math.min(box.x + box.w - R, edge - label);
     const y0 = box.y + LABEL + R * SQ, y1 = box.y + box.h - R * SQ;
@@ -104,19 +114,20 @@ function place(list: Peak[], box: Box, step: number, edge: number): Placed[] | n
       const x = x0 + r() * (x1 - x0), y = y0 + r() * (y1 - y0);
       let score = p.big ? 400 - 0.35 * Math.hypot(x - (box.x + box.w / 2), (y - (box.y + box.h / 2)) / SQ) : Infinity;
       for (const o of out) score = Math.min(score, Math.hypot(x - o.x, (y - o.y) / SQ) - R - o.R - GAP);
-      if (score > bestScore) { bestScore = score; best = { x, y }; }
+      if (score > bestScore && !marks(p, x, y).some((m) => taken.some((t) => hits(m, t)))) { bestScore = score; best = { x, y }; }
     }
     if (bestScore < 0) return null;
+    taken.push(...marks(p, best.x, best.y));
     out.push({ slug: p.slug, ...best, step, rings: p.rings, R });
   }
   return out.map(({ R: _, ...p }) => p);
 }
 
 /** Places a list in a box of the given width, growing its height until nothing overlaps. */
-function fit(list: Peak[], x: number, y: number, w: number, h: number, step: number, edge: number) {
+function fit(list: Peak[], x: number, y: number, w: number, h: number, step: number, edge: number, avoid: Rect[] = []) {
   for (;; h += 16) {
     if (h > 20000) throw new Error("The Map can't place its projects without overlaps");
-    const placed = place(list, { x, y, w, h }, step, edge);
+    const placed = place(list, { x, y, w, h }, step, edge, avoid);
     if (placed) return { placed, box: { x, y, w, h } };
   }
 }
@@ -141,7 +152,13 @@ function column(x: number, y: number, w: number, step: number) {
   ];
   for (const row of rows) {
     const cw = (w - 16 * (row.length - 1)) / row.length;
-    const fits = row.map((a, i) => fit(a.peaks, x + i * (cw + 16), y, cw, guess(a.peaks, cw, step), step, x + w));
+    // Areas side by side are placed left to right, each keeping clear of the names before it.
+    const fits: ReturnType<typeof fit>[] = [], avoid: Rect[] = [];
+    row.forEach((a, i) => {
+      const f = fit(a.peaks, x + i * (cw + 16), y, cw, guess(a.peaks, cw, step), step, x + w, avoid);
+      fits.push(f);
+      f.placed.forEach((pl) => avoid.push(...marks(a.peaks.find((p) => p.slug === pl.slug)!, pl.x, pl.y)));
+    });
     const h = Math.max(...fits.map((f) => f.box.h));
     row.forEach((a, i) => { placed.push(...fits[i].placed); areas.push({ label: a.label, box: { ...fits[i].box, h } }); });
     y += h + 12;
