@@ -126,6 +126,8 @@ import { ASK, ASK_LINKS } from "../data/ask";
   .log { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 28px 28px 8px; display: flex; flex-direction: column; gap: 28px; }
   .empty { display: flex; flex-direction: column; gap: 16px; }
   .empty[hidden] { display: none; }
+  /* A chat being restored on a new page: no welcome text in the moment before it's drawn. */
+  :global(html.ask-chat) .empty { display: none; }
   .ask-lead { font-size: 26px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; color: var(--cream); }
   .sub { font-size: 15px; color: var(--muted); }
   .starters { list-style: none; margin: 12px 0 0; padding: 0; border-top: 1px solid #262626; }
@@ -140,7 +142,7 @@ import { ASK, ASK_LINKS } from "../data/ask";
   .turns :global(.turn:last-child) { border-bottom: 0; padding-bottom: 0; }
   .turns :global(.q) { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; color: var(--cream); white-space: pre-wrap; overflow-wrap: anywhere; }
   .turns :global(.a) { display: flex; flex-direction: column; gap: 12px; font-size: 15px; color: var(--body); overflow-wrap: anywhere; }
-  .turns :global(.a ul) { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+  .turns :global(.a :is(ul, ol)) { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
   .turns :global(.from) { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13px; }
   .turns :global(.dot) { width: 7px; height: 7px; border-radius: 50%; background: var(--dot, var(--subtle)); }
   .turns :global(.sep) { color: var(--line-strong); }
