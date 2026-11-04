@@ -5,7 +5,7 @@ order: 2
 role: Full-Stack Developer
 when: 2019 to 2022
 line: Speech analytics for call center quality, with recordings scored by AI against compliance criteria. Built the analytics frontend and a transcript-synced audio player, plus parts of the Java microservices.
-tech: [Java, Microservices]
+tech: [Angular, Java, Microservices]
 ---
 
 ## Concept
