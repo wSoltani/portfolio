@@ -54,7 +54,7 @@ const themeVars = (slug: string) => {
               ) : (
                 <>
                   <span class="tile-art" aria-hidden="true">
-                    {p.slug === "syncify" && <span class="art-mark caps"><SyncifyLogo size={34} />SYNCIFY</span>}
+                    {p.slug === "syncify" && <span class="art-mark"><SyncifyLogo size={72} /></span>}
                     {p.slug === "yapora" && <span class="art-mark"><YaporaMark size={40} />Yapora</span>}
                     {p.slug === "switchflare" && <span class="art-mark"><span style="display:flex;color:var(--p-accent)"><Icon name="switch" size={32} stroke={2} /></span>Switchflare</span>}
                     {p.slug === "nethermark" && <span class="art-mark art-word"><span class="word-pkg">@netherstone/nethermark · {L[p.slug].version} · MIT</span>Nethermark</span>}
@@ -73,7 +73,7 @@ const themeVars = (slug: string) => {
               <div class="open-card">
                 <div class="open-text">
                   {o.logo && <img src={o.logo.src} alt={p.name} width={Math.round((44 * o.logo.width) / o.logo.height)} height="44" loading="lazy" class="open-logo" />}
-                  {p.slug === "syncify" && <span class="open-mark caps"><SyncifyLogo size={36} />SYNCIFY</span>}
+                  {p.slug === "syncify" && <span class="open-mark"><SyncifyLogo size={72} /></span>}
                   {p.slug === "yapora" && <span class="open-mark"><YaporaMark size={40} />Yapora</span>}
                   {p.slug === "lyrica" && <span class="open-mark" style="color: var(--p-accent); font-size: 22px">Lyrica</span>}
                   {p.slug === "switchflare" && <span class="open-mark"><span style="display:flex;color:var(--p-accent)"><Icon name="switch" size={34} stroke={2} /></span>Switchflare</span>}
@@ -142,7 +142,6 @@ const themeVars = (slug: string) => {
   .tile-art { height: 140px; overflow: hidden; position: relative; background: var(--p-bg); border-bottom: 1px solid var(--line); }
   /* Each project's own mark on its own color, the way its showcase opens. */
   .art-mark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); transition: transform var(--base) var(--ease-out); }
-  .art-mark.caps { font-size: 22px; font-weight: 700; letter-spacing: 0.04em; }
   .tile-link:hover .art-mark { transform: translateY(-4px); }
   /* Nethermark's name set the way its page on netherstone.app sets it. */
   .art-word { flex-direction: column; gap: 6px; font-family: "Geist", var(--font); font-size: 34px; font-weight: 700; letter-spacing: -0.045em; color: #eeebe5; }
@@ -169,7 +168,6 @@ const themeVars = (slug: string) => {
   .open-word { font-family: "Geist", var(--font); font-size: 32px; font-weight: 700; letter-spacing: -0.045em; color: #eeebe5; }
   .open-name { font-size: 64px; font-weight: 600; letter-spacing: -0.04em; color: var(--text); }
   .open-name.open-word { font-size: 72px; }
-  .open-mark.caps { font-size: 24px; font-weight: 700; letter-spacing: 0.04em; }
   .open-title { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
   .open-sub { font-size: 16px; line-height: 1.6; color: var(--p-soft); }
   .open-points { display: flex; flex-direction: column; gap: 10px; font-size: 14px; line-height: 1.5; color: var(--body); }
