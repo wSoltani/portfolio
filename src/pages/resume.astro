@@ -75,12 +75,12 @@ const contact = [
 
     <section class="sec" data-reveal>
       <h2 class="h3">Skills</h2>
-      {SKILLS.map(([a, b]) => <div class="row kv"><span class="when">{a}</span><p class="p">{b}</p></div>)}
+      <div class="skills">{SKILLS.map(([a, b]) => <div class="skill"><h3 class="name">{a}</h3><p class="p tags">{b.split(", ").map((t) => <span>{t}</span>)}</p></div>)}</div>
     </section>
 
     <section class="sec" data-reveal>
       <h2 class="h3">Languages</h2>
-      {LANG.map(([a, b]) => <div class="row kv"><span class="when">{a}</span><p class="p">{b}</p></div>)}
+      <p class="split langs">{LANG.map(([a, b]) => <span><strong>{a}</strong> {b}</span>)}</p>
     </section>
   </div>
 </Base>
@@ -100,7 +100,12 @@ const contact = [
   .pdf + .sec { padding-top: 48px; }
   .sec .h3 { margin-bottom: 8px; }
   .row { display: grid; grid-template-columns: 200px 1fr; gap: 32px; padding: 24px 0; border-top: 1px solid #262626; }
-  .row.kv { padding: 16px 0; }
+  /* Skills in three columns, each a bold label over a comma list. */
+  .skills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 48px; padding-top: 24px; border-top: 1px solid #262626; }
+  .skill { display: flex; flex-direction: column; gap: 6px; }
+  .tags span:not(:last-child)::after { content: ", "; }
+  .langs { padding-top: 24px; border-top: 1px solid #262626; font-size: 16px; color: var(--body); }
+  .langs strong { font-weight: 600; color: var(--text); margin-right: 6px; }
   .when { font-size: 14px; color: var(--subtle); padding-top: 3px; }
   .what { display: flex; flex-direction: column; gap: 8px; }
   .job { gap: 16px; }
@@ -119,6 +124,6 @@ const contact = [
   .link { text-decoration-color: #4a4a4a; text-underline-offset: 3px; }
   @media (max-width: 767px) {
     .row { grid-template-columns: 1fr; gap: 6px; }
-    .row.kv { grid-template-columns: 110px 1fr; gap: 16px; }
+    .skills { grid-template-columns: 1fr; gap: 20px; }
   }
 </style>
