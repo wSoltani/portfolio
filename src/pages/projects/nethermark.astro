@@ -1,0 +1,104 @@
+---
+import Showcase from "../../layouts/Showcase.astro";
+import Icon from "../../components/Icon.astro";
+import Timeline from "../../components/showcase/Timeline.astro";
+import Facts from "../../components/showcase/Facts.astro";
+import { bySlug, live } from "../../data/projects";
+import "@fontsource/geist/700.css";
+
+const p = bySlug("nethermark");
+const L = await live(p);
+const repo = `https://github.com/${p.releases!.repo}`;
+const site = p.tile.site!;
+const npm = "https://www.npmjs.com/package/@netherstone/nethermark";
+
+// The quick start from the package's README.
+const install = "npm install @netherstone/nethermark";
+const start = `import { createMarkdownEditor } from "@netherstone/nethermark";
+
+const editor = createMarkdownEditor({
+  parent: document.querySelector("#editor")!,
+  doc: "# Hello",
+  onChange: (doc) => console.log(doc),
+});`;
+
+const does = [
+  { icon: "file", t: "All of Markdown", b: "Commands for all of CommonMark and GitHub-flavored Markdown, with toolbar buttons and shortcuts for the ones people use most." },
+  { icon: "box", t: "Plain JavaScript, HTML or React", b: "Use it from plain JavaScript, drop <nether-mark> into a form in HTML, Vue, Svelte or Angular, or use the React component on React 18 or 19." },
+  { icon: "tabs", t: "A live preview", b: "Shows the Markdown rendered by whichever renderer you pass in. HTML is sanitized by default, and the preview scrolls with the editor." },
+  { icon: "layers", t: "Themes", b: "It ships with Netherstone's Light and Dark themes. Colors, labels and icons can all be replaced, and it keeps its look on pages that use Tailwind's CSS reset." },
+];
+
+const facts = [
+  { value: L.version!, label: "Latest version" },
+  { value: String(L.releases ?? 7), label: "Releases" },
+  { value: "2", label: "Packages" },
+  { value: "MIT", label: "Open source" },
+];
+---
+
+<Showcase slug="nethermark" title="Nethermark" description="A small Markdown source editor for the web, built on CodeMirror 6 and published on npm as a JavaScript package, a web component and a React component.">
+  <section slot="hero" class="sc-hero">
+    <div class="sc-hero-card">
+      <div class="sc-hero-text">
+        <span class="pkg">@netherstone/nethermark · {L.version} · MIT</span>
+        <h1 class="wordmark">Nethermark</h1>
+        <p class="sc-hero-title">{p.tile.headline}</p>
+        <p class="sc-hero-sub">{p.tile.sub}</p>
+        <div class="sc-actions">
+          <a class="sc-btn" href={site.href}>{site.label}</a>
+          <a class="sc-btn outline" href={npm}>npm</a>
+          <a class="sc-round" href={repo} aria-label="Source code on GitHub"><Icon name="github" size={20} /></a>
+        </div>
+        <p class="sc-facts parts"><span>{L.versionLabel}</span><span>{L.dateLabel}</span><span>Free and open source (MIT)</span></p>
+      </div>
+      <div class="code" aria-label="Quick start">
+        <pre class="install"><span class="dim">$</span> {install}</pre>
+        <pre class="start">{start}</pre>
+      </div>
+    </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">What it does</h2>
+    <ul class="does">
+      {does.map((d) => (
+        <li><span style="display: flex; color: var(--p-accent)"><Icon name={d.icon} size={22} /></span><span class="t">{d.t}</span><span class="b">{d.b}</span></li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">Concept</h2>
+    <Timeline miles={p.timeline!} />
+    <div class="prose concept">
+      <p>The Markdown converter on netherstone.app needed a source editor next to a live preview, and Netherstone's own editor is a rich editor, so it couldn't be used there. I wrote a small editor on CodeMirror 6 whose commands read the Markdown syntax tree, so formatting toggles cleanly and leaves code alone. I published it on its own under MIT so anyone can use it. The converter was its first user, and the demo page the second.</p>
+    </div>
+  </section>
+
+  <section class="sc-sec" data-reveal>
+    <h2 class="h2">How it's built</h2>
+    <p class="prose">Nethermark is a pnpm monorepo with two packages. Commands are tested on CodeMirror's editor state alone, without a browser. Playwright runs the editor in Chromium, Firefox and WebKit, and the React component on React 18 and 19. Releases are versioned with Changesets and published to npm with provenance.</p>
+    <div class="built-foot">
+      <div class="chips">{p.tech.map((t) => <a class="pill" href={`/map?t=${encodeURIComponent(t)}`}>{t}</a>)}</div>
+      <div class="doc-links"><a href={repo}>Source ↗</a></div>
+    </div>
+  </section>
+
+  <Facts slot="after" items={facts} />
+</Showcase>
+
+<style>
+  .pkg { font-family: var(--mono); font-size: 14px; color: var(--muted); }
+  .wordmark { margin: -12px 0 0; font-family: "Geist", var(--font); font-size: 56px; font-weight: 700; letter-spacing: -0.045em; line-height: 1; color: #eeebe5; }
+  .code { display: flex; flex-direction: column; gap: 12px; min-width: 0; align-self: center; }
+  .code pre { margin: 0; font-family: var(--mono); font-size: 14px; line-height: 1.7; color: #eeebe5; background: #0f1011; border: 1px solid var(--p-line); border-radius: 10px; padding: 18px 20px; overflow-x: auto; }
+  .code .dim { color: var(--subtle); }
+  .does { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .does li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .does .t { font-size: 17px; font-weight: 600; }
+  .does .b { font-size: 14px; line-height: 1.55; color: #c9c9c9; }
+  .concept { margin-top: 24px; max-width: 72ch; }
+  @media (max-width: 1023px) { .does { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 599px) { .does { grid-template-columns: 1fr; } .wordmark { font-size: 44px; } }
+</style>
