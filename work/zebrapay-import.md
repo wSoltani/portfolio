@@ -2,7 +2,7 @@
 name: ZebraPay import
 org: Vantage Labs
 order: 3
-role: Software Engineer
+role: Senior Software Engineer
 when: "2025"
 line: "Designed and built an import system for ZebraPay that automates data entry: an extension that pulls data from partner sites, configured per site from a DevTools panel, and a Node service that runs OCR on images with AWS Bedrock and returns structured data."
 tech: [Plasmo, React, Node.js, AWS Bedrock]

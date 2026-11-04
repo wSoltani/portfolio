@@ -6,7 +6,7 @@ export type WorkEntry = CollectionEntry<"work">;
 
 /** The groups, in the order the home page shows them. */
 const GROUPS = [
-  { org: "Vantage Labs", role: "Software engineer", when: "Apr 2022 to now" },
+  { org: "Vantage Labs", role: "Senior software engineer", when: "Apr 2022 to now" },
   { org: "Blueblood", role: "Founder", when: "2022 to now" },
   { org: "AlmavivA", role: "Lead full-stack developer", when: "Sep 2019 to Mar 2022" },
   { org: "Freelance", role: "Client work" },

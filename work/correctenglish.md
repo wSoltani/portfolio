@@ -2,7 +2,7 @@
 name: CorrectEnglish
 org: Vantage Labs
 order: 2
-role: Software Engineer
+role: Senior Software Engineer
 when: From 2022
 line: "Extension engineering on Vantage's writing assistant: site-specific integrations for Gmail, LinkedIn and Indeed, and suggestion overlays positioned precisely on arbitrary third-party pages, isolated in Shadow DOM. Also maintained the native Android and iOS keyboards."
 tech: [React, Shadow DOM, Kotlin, Swift]

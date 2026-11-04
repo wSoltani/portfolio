@@ -2,7 +2,7 @@
 name: WriteAhead
 org: Vantage Labs
 order: 1
-role: Software Engineer
+role: Senior Software Engineer
 when: 2024 to now
 line: Joined WriteAhead at its start and proposed the Side Panel design its extension is built around. Later rewrote the extension on WXT and took on the web app's rebuild on Next.js. Built several modules end to end, organisation admin among them.
 tech: [WXT, React, Next.js, Spring Boot, PostgreSQL]
