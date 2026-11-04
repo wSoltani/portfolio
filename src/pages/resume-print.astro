@@ -42,6 +42,7 @@ const contact = [
               <div class="group">
                 <p><a href={`${SITE.url}/work/${g.slug}`} class="name">{g.name}</a> <span class="context">{g.context}</span></p>
                 <ul>{g.items.map((l) => <li>{l}</li>)}</ul>
+                {g.stack && <p class="stack">{g.stack.join(", ")}</p>}
               </div>
             ))}
           </article>
@@ -111,7 +112,8 @@ const contact = [
   ul { margin-top: 1px; padding-left: 15px; color: #333; }
   .project { margin-top: 5px; break-inside: avoid; }
   .line { margin-top: 1px; color: #333; }
-  .facts { margin-top: 1px; font-size: 11.5px; color: #666; }
+  .facts, .stack { margin-top: 1px; font-size: 11.5px; color: #666; }
+  .stack { padding-left: 15px; }
   .older { margin-top: 6px; font-size: 11.5px; color: #666; }
   .edu { margin-top: 5px; display: flex; justify-content: space-between; gap: 16px; break-inside: avoid; }
   .skills { margin-top: 8px; color: #333; }
