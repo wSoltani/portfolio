@@ -60,6 +60,18 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 main { flex: 1 0 auto; }
+
+/* Scrollbars: thin graphite thumbs on a clear track, everywhere on the site. */
+* { scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+*:hover { scrollbar-color: #5a5a5a transparent; }
+/* Older Safari doesn't know scrollbar-color, so it gets the same look this way. */
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
+  ::-webkit-scrollbar-thumb:hover { background-color: #5a5a5a; }
+  ::-webkit-scrollbar-corner { background: transparent; }
+}
 img, svg, video { display: block; max-width: 100%; }
 img { height: auto; }
 h1, h2, h3, p { margin: 0; }
