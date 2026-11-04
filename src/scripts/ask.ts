@@ -1,6 +1,6 @@
 // The Answers panel's behaviour: opening and closing, the chat, the bot check, and the streamed answers.
 // Everything a visitor or the Worker sends is shown as text, never as HTML.
-import { gsap, T, EASE, reduced } from "./motion";
+import { gsap, T, reduced } from "./motion";
 import { edgePath } from "../lib/edgelines";
 
 type Turn = { role: "user" | "assistant"; content: string; sources?: string[] };
@@ -429,7 +429,8 @@ export function mountAsk() {
   $("[data-close]").addEventListener("click", () => close());
 
   // --- Opening and closing.
-  const isOpen = () => !dlg.hidden;
+  const isOpen = () => !dlg.hidden && html.classList.contains("ask-open");
+  const isOpenState = () => html.classList.contains("ask-open");
   const html = document.documentElement;
   let returnTo: HTMLElement | null = null;
 
@@ -439,35 +440,28 @@ export function mountAsk() {
     triggers.forEach((b) => b.setAttribute("aria-expanded", String(open)));
   }
 
-  /** Runs a change as a view transition where the browser has them, so the page's new width eases in. */
-  function transition(change: () => void, fallback: () => void) {
-    if (reduced()) return change();
-    if ("startViewTransition" in document) document.startViewTransition(change);
-    else {
-      change();
-      fallback();
-    }
-  }
-
   function open(animate = true) {
     if (isOpen()) return input.focus();
     returnTo = document.activeElement as HTMLElement | null;
-    const show = () => {
-      paint();
-      dlg.hidden = false;
-      html.classList.add("ask-open");
-      scrollDown();
-    };
     setOpen(true);
+    paint();
+    if (!animate) {
+      // Reopened on a new page: no slide, no color fade, just as it was.
+      dlg.classList.add("instant");
+      html.classList.add("ask-still");
+    }
+    dlg.hidden = false;
+    dlg.getBoundingClientRect(); // start the slide from off screen
+    html.classList.add("ask-open");
+    scrollDown();
     if (animate) {
-      transition(show, () => gsap.fromTo(dlg, { xPercent: 100 }, { xPercent: 0, duration: T.slow, ease: EASE.enter, clearProps: "transform" }));
       strip.settle();
       input.focus({ preventScroll: true });
     } else {
-      // Reopened on a new page: no slide, no color fade, just as it was.
-      dlg.classList.add("instant");
-      show();
-      requestAnimationFrame(() => requestAnimationFrame(() => dlg.classList.remove("instant")));
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        dlg.classList.remove("instant");
+        html.classList.remove("ask-still");
+      }));
     }
     if (!state.session) loadTurnstile().catch(() => {});
   }
@@ -475,12 +469,17 @@ export function mountAsk() {
   function close(restoreFocus = true) {
     if (!isOpen()) return;
     setOpen(false);
-    const done = () => {
-      dlg.hidden = true;
-      html.classList.remove("ask-open");
-    };
-    if (reduced() || "startViewTransition" in document) transition(done, () => {});
-    else gsap.to(dlg, { xPercent: 100, duration: T.base, ease: EASE.move, onComplete: () => { done(); gsap.set(dlg, { clearProps: "transform" }); } });
+    html.classList.remove("ask-open");
+    const hide = () => { if (!isOpenState()) dlg.hidden = true; };
+    if (reduced()) hide();
+    else {
+      const end = (e: TransitionEvent) => {
+        if (e.target !== dlg || e.propertyName !== "transform") return;
+        dlg.removeEventListener("transitionend", end);
+        hide();
+      };
+      dlg.addEventListener("transitionend", end);
+    }
     if (restoreFocus && dlg.contains(document.activeElement)) (returnTo ?? triggers[0])?.focus();
   }
 

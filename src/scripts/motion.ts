@@ -19,12 +19,19 @@ export { gsap, ScrollTrigger, SplitText };
 /** Page titles: revealed line by line from behind a mask, once. */
 function titles() {
   document.querySelectorAll<HTMLElement>("[data-title]").forEach((el) => {
+    // autoSplit re-splits the lines whenever the title's width changes (a window resize,
+    // the Answers panel opening). Only the first split plays the reveal.
+    let revealed = false;
     SplitText.create(el, {
       type: "lines",
       mask: "lines",
       linesClass: "title-line",
       autoSplit: true,
-      onSplit: (self) => gsap.from(self.lines, { yPercent: 100, duration: T.slow, ease: EASE.enter, stagger: 0.06, delay: 0.05 }),
+      onSplit: (self) => {
+        if (revealed) return;
+        revealed = true;
+        return gsap.from(self.lines, { yPercent: 100, duration: T.slow, ease: EASE.enter, stagger: 0.06, delay: 0.05 });
+      },
     });
     gsap.set(el, { opacity: 1 });
   });
