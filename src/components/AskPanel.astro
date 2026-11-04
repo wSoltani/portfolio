@@ -16,12 +16,20 @@ import { ASK, ASK_LINKS } from "../data/ask";
     <div class="top">
       <h2 id="ask-title">Answers</h2>
       <div class="acts">
+        <div class="export" data-export hidden>
+          <button type="button" class="new" data-export-btn aria-haspopup="menu" aria-expanded="false" aria-controls="ask-export">Export</button>
+          <div class="menu" id="ask-export" role="menu" hidden data-export-menu>
+            <button type="button" role="menuitem" data-export-as="md">Markdown<span>.md</span></button>
+            <button type="button" role="menuitem" data-export-as="pdf">PDF<span>.pdf</span></button>
+          </div>
+        </div>
         <button type="button" class="new" data-new aria-label="New chat" hidden>New</button>
         <button type="button" class="close" data-close aria-label="Close"><kbd>Esc</kbd><Icon name="close" size={13} stroke={2} /></button>
       </div>
     </div>
 
     <div class="log" data-log>
+      <p class="print-head">Answers from wsoltani.com</p>
       <div class="empty" data-empty>
         <p class="ask-lead">Answers come from Wassim's notes on his jobs and projects.</p>
         <p class="sub">Each answer links to the pages it used.</p>
@@ -43,6 +51,9 @@ import { ASK, ASK_LINKS } from "../data/ask";
     </div>
   </div>
 
+  <template data-copy>
+    <button type="button" class="copy" aria-label="Copy answer"><span class="i-copy"><Icon name="copy" size={15} stroke={2} /></span><span class="i-done"><Icon name="check" size={15} stroke={2.2} /></span></button>
+  </template>
   <template data-state="checking">
     <div class="status"><span class="trail" aria-hidden="true"></span>Checking you're not a bot…</div>
   </template>
@@ -119,6 +130,15 @@ import { ASK, ASK_LINKS } from "../data/ask";
   .acts { display: flex; gap: 4px; align-items: center; }
   .new { height: 40px; padding: 0 12px; background: none; border: 0; border-radius: 6px; color: var(--muted); font-size: 14px; cursor: pointer; }
   .new:hover { color: var(--text); }
+  .export { position: relative; }
+  .export[hidden] { display: none; }
+  .export [aria-expanded="true"] { color: var(--text); background: #1c1c1c; }
+  .menu { position: absolute; top: calc(100% + 8px); right: 0; z-index: 2; width: 200px; padding: 6px; background: #1a1a1a; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5); }
+  .menu[hidden] { display: none; }
+  .menu button { width: 100%; height: 40px; display: flex; justify-content: space-between; align-items: center; padding: 0 12px; background: none; border: 0; border-radius: 6px; color: var(--body); font-size: 14px; text-align: left; cursor: pointer; }
+  .menu button:hover, .menu button:focus-visible { background: #242424; color: var(--text); }
+  .menu button span { font-size: 12px; color: #6a6a6a; }
+
   .close { height: 36px; display: flex; align-items: center; gap: 8px; padding: 0 10px; background: none; border: 1px solid var(--line); border-radius: 8px; color: var(--muted); font-size: 12px; cursor: pointer; transition: border-color var(--fast) ease, color var(--fast) ease; }
   .close:hover { border-color: var(--line-strong); color: var(--text); }
   .close kbd { font: inherit; }
@@ -148,6 +168,13 @@ import { ASK, ASK_LINKS } from "../data/ask";
   .turns :global(.sep) { color: var(--line-strong); }
   .turns :global(.src) { text-decoration: none; color: var(--body); border-bottom: 1px solid var(--line-strong); padding: 2px 0; transition: color var(--fast) ease, border-color var(--fast) ease; }
   .turns :global(.src.lit) { color: var(--dot); border-bottom-color: color-mix(in srgb, var(--dot) 40%, transparent); }
+  .turns :global(.copy) { margin-left: auto; width: 32px; height: 32px; flex-shrink: 0; display: grid; place-items: center; padding: 0; background: none; border: 0; border-radius: 6px; color: #6a6a6a; cursor: pointer; transition: color var(--fast) ease, background var(--fast) ease; }
+  .turns :global(.copy > span) { grid-area: 1 / 1; transition: opacity var(--fast) ease, transform var(--fast) ease; }
+  .turns :global(.copy .i-done) { opacity: 0; transform: scale(0.6); }
+  .turns :global(.copy:hover) { color: var(--body); background: #1c1c1c; }
+  .turns :global(.copy.done) { color: var(--cream); background: #1c1c1c; }
+  .turns :global(.copy.done .i-copy) { opacity: 0; transform: scale(0.6); }
+  .turns :global(.copy.done .i-done) { opacity: 1; transform: none; }
   .turns :global(.src:hover) { color: var(--cream); border-bottom-color: var(--cream); }
 
   .turns :global(.status) { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--subtle); }
@@ -185,4 +212,20 @@ import { ASK, ASK_LINKS } from "../data/ask";
     .turns :global(.a) { font-size: 16px; }
     textarea { font-size: 16px; }
   }
+
+  /* Export as PDF prints just the chat, dark on white. */
+  @media print {
+    @page { margin: 18mm; }
+    :global(html.ask-print .page), :global(html.ask-print .gap), :global(html.ask-print) .ask :global(.strip), :global(html.ask-print) .top, :global(html.ask-print) .bottom, :global(html.ask-print) .empty, :global(html.ask-print) .turns :global(.copy) { display: none !important; }
+    :global(html.ask-print), :global(html.ask-print body) { background: #fff; }
+    :global(html.ask-print body) { display: block; }
+    :global(html.ask-print) .ask { position: static; display: block; width: 100%; max-width: 680px; transform: none; border: 0; box-shadow: none; background: #fff; color: #111; }
+    :global(html.ask-print) .log { overflow: visible; padding: 0; }
+    :global(html.ask-print) .print-head { display: block; }
+    :global(html.ask-print) .turns :global(.q) { color: #111; }
+    :global(html.ask-print) .turns :global(.a) { color: #222; }
+    :global(html.ask-print) .turns :global(.turn) { break-inside: avoid; border-color: #ddd; }
+    :global(html.ask-print) .turns :global(.src) { color: #222; border-color: #999; }
+  }
+  .print-head { display: none; margin-bottom: 24px; font-size: 13px; color: #555; }
 </style>

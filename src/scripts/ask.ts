@@ -212,6 +212,9 @@ export function mountAsk() {
   const input = $<HTMLTextAreaElement>("[data-input]");
   const send = $<HTMLButtonElement>("[data-send]");
   const newBtn = $<HTMLButtonElement>("[data-new]");
+  const exportBox = $("[data-export]");
+  const exportBtn = $<HTMLButtonElement>("[data-export-btn]");
+  const exportMenu = $("[data-export-menu]");
   const log = $("[data-log]");
   const checkEl = $("[data-check]");
 
@@ -291,24 +294,61 @@ export function mountAsk() {
     return { a, body };
   }
 
-  function addSources(view: { a: HTMLElement }, t: Turn) {
+  /** A page link as a full URL, for text that leaves the site (copies and exports). */
+  const fullUrl = (href: string) => new URL(href, location.origin).href;
+
+  /** One question and its answer as Markdown, with the pages it used. */
+  function asMarkdown(question: string, t: Turn) {
     const items = linksOf(t.sources);
-    const src = sourcesEl(items);
-    if (src) view.a.append(src);
+    const src = items.length ? `\n\nSources: ${items.map((l) => `[${l.label}](${fullUrl(l.href)})`).join(", ")}` : "";
+    return `## ${question}\n\n${t.content.trim()}${src}`;
+  }
+
+  function copyButton(question: string, t: Turn) {
+    const btn = (dlg.querySelector<HTMLTemplateElement>("template[data-copy]")!.content.firstElementChild!.cloneNode(true)) as HTMLButtonElement;
+    let reset = 0;
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(asMarkdown(question, t));
+      } catch {
+        return;
+      }
+      btn.classList.add("done");
+      btn.setAttribute("aria-label", "Copied");
+      clearTimeout(reset);
+      reset = window.setTimeout(() => {
+        btn.classList.remove("done");
+        btn.setAttribute("aria-label", "Copy answer");
+      }, 1500);
+    });
+    return btn;
+  }
+
+  /** The row under an answer: the pages it used, and a button to copy it. */
+  function addSources(view: { a: HTMLElement }, t: Turn, question: string) {
+    const items = linksOf(t.sources);
+    let row = sourcesEl(items);
+    if (!row) {
+      row = document.createElement("p");
+      row.className = "from";
+    }
+    row.append(copyButton(question, t));
+    view.a.append(row);
     return items.find((l) => l.accent);
   }
 
   function paint() {
     turnsEl.replaceChildren();
     let turn: HTMLElement | null = null;
+    let question = "";
     let lit: Link | undefined;
     for (const t of state.turns) {
-      if (t.role === "user") turn = addTurn(t.content);
-      else if (turn) lit = addSources(addAnswer(turn, t), t) ?? lit;
+      if (t.role === "user") turn = addTurn((question = t.content));
+      else if (turn) lit = addSources(addAnswer(turn, t), t, question) ?? lit;
     }
     tone(lit);
     empty.hidden = state.turns.length > 0;
-    newBtn.hidden = state.turns.length === 0;
+    newBtn.hidden = exportBox.hidden = !state.turns.some((t) => t.role === "assistant");
   }
 
   function setBusy(b: boolean) {
@@ -509,7 +549,8 @@ export function mountAsk() {
       if (!answer.content.trim() || !view) return fail("failed");
       await settled;
       state.turns.push(answer);
-      tone(addSources(view, answer) ?? null);
+      tone(addSources(view, answer, question) ?? null);
+      exportBox.hidden = false;
       strip.calm();
       save(state);
       scrollDown();
@@ -540,6 +581,49 @@ export function mountAsk() {
     input.focus();
   });
   $("[data-close]").addEventListener("click", () => close());
+
+  // --- Export: the whole chat as a Markdown file, or as a PDF through the browser's print dialog.
+  function showMenu(show: boolean) {
+    exportMenu.hidden = !show;
+    exportBtn.setAttribute("aria-expanded", String(show));
+    if (show) exportMenu.querySelector<HTMLElement>("button")?.focus();
+  }
+  exportBtn.addEventListener("click", () => showMenu(!!exportMenu.hidden));
+  document.addEventListener("click", (e) => {
+    if (!exportMenu.hidden && !exportBox.contains(e.target as Node)) showMenu(false);
+  });
+
+  function chatMarkdown() {
+    const parts: string[] = [];
+    let question = "";
+    for (const t of state.turns) {
+      if (t.role === "user") question = t.content;
+      else parts.push(asMarkdown(question, t));
+    }
+    const day = new Date().toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+    return `# Answers from wsoltani.com\n\n${day}\n\n${parts.join("\n\n")}\n`;
+  }
+
+  exportMenu.querySelectorAll<HTMLButtonElement>("[data-export-as]").forEach((b) =>
+    b.addEventListener("click", () => {
+      showMenu(false);
+      if (b.dataset.exportAs === "md") {
+        const url = URL.createObjectURL(new Blob([chatMarkdown()], { type: "text/markdown" }));
+        const a = Object.assign(document.createElement("a"), { href: url, download: "answers-wsoltani.md" });
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } else {
+        const title = document.title;
+        document.title = "Answers from wsoltani.com";
+        html.classList.add("ask-print");
+        addEventListener("afterprint", () => {
+          html.classList.remove("ask-print");
+          document.title = title;
+        }, { once: true });
+        print();
+      }
+    }),
+  );
 
   // --- Opening and closing.
   const isOpen = () => !dlg.hidden && html.classList.contains("ask-open");
@@ -602,6 +686,9 @@ export function mountAsk() {
       e.preventDefault();
       if (isOpen() && !dlg.contains(document.activeElement)) input.focus();
       else isOpen() ? close() : open();
+    } else if (e.key === "Escape" && !exportMenu.hidden) {
+      showMenu(false);
+      exportBtn.focus();
     } else if (e.key === "Escape" && isOpen() && !document.querySelector(":popover-open")) {
       close();
     }
