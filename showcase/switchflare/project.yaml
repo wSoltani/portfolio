@@ -34,9 +34,6 @@ tile:
     href: https://switchflare.wsoltani.com/
   image: ./hero.png
   imageAlt: Switchflare on the Cloudflare dashboard, asking to unlock the vault
-map:
-  x: 1045
-  y: 475
 resume:
   when: Not released yet
   fact: Logins stay encrypted on your computer.

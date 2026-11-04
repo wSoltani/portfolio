@@ -50,9 +50,6 @@ tile:
   logo: ./lockup-dark.svg
   image: ./hero.png
   imageAlt: Netherstone editor with a shard open
-map:
-  x: 300
-  y: 290
 resume:
   when: Public beta since Oct 2026
   fact: Free and open source (GPL-3.0), on Windows, macOS and Linux.

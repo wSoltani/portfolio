@@ -41,9 +41,6 @@ tile:
   site:
     label: Demo and docs ↗
     href: https://netherstone.app/nethermark
-map:
-  x: 470
-  y: 470
 resume:
   when: Released Oct 2026
   fact: Two packages on npm, free and open source (MIT).

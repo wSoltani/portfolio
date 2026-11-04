@@ -17,14 +17,12 @@
     "@fontsource/inter": "^5.3.0",
     "@fontsource/newsreader": "^5.3.0",
     "astro": "7.3.8",
-    "d3-contour": "4.0.2",
     "gsap": "3.15.0",
     "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@fontsource/instrument-sans": "^5.3.0",
     "@resvg/resvg-js": "^2.6.2",
-    "@types/d3-contour": "^3.0.6",
     "satori": "^0.47.1"
   },
   "packageManager": "pnpm@11.5.0",

@@ -21,8 +21,6 @@ const common = {
   /** One line for tiles and the Archive. */
   line: z.string(),
   tech: z.array(z.string()),
-  /** Where the project sits on the Map, in its 1240×620 frame. */
-  map: z.object({ x: z.number(), y: z.number() }),
 };
 
 const listed = ({ image }: SchemaContext) =>

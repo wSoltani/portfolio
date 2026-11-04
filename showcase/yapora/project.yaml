@@ -36,9 +36,6 @@ tile:
     - Windows
   image: ./Avatar.webp
   imageAlt: "Yapora: an avatar on the stage, with its settings beside it"
-map:
-  x: 585
-  y: 175
 resume:
   when: Public beta since Sep 2026
   fact: Exports render frame by frame, so they never drop a frame or drift out of sync.

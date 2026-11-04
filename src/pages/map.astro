@@ -1,11 +1,12 @@
 ---
-// The Map: every project as a peak on one terrain. Featured projects are the tall
-// ones; archived projects are small hills. Picking a peak lights its contours, shows
-// what it's built with, and draws a dashed line to every project that shares a technology.
+// The Map: every project as a peak, my own on the left and work in one area per employer.
+// Picking a peak lights its rings in its own color, links every project that shares a
+// technology with it, and fills the card with what it's built with and who shares what.
 import Base from "../layouts/Base.astro";
-import { W, H, peaks, terrain, mapData } from "../lib/terrain";
+import MapTerrain from "../components/MapTerrain.astro";
+import { WIDE, NARROW, mapData } from "../lib/terrain";
+import { PROJECTS } from "../data/projects";
 
-const rings = terrain();
 const data = mapData();
 ---
 
@@ -16,35 +17,31 @@ const data = mapData();
       <p class="lead">Every project as a peak. Pick one to see what it's built with, and which projects share it.</p>
     </header>
 
-    <div class="map-scroll" data-reveal>
-      <div class="map" data-map>
-        <svg viewBox={`0 0 ${W} ${H}`} class="terrain" role="img" aria-label="Topographic map of projects">
-          <g class="rings">{rings.map((r) => <path d={r.d} data-p={r.p} />)}</g>
-          <g class="links" />
-          {peaks.map((p) => (
-            <a href={`?p=${p.slug}`} class:list={["peak", { featured: p.featured }]} data-slug={p.slug} aria-label={`${p.name}${p.featured ? "" : ", archived"}`}>
-              <circle cx={p.x} cy={p.y} r="22" class="hit" />
-              <circle cx={p.x} cy={p.y} r={p.featured ? 4 : 3} class="dot" />
-              <text x={p.x + 12} y={p.y - 8} class="name">{p.name}</text>
-            </a>
-          ))}
-          <g class="chips" />
-        </svg>
+    <div class="row" data-map data-first={PROJECTS[0]?.slug}>
+      <div class="maps" data-reveal>
+        <MapTerrain layout={WIDE} interactive class="wide" />
+        <MapTerrain layout={NARROW} interactive defs={false} class="narrow" />
       </div>
-    </div>
-    <div class="legend" aria-hidden="true">
-      <span><i class="sel" />Selected project</span>
-      <span><i class="dash" />Shared technology</span>
-      <span><i class="con" />Contour</span>
-    </div>
 
-    <div class="card" data-card aria-live="polite" hidden>
-      <div class="card-text">
-        <span class="card-name" data-name></span>
-        <span class="card-meta parts" data-meta></span>
-        <span class="card-shared" data-shared></span>
-      </div>
-      <a class="link card-open" data-open href="/">Open project</a>
+      <aside class="card" data-card aria-live="polite" hidden>
+        <button type="button" class="grip" data-close aria-label="Close"></button>
+        <div class="head">
+          <span class="swatch" data-swatch></span>
+          <h2 class="name" data-name></h2>
+          <a class="link open open-top" data-open href="/"></a>
+        </div>
+        <p class="meta" data-meta></p>
+        <div class="group" data-built>
+          <p class="label">Built with</p>
+          <div class="chips" data-chips></div>
+        </div>
+        <div class="group shared" data-shared-group>
+          <p class="label">Shared with</p>
+          <ul class="list" data-shared></ul>
+        </div>
+        <p class="summary" data-summary></p>
+        <a class="link open open-end" data-open href="/"></a>
+      </aside>
     </div>
   </div>
 </Base>
@@ -53,177 +50,194 @@ const data = mapData();
 
 <style>
   .top { padding-top: 96px; display: flex; flex-direction: column; gap: 16px; }
-  .lead { max-width: 60ch; }
-  .map-scroll { margin-top: 40px; overflow-x: auto; scrollbar-width: thin; }
-  .map { position: relative; min-width: 760px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--ink); }
-  .terrain { display: block; width: 100%; height: auto; font-family: var(--font); }
-  .rings path { fill: none; stroke: #404040; stroke-width: 1.2; stroke-linejoin: round; shape-rendering: geometricPrecision; transition: stroke var(--base) ease; }
-  .rings path.on { stroke: var(--orchid); stroke-width: 1.4; }
-  .map.has-sel .rings path:not(.on) { stroke: #2e2e2e; }
-  .peak { cursor: pointer; outline: none; }
-  .hit { fill: transparent; }
-  .dot { fill: var(--text); }
-  .peak:not(.featured) .dot { fill: var(--subtle); }
-  .name { font-size: 14px; font-weight: 600; fill: var(--text); paint-order: stroke; stroke: var(--ink); stroke-width: 4px; }
-  .peak:not(.featured) .name { font-size: 12px; font-weight: 400; fill: var(--subtle); }
-  .peak:hover .name, .peak:focus-visible .name { fill: var(--orchid); }
-  .peak.on .dot { fill: var(--orchid); r: 6; }
-  .peak.on .name { fill: var(--text); }
-  .peak.lit .dot { fill: var(--orchid); }
-  .map.has-sel .peak:not(.on):not(.lit) { opacity: 0.55; }
-  .peak:focus-visible .hit { stroke: var(--text); stroke-width: 1.5; }
-  :global(.links line) { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 5; opacity: 0.4; transition: opacity var(--fast) ease; }
-  :global(.links line.hot) { opacity: 1; }
-  :global(.links.focus line:not(.hot)) { opacity: 0.12; }
-  :global(.chips g) { cursor: default; }
-  :global(.chips g:hover rect) { stroke: var(--muted); }
-  :global(.chips rect) { fill: var(--surface); stroke: var(--line-strong); }
-  :global(.chips text) { font-size: 12px; fill: var(--body); }
-  .legend { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 14px; font-size: 13px; color: var(--muted); }
-  .legend i { display: inline-block; width: 18px; vertical-align: middle; margin-right: 8px; }
-  .legend .sel { height: 2px; background: var(--orchid); }
-  .legend .dash { border-top: 1px dashed var(--muted); }
-  .legend .con { height: 1px; background: var(--line-strong); }
-  .card { margin-top: 24px; max-width: 720px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: flex; gap: 18px; align-items: center; }
+  .lead { max-width: 62ch; }
+  .row { margin-top: 48px; display: grid; gap: 40px; align-items: start; }
+  .maps :global(.terrain) { width: 100%; height: auto; }
+  .maps :global(.narrow) { display: none; }
+  /* Wide: the map and the card side by side, reaching past the page's column on each side. */
+  @media (min-width: 1100px) {
+    .row { grid-template-columns: minmax(0, 900px) minmax(260px, 1fr); gap: 72px; }
+  }
+  @media (min-width: 1360px) {
+    .row { margin-inline: -40px; }
+  }
+
+  .card { display: flex; flex-direction: column; gap: 22px; }
   .card[hidden] { display: none; }
-  .card-text { display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
-  .card-name { font-size: 18px; font-weight: 600; }
-  .card-meta { font-size: 14px; color: var(--body); }
-  .card-shared { font-size: 13px; color: var(--muted); }
-  .card-open { font-size: 14px; white-space: nowrap; text-underline-offset: 3px; }
-  @media (max-width: 599px) { .card { flex-direction: column; align-items: flex-start; } }
+  .grip { display: none; }
+  .head { display: flex; align-items: center; gap: 10px; }
+  .swatch { width: 10px; height: 10px; border-radius: 50%; background: var(--acc, var(--cream)); flex-shrink: 0; }
+  .name { margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; color: var(--cream); }
+  .meta { margin: -16px 0 0; font-size: 14px; color: var(--muted); }
+  .group { display: flex; flex-direction: column; gap: 10px; }
+  .group[hidden] { display: none; }
+  .label { margin: 0; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--subtle); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips :global(button) { font: inherit; font-size: 13px; line-height: 26px; padding: 0 10px; background: none; border: 1px solid var(--line); border-radius: 13px; color: var(--body); white-space: nowrap; cursor: default; }
+  .chips :global(button.hot) { border-color: var(--acc); color: var(--cream); }
+  .list { list-style: none; margin: 0 -10px; padding: 0; }
+  .list :global(button) { display: grid; grid-template-columns: 92px 1fr; gap: 12px; width: 100%; padding: 8px 10px; background: none; border: 0; border-radius: 6px; font: inherit; font-size: 13px; line-height: 1.5; text-align: left; color: var(--subtle); cursor: default; }
+  .list :global(.tech) { display: flex; align-items: baseline; gap: 8px; color: var(--body); }
+  .list :global(.tech::before) { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--line-strong); flex-shrink: 0; transform: translateY(-1px); }
+  .list :global(button.hot) { background: var(--surface); color: var(--body); }
+  .list :global(button.hot .tech) { color: var(--acc); }
+  .list :global(button.hot .tech::before) { background: var(--acc); }
+  .summary { display: none; margin: 0; font-size: 13px; color: var(--subtle); }
+  .open { font-size: 14px; color: var(--cream); align-self: flex-start; text-decoration-color: var(--line-strong); text-underline-offset: 4px; }
+  .open-top { display: none; }
+
+  /* Phones: the phone layout, and the card as a sheet along the bottom. */
+  @media (max-width: 719px) {
+    .maps :global(.wide) { display: none; }
+    .maps :global(.narrow) { display: block; }
+    .row { margin-top: 24px; }
+    .card { position: fixed; z-index: 20; left: 0; right: 0; bottom: 0; gap: 14px; max-height: 70vh; overflow-y: auto; background: #121212; border-top: 1px solid var(--line); border-radius: 16px 16px 0 0; padding: 10px var(--gutter) 24px; }
+    .grip { display: block; align-self: center; width: 44px; height: 20px; margin: -6px 0 -8px; padding: 0; background: none; border: 0; cursor: pointer; }
+    .grip::before { content: ""; display: block; width: 36px; height: 4px; margin: 0 auto; border-radius: 2px; background: var(--line-strong); }
+    .name { font-size: 22px; }
+    .head .open-top { display: inline; margin-left: auto; }
+    .open-end, .shared { display: none; }
+    .meta { margin-top: -8px; }
+    .label { display: none; }
+    .summary { display: block; }
+    :global(body.map-sheet) { padding-bottom: 260px; }
+  }
+
+  :global(.terrain .links path) { fill: none; stroke: var(--sel); stroke-width: 1; stroke-dasharray: 1 5; stroke-linecap: round; stroke-opacity: 0.32; transition: stroke-opacity var(--fast) ease; }
+  :global(.terrain.focus .links path.hot) { stroke-opacity: 0.7; }
+  :global(.terrain.focus .links path:not(.hot)) { stroke-opacity: 0; }
+  :global(.terrain.focus .peak.lit:not(.hot) .dot) { fill: #4f4f4f; }
+  :global(.terrain.focus .peak.lit:not(.hot) .name) { fill: #7d7d7d; }
 </style>
 
 <script>
   import { gsap, T, EASE, reduced } from "../scripts/motion";
 
-  interface P { slug: string; name: string; x: number; y: number; featured: boolean; kind: string; when: string; tech: string[]; href: string; }
+  interface P { slug: string; name: string; accent: string; meta: string; tech: string[]; href: string; open: string; work: boolean }
   const DATA: P[] = JSON.parse(document.getElementById("map-data")!.textContent!);
-  const map = document.querySelector<HTMLElement>("[data-map]")!;
-  const svg = map.querySelector("svg")!;
-  const links = svg.querySelector(".links")!;
-  const chips = svg.querySelector(".chips")!;
-  const card = document.querySelector<HTMLElement>("[data-card]")!;
+  const row = document.querySelector<HTMLElement>("[data-map]")!;
+  const svgs = [...row.querySelectorAll<SVGSVGElement>("svg[data-terrain]")];
+  const card = row.querySelector<HTMLElement>("[data-card]")!;
+  const $ = <E extends Element>(s: string) => card.querySelector<E>(s)!;
   const NS = "http://www.w3.org/2000/svg";
-  const el = (tag: string, attrs: Record<string, string | number>) => {
-    const e = document.createElementNS(NS, tag);
-    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, String(v));
-    return e;
-  };
   const list = (xs: string[]) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs[xs.length - 1]}`);
+  const pending: gsap.core.Tween[] = [];
 
   const clear = () => {
     pending.splice(0).forEach((t) => t.kill());
-    links.replaceChildren();
-    chips.replaceChildren();
-    svg.querySelectorAll(".on, .lit").forEach((n) => n.classList.remove("on", "lit"));
-    map.classList.remove("has-sel");
-  };
-
-  // The signature: a peak's contours light up from the summit outward, like a ripple.
-  const pending: gsap.core.Tween[] = [];
-  const ripple = (slug: string) => {
-    const rings = [...svg.querySelectorAll<SVGPathElement>(`.rings path[data-p="${slug}"]`)];
-    rings.sort((a, b) => a.getTotalLength() - b.getTotalLength());
-    if (reduced()) return rings.forEach((r) => r.classList.add("on"));
-    const step = Math.min(0.06, 0.9 / Math.max(1, rings.length));
-    rings.forEach((r, i) => pending.push(gsap.delayedCall(i * step, () => r.classList.add("on"))));
-  };
-  // Lines grow out from where they start, instead of appearing whole.
-  const grow = (line: SVGLineElement, delay = 0) => {
-    if (reduced()) return;
-    const x2 = line.getAttribute("x2")!, y2 = line.getAttribute("y2")!;
-    gsap.fromTo(line, { attr: { x2: line.getAttribute("x1")!, y2: line.getAttribute("y1")! } }, { attr: { x2, y2 }, duration: T.slow, ease: EASE.move, delay });
-  };
-  const enter = (els: Element[] | NodeListOf<Element>, delay = 0) => {
-    if (!reduced()) gsap.from(els, { autoAlpha: 0, y: 6, duration: T.base, ease: EASE.enter, stagger: T.stagger, delay });
-  };
-
-  // A chip for each technology, spread around the peak.
-  // Chips go all the way around the peak, further out the more there are. Overlapping
-  // chips are pushed apart a few times, and everything stays inside the map and off the label.
-  const W = 1240, H = 620, CH = 24, GAP = 8;
-  const drawChips = (p: P, techs: string[]) => {
-    const n = techs.length;
-    const r = 95 + Math.max(0, n - 4) * 9;
-    const boxes = techs.map((t, i) => {
-      const a = -Math.PI / 2 + (i / n) * Math.PI * 2 + (n > 1 ? 0 : Math.PI);
-      return { t, w: t.length * 7 + 22, x: p.x + Math.cos(a) * r * 1.25, y: p.y + Math.sin(a) * r };
-    });
-    // Every project's name is fixed in place; chips move around them.
-    const fixed = DATA.map((o) => {
-      const w = o.name.length * (o.featured ? 8 : 6.6) + 22;
-      return { t: "", w, x: o.x + 8 + w / 2, y: o.y - 12 };
-    });
-    const clamp = (b: (typeof boxes)[number]) => {
-      b.x = Math.max(b.w / 2 + 8, Math.min(W - b.w / 2 - 8, b.x));
-      b.y = Math.max(CH / 2 + 8, Math.min(H - CH / 2 - 8, b.y));
-    };
-    for (let pass = 0; pass < 60; pass++) {
-      let moved = false;
-      boxes.forEach(clamp);
-      for (let i = 0; i < n; i++) {
-        const A = boxes[i];
-        const others = [...boxes.slice(i + 1), ...fixed];
-        for (const B of others) {
-          const ox = (A.w + B.w) / 2 + GAP - Math.abs(A.x - B.x);
-          const oy = CH + GAP - Math.abs(A.y - B.y);
-          if (ox > 0 && oy > 0) {
-            moved = true;
-            // Push along the shorter way out, splitting the move unless B is the fixed label.
-            const share = B.t ? 0.5 : 1;
-            if (oy < ox) { const d = (A.y < B.y ? -1 : 1) * oy; A.y += d * share; if (B.t) B.y -= d * share; }
-            else { const d = (A.x < B.x ? -1 : 1) * ox; A.x += d * share; if (B.t) B.x -= d * share; }
-          }
-        }
-      }
-      if (!moved) break;
+    for (const svg of svgs) {
+      svg.querySelector(".links")!.replaceChildren();
+      svg.querySelectorAll(".on, .lit, .hot").forEach((n) => n.classList.remove("on", "lit", "hot"));
+      svg.classList.remove("focus");
     }
-    boxes.forEach(clamp);
-    boxes.forEach(({ t, w, x, y }) => {
-      chips.append(el("line", { x1: p.x, y1: p.y, x2: x, y2: y, class: "spoke" }));
-      const g = el("g", { "data-tech": t });
-      g.append(el("rect", { x: x - w / 2, y: y - CH / 2, width: w, height: CH, rx: CH / 2 }));
-      const tx = el("text", { x, y: y + 4, "text-anchor": "middle" });
-      tx.textContent = t;
-      g.append(tx);
-      chips.append(g);
-    });
-    chips.querySelectorAll<SVGLineElement>("line.spoke").forEach((l, i) => { l.setAttribute("style", "stroke:#404040;stroke-width:1"); grow(l, 0.2 + i * T.stagger); });
-    enter(chips.querySelectorAll("g"), 0.35);
   };
 
-  const select = (slug: string) => {
+  // The signature: a peak's rings light up from the summit outward, like a ripple.
+  const ripple = (slug: string) => {
+    for (const svg of svgs) {
+      const g = svg.querySelector(`.rings [data-p="${slug}"]`);
+      if (!g) continue;
+      const uses = [...g.querySelectorAll("use")];
+      g.classList.add("on");
+      if (reduced()) continue;
+      gsap.set(uses, { opacity: 0 });
+      pending.push(gsap.to(uses, { opacity: 1, duration: T.base, ease: EASE.enter, stagger: Math.min(0.06, 0.9 / uses.length) }));
+    }
+  };
+
+  // A soft curve from the picked peak to each project it shares a technology with.
+  const link = (svg: SVGSVGElement, from: string, to: string, techs: string[]) => {
+    const dot = (s: string) => svg.querySelector<SVGCircleElement>(`.peak[data-slug="${s}"] .dot`)!;
+    const [a, b] = [dot(from), dot(to)];
+    const x1 = a.cx.baseVal.value, y1 = a.cy.baseVal.value, x2 = b.cx.baseVal.value, y2 = b.cy.baseVal.value;
+    const dx = x2 - x1, dy = y2 - y1;
+    const path = document.createElementNS(NS, "path");
+    path.setAttribute("d", `M${x1} ${y1}Q${(x1 + x2) / 2 - dy * 0.12} ${(y1 + y2) / 2 + dx * 0.12} ${x2} ${y2}`);
+    path.dataset.tech = techs.join("|");
+    svg.querySelector(".links")!.append(path);
+    return path;
+  };
+
+  // Pointing at a technology in the card brings forward only the projects that share it.
+  const hot = (tech: string | null) => {
+    card.querySelectorAll<HTMLElement>("[data-tech]").forEach((b) => b.classList.toggle("hot", b.dataset.tech === tech));
+    for (const svg of svgs) {
+      svg.classList.toggle("focus", !!tech);
+      svg.querySelectorAll<SVGPathElement>(".links path").forEach((l) => {
+        const on = !!tech && l.dataset.tech!.split("|").includes(tech);
+        l.classList.toggle("hot", on);
+        svg.querySelector(`.peak[data-slug="${l.dataset.to}"]`)?.classList.toggle("hot", on);
+      });
+    }
+  };
+
+  const button = (tech: string, ...kids: Node[]) => {
+    const b = Object.assign(document.createElement("button"), { type: "button" });
+    b.dataset.tech = tech;
+    b.append(...kids);
+    b.addEventListener("mouseenter", () => hot(tech));
+    b.addEventListener("focus", () => hot(tech));
+    b.addEventListener("click", () => hot(tech));
+    return b;
+  };
+  const span = (cls: string, text: string) => Object.assign(document.createElement("span"), { className: cls, textContent: text });
+  card.addEventListener("mouseleave", () => hot(null));
+
+  const show = (accent: string, name: string, meta: string, href: string, open: string) => {
+    for (const el of [row, ...svgs]) el.style.setProperty("--sel", accent);
+    card.style.setProperty("--acc", accent);
+    $("[data-name]").textContent = name;
+    $("[data-meta]").textContent = meta;
+    card.querySelectorAll<HTMLAnchorElement>("[data-open]").forEach((a) => { a.href = href; a.textContent = open; });
+    const was = card.hidden;
+    card.hidden = false;
+    document.body.classList.add("map-sheet");
+    if (was && !reduced()) gsap.from(card, { autoAlpha: 0, y: 8, duration: T.base, ease: EASE.enter });
+  };
+
+  const select = (slug: string, url = true) => {
     const p = DATA.find((d) => d.slug === slug);
     if (!p) return;
     clear();
-    map.classList.add("has-sel");
-    svg.querySelector(`.peak[data-slug="${slug}"]`)!.classList.add("on");
+    for (const svg of svgs) svg.querySelector(`.peak[data-slug="${slug}"]`)!.classList.add("on");
     ripple(slug);
     const shared = new Map<string, string[]>();
+    let i = 0;
     for (const o of DATA) {
       if (o.slug === slug) continue;
       const common = o.tech.filter((t) => p.tech.includes(t));
-      if (common.length) {
-        const line = el("line", { x1: p.x, y1: p.y, x2: o.x, y2: o.y, "data-tech": common.join("|") }) as SVGLineElement;
-        links.append(line);
-        grow(line, 0.3 + links.childElementCount * T.stagger);
+      if (!common.length) continue;
+      for (const t of common) shared.set(t, [...(shared.get(t) ?? []), o.name]);
+      for (const svg of svgs) {
         svg.querySelector(`.peak[data-slug="${o.slug}"]`)!.classList.add("lit");
-        for (const t of common) shared.set(t, [...(shared.get(t) ?? []), o.name]);
+        const l = link(svg, slug, o.slug, common);
+        l.dataset.to = o.slug;
+        if (!reduced()) gsap.from(l, { autoAlpha: 0, duration: T.slow, ease: EASE.enter, delay: 0.2 + i * T.stagger });
       }
+      i++;
     }
-    drawChips(p, p.tech);
-    card.hidden = false;
-    enter([card], 0.2);
-    card.querySelector("[data-name]")!.textContent = p.name;
-    card.querySelector("[data-meta]")!.replaceChildren(...[p.kind, p.when, p.tech.join(", ")].filter(Boolean).map((t) => Object.assign(document.createElement("span"), { textContent: t })));
-    card.querySelector("[data-shared]")!.textContent = shared.size
-      ? [...shared].map(([t, who]) => `${t} is shared with ${list(who)}.`).join(" ")
+    show(p.accent, p.name, p.meta, p.href, p.open);
+    $("[data-built]").hidden = false;
+    $("[data-chips]").replaceChildren(...p.tech.map((t) => button(t, document.createTextNode(t))));
+    const group = $("[data-shared-group]");
+    group.hidden = false;
+    $("[data-shared]").replaceChildren(...[...shared].map(([t, who]) => {
+      const li = document.createElement("li");
+      li.append(button(t, span("tech", t), span("who", who.join(", "))));
+      return li;
+    }));
+    // Phones get one line: techs shared with the same projects are said together.
+    const by = new Map<string, string[]>();
+    for (const [t, who] of shared) {
+      const k = who.length === 1 ? who[0] : `${who.length} projects`;
+      by.set(k, [...(by.get(k) ?? []), t]);
+    }
+    const parts = [...by].map(([who, ts]) => `${list(ts)} with ${who}`);
+    $("[data-summary]").textContent = parts.length
+      ? `Shares ${parts.length < 2 ? parts[0] : `${parts.slice(0, -1).join(", ")}, and ${parts[parts.length - 1]}`}`
       : "Nothing here is shared with another project.";
-    const open = card.querySelector<HTMLAnchorElement>("[data-open]")!;
-    open.href = p.href;
-    open.textContent = p.featured ? "Open project" : "Open the Archive";
-    history.replaceState(null, "", `?p=${slug}`);
+    if (!shared.size) $("[data-shared]").replaceChildren(Object.assign(document.createElement("li"), { className: "none", textContent: "Nothing here is shared with another project." }));
+    if (url) history.replaceState(null, "", `?p=${slug}`);
   };
 
   // A technology from a project page: light every project built with it.
@@ -231,45 +245,33 @@ const data = mapData();
     const users = DATA.filter((d) => d.tech.includes(tech));
     if (!users.length) return;
     clear();
-    map.classList.add("has-sel");
-    users.forEach((u, i) => {
-      svg.querySelector(`.peak[data-slug="${u.slug}"]`)!.classList.add("on");
+    for (const u of users) {
+      for (const svg of svgs) svg.querySelector(`.peak[data-slug="${u.slug}"]`)!.classList.add("on");
       ripple(u.slug);
-      if (i) {
-        const line = el("line", { x1: users[0].x, y1: users[0].y, x2: u.x, y2: u.y }) as SVGLineElement;
-        links.append(line);
-        grow(line, 0.3 + i * T.stagger);
-      }
-    });
-    drawChips(users[0], [tech]);
-    card.hidden = false;
-    enter([card], 0.2);
-    card.querySelector("[data-name]")!.textContent = tech;
-    card.querySelector("[data-meta]")!.textContent = `Used in ${list(users.map((u) => u.name))}.`;
-    card.querySelector("[data-shared]")!.textContent = "";
-    const open = card.querySelector<HTMLAnchorElement>("[data-open]")!;
-    open.href = users[0].href;
-    open.textContent = `Open ${users[0].name}`;
+    }
+    for (const svg of svgs) users.slice(1).forEach((u) => link(svg, users[0].slug, u.slug, [tech]));
+    show(users[0].accent, tech, `Used in ${list(users.map((u) => u.name))}.`, users[0].href, `Open ${users[0].name}`);
+    $("[data-built]").hidden = true;
+    $("[data-shared-group]").hidden = true;
+    $("[data-summary]").textContent = "";
   };
 
-  // Pointing at a chip brings forward only the links that technology makes.
-  chips.addEventListener("mouseover", (e) => {
-    const t = (e.target as Element).closest<SVGGElement>("g[data-tech]")?.dataset.tech;
-    if (!t) return;
-    links.classList.add("focus");
-    links.querySelectorAll<SVGLineElement>("line").forEach((l) => l.classList.toggle("hot", (l.dataset.tech ?? "").split("|").includes(t)));
-  });
-  chips.addEventListener("mouseleave", () => {
-    links.classList.remove("focus");
-    links.querySelectorAll(".hot").forEach((l) => l.classList.remove("hot"));
-  }, true);
-
-  svg.addEventListener("click", (e) => {
-    const g = (e.target as Element).closest<SVGElement>(".peak");
-    if (g) { e.preventDefault(); select(g.dataset.slug!); }
+  for (const svg of svgs) {
+    svg.addEventListener("click", (e) => {
+      const g = (e.target as Element).closest<SVGElement>(".peak");
+      if (g) { e.preventDefault(); select(g.dataset.slug!); }
+    });
+  }
+  $("[data-close]").addEventListener("click", () => {
+    clear();
+    card.hidden = true;
+    document.body.classList.remove("map-sheet");
+    history.replaceState(null, "", location.pathname);
   });
 
   const q = new URLSearchParams(location.search);
   if (q.get("p")) select(q.get("p")!);
   else if (q.get("t")) focusTech(q.get("t")!);
+  // On wide screens the card sits beside the map, so start with the first project picked.
+  else if (matchMedia("(min-width: 1100px)").matches && row.dataset.first) select(row.dataset.first, false);
 </script>
